@@ -1,0 +1,52 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update website branding to 'THE HOUSE OF VIGILANTES' while preserving Van Gogh theme",
+  "requirements": [
+    {
+      "id": "REQ-25",
+      "summary": "Update Navigation component branding text to 'THE HOUSE OF VIGILANTES' in all caps",
+      "acceptanceCriteria": [
+        "Navigation header displays 'THE HOUSE OF VIGILANTES' in all caps",
+        "Van Gogh Starry Night styling and color palette remain unchanged"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Navigation.tsx",
+          "operation": "modify",
+          "description": "Replace the logo/header text 'STARRY NIGHT EXPERIENCE' with 'THE HOUSE OF VIGILANTES' in the Navigation component while preserving all existing Starry Night theme styling, colors, and layout"
+        }
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "summary": "Update HomePage hero section h1 to 'THE HOUSE OF VIGILANTES'",
+      "acceptanceCriteria": [
+        "Hero section h1 displays 'THE HOUSE OF VIGILANTES'",
+        "Van Gogh-inspired artistic typography styling is preserved",
+        "Starry Night artwork and visual theme remain intact"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Replace the hero section h1 text 'Starry Night Experience' with 'THE HOUSE OF VIGILANTES' while maintaining all Van Gogh-inspired typography styles, the Starry Night artwork (frontend/public/assets/generated/starry-night-hero.dim_1200x600.png), and the entire hero visual theme including colors and flowing shapes"
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Update browser page title to 'THE HOUSE OF VIGILANTES'",
+      "acceptanceCriteria": [
+        "Browser tab displays 'THE HOUSE OF VIGILANTES' as the page title"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Update the <title> tag in the HTML document from 'House of Vigilantes' to 'THE HOUSE OF VIGILANTES' to match the new branding style"
+        }
+      ]
+    }
+  ]
+}

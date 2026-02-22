@@ -1,2 +1,3 @@
-# the-website-house-of-vigilantes
-Exported from Caffeine project: the website House of Vigilantes
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

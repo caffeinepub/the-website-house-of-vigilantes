@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+        /* Literary warm earth tones - Light mode */
+        --background: 0.97 0.015 45;  /* Warm cream */
+        --foreground: 0.25 0.02 35;   /* Deep brown */
+        --card: 0.98 0.01 50;
+        --card-foreground: 0.25 0.02 35;
+        --popover: 0.98 0.01 50;
+        --popover-foreground: 0.25 0.02 35;
+        --primary: 0.42 0.08 25;      /* Rich burgundy-brown */
+        --primary-foreground: 0.98 0.01 50;
+        --secondary: 0.88 0.025 40;   /* Soft sepia */
+        --secondary-foreground: 0.25 0.02 35;
+        --muted: 0.92 0.02 45;
+        --muted-foreground: 0.50 0.03 30;
+        --accent: 0.65 0.10 30;       /* Warm amber accent */
+        --accent-foreground: 0.98 0.01 50;
+        --destructive: 0.55 0.20 15;
+        --destructive-foreground: 0.98 0.01 50;
+        --border: 0.85 0.02 40;
+        --input: 0.85 0.02 40;
+        --ring: 0.42 0.08 25;
+        --chart-1: 0.65 0.10 30;
+        --chart-2: 0.55 0.08 50;
+        --chart-3: 0.45 0.06 20;
+        --chart-4: 0.70 0.12 35;
+        --chart-5: 0.60 0.09 45;
+
+        /* Starry Night color palette */
+        --starry-primary: 0.30 0.15 250;      /* Deep blue #0B3D91 */
+        --starry-secondary: 0.85 0.25 95;     /* Golden yellow #FFD700 */
+        --starry-background: 0.15 0.12 245;   /* Midnight blue #0A192F */
+        --starry-accent: 0.60 0.18 230;       /* Soft blue #1E90FF */
+    }
+
+    .dark {
+        --background: 0.18 0.02 30;   /* Deep warm brown */
+        --foreground: 0.95 0.015 45;  /* Warm off-white */
+        --card: 0.22 0.025 28;
+        --card-foreground: 0.95 0.015 45;
+        --popover: 0.20 0.02 32;
+        --popover-foreground: 0.95 0.015 45;
+        --primary: 0.75 0.08 40;      /* Warm gold */
+        --primary-foreground: 0.20 0.02 30;
+        --secondary: 0.30 0.03 25;
+        --secondary-foreground: 0.95 0.015 45;
+        --muted: 0.28 0.025 28;
+        --muted-foreground: 0.65 0.03 35;
+        --accent: 0.65 0.10 30;
+        --accent-foreground: 0.95 0.015 45;
+        --destructive: 0.60 0.18 20;
+        --destructive-foreground: 0.95 0.015 45;
+        --border: 0.32 0.03 28;
+        --input: 0.32 0.03 28;
+        --ring: 0.75 0.08 40;
+        --chart-1: 0.65 0.10 30;
+        --chart-2: 0.55 0.08 50;
+        --chart-3: 0.45 0.06 20;
+        --chart-4: 0.70 0.12 35;
+        --chart-5: 0.60 0.09 45;
+
+        /* Starry Night color palette - dark mode adjusted */
+        --starry-primary: 0.25 0.18 250;      /* Deeper blue for dark mode */
+        --starry-secondary: 0.88 0.28 95;     /* Brighter golden yellow */
+        --starry-background: 0.12 0.15 245;   /* Darker midnight blue */
+        --starry-accent: 0.65 0.20 230;       /* Brighter soft blue */
+    }
+
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer components {
+    .book-title {
+        @apply font-serif text-2xl font-semibold tracking-tight;
+    }
+    
+    .book-author {
+        @apply font-sans text-base text-muted-foreground;
+    }
+    
+    .literary-heading {
+        @apply font-serif text-4xl md:text-5xl font-bold tracking-tight;
+    }
+
+    /* Starry Night themed components */
+    .starry-heading {
+        @apply font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide;
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(30, 144, 255, 0.3);
+    }
+}
+
+@layer utilities {
+    /* Starry Night color utilities */
+    .bg-starry-primary {
+        background-color: oklch(var(--starry-primary));
+    }
+    .bg-starry-secondary {
+        background-color: oklch(var(--starry-secondary));
+    }
+    .bg-starry-background {
+        background-color: oklch(var(--starry-background));
+    }
+    .bg-starry-accent {
+        background-color: oklch(var(--starry-accent));
+    }
+    .text-starry-primary {
+        color: oklch(var(--starry-primary));
+    }
+    .text-starry-secondary {
+        color: oklch(var(--starry-secondary));
+    }
+    .text-starry-background {
+        color: oklch(var(--starry-background));
+    }
+    .text-starry-accent {
+        color: oklch(var(--starry-accent));
+    }
+    .border-starry-primary {
+        border-color: oklch(var(--starry-primary));
+    }
+    .border-starry-secondary {
+        border-color: oklch(var(--starry-secondary));
+    }
+    .border-starry-accent {
+        border-color: oklch(var(--starry-accent));
+    }
+
+    /* Flowing, brush stroke-inspired animations */
+    @keyframes subtle-float {
+        0%, 100% {
+            transform: scale(1.05) translateY(0);
+        }
+        50% {
+            transform: scale(1.08) translateY(-10px);
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fade-in-delay {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        30% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse-slow {
+        0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.6;
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes pulse-slow-delay {
+        0%, 100% {
+            opacity: 0.2;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.5;
+            transform: scale(1.15);
+        }
+    }
+
+    .animate-subtle-float {
+        animation: subtle-float 8s ease-in-out infinite;
+    }
+
+    .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+    }
+
+    .animate-fade-in-delay {
+        animation: fade-in-delay 1.5s ease-out forwards;
+    }
+
+    .animate-pulse-slow {
+        animation: pulse-slow 4s ease-in-out infinite;
+    }
+
+    .animate-pulse-slow-delay {
+        animation: pulse-slow-delay 5s ease-in-out infinite 1s;
+    }
+
+    /* Gradient utilities for Van Gogh aesthetic */
+    .bg-gradient-radial {
+        background: radial-gradient(circle, var(--tw-gradient-stops));
+    }
+}

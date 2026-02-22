@@ -1,0 +1,74 @@
+{
+  "kind": "build_request",
+  "title": "Update website branding to 'THE HOUSE OF VIGILANTES' while preserving Van Gogh theme",
+  "projectName": "House of Vigilantes",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-25",
+      "text": "Update the Navigation component branding text to display 'THE HOUSE OF VIGILANTES' in all caps, replacing the current 'STARRY NIGHT EXPERIENCE' text",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "CHANGE THE HEADER/LOGO TO 'THE HOUSE OF VIGILANTES'"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigation header displays 'THE HOUSE OF VIGILANTES' in all caps",
+        "Van Gogh Starry Night styling and color palette remain unchanged"
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "text": "Update the HomePage hero section h1 title element to display 'THE HOUSE OF VIGILANTES' instead of 'Starry Night Experience'",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "CHNAGE THE TITLE TO 'THE HOUSE OF VIGILANTES'"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Hero section h1 displays 'THE HOUSE OF VIGILANTES'",
+        "Van Gogh-inspired artistic typography styling is preserved",
+        "Starry Night artwork and visual theme remain intact"
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "text": "Update the browser page title in frontend/index.html to 'THE HOUSE OF VIGILANTES'",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "UPADTE THE BROWSER TAB TITLE ALSO"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Browser tab displays 'THE HOUSE OF VIGILANTES' as the page title"
+      ]
+    }
+  ],
+  "constraints": [
+    "Preserve all Van Gogh Starry Night visual theme elements including colors (#0B3D91, #FFD700, #0A192F, #1E90FF), flowing shapes, and artwork",
+    "Keep the existing Starry Night-inspired artwork in the hero section",
+    "Maintain all current Van Gogh-inspired typography and design elements"
+  ],
+  "nonGoals": [
+    "Removing or modifying the Starry Night visual theme",
+    "Changing color palettes or design elements",
+    "Updating Footer branding (already shows 'House of Vigilantes')",
+    "Modifying Van Gogh artwork or artistic styling"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
