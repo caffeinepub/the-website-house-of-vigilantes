@@ -2,10 +2,29 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-navigation-component-branding-text-to-display-the-house-of-vigilantes-in-all-caps-replacing-the-current-starry-night-experience-text",
-      "featureTitle": "Update the Navigation component branding text to display 'THE HOUSE OF VIGILANTES' in all caps, replacing the current 'STARRY NIGHT EXPERIENCE' text",
+      "featureId": "feature-generate-a-van-gogh-inspired-background-image-with-vibrant-swirling-colors-and-brushstroke-textures-suitable-for-a-homepage-hero-section-dimensions-1920x1080",
+      "featureTitle": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
+      "files": [],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-new-unified-homepage-component-that-replaces-the-existing-homepage-featuring-a-van-gogh-inspired-design-with-css-effects-for-swirling-brushstrokes-and-vibrant-color-gradients-overlaying-the-generated-background-image",
+      "featureTitle": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
       "files": [
-        "frontend/src/components/Navigation.tsx"
+        "frontend/src/index.css",
+        "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,13 +36,34 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-25"
+        "REQ-2"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-homepage-hero-section-h1-title-element-to-display-the-house-of-vigilantes-instead-of-starry-night-experience",
-      "featureTitle": "Update the HomePage hero section h1 title element to display 'THE HOUSE OF VIGILANTES' instead of 'Starry Night Experience'",
+      "featureId": "feature-implement-three-prominent-main-menu-options-in-a-center-or-top-panel-on-the-homepage-browse-books-navigates-to-browse-mood-based-recommendations-expands-content-on-homepage-and-trending-popular-expands-content-on-homepage",
+      "featureTitle": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
+      "files": [
+        "frontend/src/components/MoodFilterChips.tsx",
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-secondary-menu-with-links-to-collection-upload-book-my-books-and-favorites-integrated-into-the-homepage-design-below-or-beside-the-three-main-options",
+      "featureTitle": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
       "files": [
         "frontend/src/pages/HomePage.tsx"
       ],
@@ -37,15 +77,15 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-4"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-browser-page-title-in-frontend-index-html-to-the-house-of-vigilantes",
-      "featureTitle": "Update the browser page title in frontend/index.html to 'THE HOUSE OF VIGILANTES'",
+      "featureId": "feature-ensure-the-homepage-serves-as-a-central-entry-point-and-personalized-dashboard-for-logged-in-users-showing-personalized-content-in-the-expanded-sections-when-available",
+      "featureTitle": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
       "files": [
-        "frontend/index.html"
+        "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -57,7 +97,28 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-27"
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-style-the-homepage-typography-to-stand-out-clearly-against-the-van-gogh-inspired-background-using-consistent-font-choices-and-spacing-that-maintain-readability-while-complementing-the-artistic-theme",
+      "featureTitle": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

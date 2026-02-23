@@ -47,22 +47,23 @@ export default function ProfileSetupModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-w-[90vw]">
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl">Welcome!</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="font-serif text-xl md:text-2xl">Welcome!</DialogTitle>
+          <DialogDescription className="text-sm md:text-base">
             Please tell us your name to complete your profile setup.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Your Name</Label>
+            <Label htmlFor="name" className="text-sm md:text-base">Your Name</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
               autoFocus
+              className="text-sm md:text-base"
             />
           </div>
           <Button type="submit" className="w-full" disabled={saveProfile.isPending}>

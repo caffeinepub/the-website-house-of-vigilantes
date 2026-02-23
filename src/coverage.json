@@ -1,29 +1,55 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-22T17:36:25.349Z",
+  "generatedAt": "2026-02-23T05:23:06.339Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 7,
+    "implemented": 6,
     "items": [
       {
-        "id": "REQ-25",
-        "summary": "Update the Navigation component branding text to display 'THE HOUSE OF VIGILANTES' in all caps, replacing the current 'STARRY NIGHT EXPERIENCE' text",
+        "id": "REQ-1",
+        "summary": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Navigation.tsx"
+          "frontend/public/assets/generated/vangogh-hero.dim_1920x1080.png"
         ],
         "matchedFiles": [
-          "frontend/src/components/Navigation.tsx"
+          "frontend/public/assets/generated/vangogh-hero.dim_1920x1080.png"
         ]
       },
       {
-        "id": "REQ-26",
-        "summary": "Update the HomePage hero section h1 title element to display 'THE HOUSE OF VIGILANTES' instead of 'Starry Night Experience'",
+        "id": "REQ-2",
+        "summary": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/components/MoodFilterChips.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/components/MoodFilterChips.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/HomePage.tsx"
@@ -33,15 +59,37 @@
         ]
       },
       {
-        "id": "REQ-27",
-        "summary": "Update the browser page title in frontend/index.html to 'THE HOUSE OF VIGILANTES'",
+        "id": "REQ-5",
+        "summary": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html"
+          "frontend/src/pages/HomePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html"
+          "frontend/src/pages/HomePage.tsx"
         ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Update the App.tsx routing to direct users to the new unified homepage as the default route, ensuring it replaces the current HomePage while maintaining access to PersonalizedHomePage logic for authenticated users",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": []
       }
     ]
   },
@@ -50,9 +98,11 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
-    "frontend/src/components/Navigation.tsx",
+    "frontend/public/assets/generated/vangogh-hero.dim_1920x1080.png",
+    "frontend/src/components/MoodFilterChips.tsx",
+    "frontend/src/index.css",
     "frontend/src/pages/HomePage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

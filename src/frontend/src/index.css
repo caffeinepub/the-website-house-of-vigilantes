@@ -36,6 +36,12 @@
         --starry-secondary: 0.85 0.25 95;     /* Golden yellow #FFD700 */
         --starry-background: 0.15 0.12 245;   /* Midnight blue #0A192F */
         --starry-accent: 0.60 0.18 230;       /* Soft blue #1E90FF */
+
+        /* Van Gogh inspired color palette */
+        --vangogh-yellow: 0.85 0.28 85;       /* Vibrant sunflower yellow */
+        --vangogh-blue: 0.45 0.22 240;        /* Swirling sky blue */
+        --vangogh-green: 0.55 0.18 140;       /* Cypress green */
+        --vangogh-orange: 0.70 0.25 50;       /* Warm sunset orange */
     }
 
     .dark {
@@ -69,6 +75,12 @@
         --starry-secondary: 0.88 0.28 95;     /* Brighter golden yellow */
         --starry-background: 0.12 0.15 245;   /* Darker midnight blue */
         --starry-accent: 0.65 0.20 230;       /* Brighter soft blue */
+
+        /* Van Gogh inspired color palette - dark mode */
+        --vangogh-yellow: 0.88 0.30 85;       /* Brighter yellow for dark */
+        --vangogh-blue: 0.50 0.25 240;        /* Brighter blue */
+        --vangogh-green: 0.60 0.20 140;       /* Brighter green */
+        --vangogh-orange: 0.75 0.28 50;       /* Brighter orange */
     }
 
     * {
@@ -96,6 +108,63 @@
     .starry-heading {
         @apply font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide;
         text-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(30, 144, 255, 0.3);
+    }
+
+    /* Van Gogh themed components */
+    .vangogh-title {
+        @apply text-vangogh-yellow drop-shadow-2xl;
+        text-shadow: 
+            0 0 40px oklch(var(--vangogh-yellow) / 0.8),
+            0 0 80px oklch(var(--vangogh-blue) / 0.4),
+            3px 3px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    .vangogh-subtitle {
+        @apply text-white drop-shadow-lg;
+        text-shadow: 
+            0 2px 10px rgba(0, 0, 0, 0.8),
+            0 0 30px oklch(var(--vangogh-yellow) / 0.3);
+    }
+
+    .vangogh-card {
+        @apply bg-gradient-to-br from-vangogh-blue/80 via-vangogh-green/70 to-vangogh-blue/80 backdrop-blur-md;
+    }
+
+    .vangogh-secondary-card {
+        @apply bg-gradient-to-r from-vangogh-yellow/20 via-vangogh-orange/20 to-vangogh-yellow/20 backdrop-blur-md;
+    }
+
+    .vangogh-expanded-section {
+        @apply bg-gradient-to-br from-vangogh-blue/90 via-vangogh-green/80 to-vangogh-blue/90 backdrop-blur-lg border-2 border-vangogh-yellow/50;
+    }
+
+    .vangogh-option-button {
+        @apply p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-vangogh-glow;
+        @apply bg-gradient-to-r from-vangogh-yellow/30 to-vangogh-orange/30 backdrop-blur-sm;
+        @apply border-2 border-vangogh-yellow/40 hover:border-vangogh-yellow/80;
+        @apply text-white;
+    }
+
+    .vangogh-icon-wrapper {
+        @apply p-3 rounded-full bg-vangogh-yellow/90 text-vangogh-blue;
+        @apply group-hover:scale-110 transition-transform duration-300;
+    }
+
+    .vangogh-arrow {
+        @apply text-3xl md:text-4xl font-bold text-vangogh-yellow;
+        @apply group-hover:translate-x-2 transition-transform duration-300;
+    }
+
+    .vangogh-secondary-link {
+        @apply flex flex-col items-center justify-center p-4 rounded-xl;
+        @apply bg-gradient-to-br from-vangogh-blue/40 to-vangogh-green/40 backdrop-blur-sm;
+        @apply border-2 border-vangogh-blue/30 hover:border-vangogh-yellow/60;
+        @apply text-white hover:text-vangogh-yellow;
+        @apply transition-all duration-300 hover:scale-105 hover:shadow-lg;
+    }
+
+    .vangogh-clear-button {
+        @apply bg-vangogh-yellow/20 border-vangogh-yellow/50 text-white hover:bg-vangogh-yellow/30;
     }
 }
 
@@ -135,6 +204,41 @@
         border-color: oklch(var(--starry-accent));
     }
 
+    /* Van Gogh color utilities */
+    .bg-vangogh-yellow {
+        background-color: oklch(var(--vangogh-yellow) / <alpha-value>);
+    }
+    .bg-vangogh-blue {
+        background-color: oklch(var(--vangogh-blue) / <alpha-value>);
+    }
+    .bg-vangogh-green {
+        background-color: oklch(var(--vangogh-green) / <alpha-value>);
+    }
+    .bg-vangogh-orange {
+        background-color: oklch(var(--vangogh-orange) / <alpha-value>);
+    }
+    .text-vangogh-yellow {
+        color: oklch(var(--vangogh-yellow) / <alpha-value>);
+    }
+    .text-vangogh-blue {
+        color: oklch(var(--vangogh-blue) / <alpha-value>);
+    }
+    .text-vangogh-green {
+        color: oklch(var(--vangogh-green) / <alpha-value>);
+    }
+    .text-vangogh-orange {
+        color: oklch(var(--vangogh-orange) / <alpha-value>);
+    }
+    .border-vangogh-yellow {
+        border-color: oklch(var(--vangogh-yellow) / <alpha-value>);
+    }
+    .border-vangogh-blue {
+        border-color: oklch(var(--vangogh-blue) / <alpha-value>);
+    }
+    .border-vangogh-green {
+        border-color: oklch(var(--vangogh-green) / <alpha-value>);
+    }
+
     /* Flowing, brush stroke-inspired animations */
     @keyframes subtle-float {
         0%, 100% {
@@ -142,6 +246,17 @@
         }
         50% {
             transform: scale(1.08) translateY(-10px);
+        }
+    }
+
+    @keyframes subtle-swirl {
+        0%, 100% {
+            transform: rotate(0deg) scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: rotate(2deg) scale(1.05);
+            opacity: 0.5;
         }
     }
 
@@ -193,8 +308,35 @@
         }
     }
 
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) translateX(0);
+        }
+        33% {
+            transform: translateY(-20px) translateX(10px);
+        }
+        66% {
+            transform: translateY(-10px) translateX(-10px);
+        }
+    }
+
+    @keyframes expand-in {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
     .animate-subtle-float {
         animation: subtle-float 8s ease-in-out infinite;
+    }
+
+    .animate-subtle-swirl {
+        animation: subtle-swirl 15s ease-in-out infinite;
     }
 
     .animate-fade-in {
@@ -206,14 +348,22 @@
     }
 
     .animate-pulse-slow {
-        animation: pulse-slow 4s ease-in-out infinite;
+        animation: pulse-slow 6s ease-in-out infinite;
     }
 
     .animate-pulse-slow-delay {
-        animation: pulse-slow-delay 5s ease-in-out infinite 1s;
+        animation: pulse-slow-delay 6s ease-in-out infinite 3s;
     }
 
-    /* Gradient utilities for Van Gogh aesthetic */
+    .animate-float {
+        animation: float 10s ease-in-out infinite;
+    }
+
+    .animate-expand-in {
+        animation: expand-in 0.4s ease-out forwards;
+    }
+
+    /* Gradient utilities */
     .bg-gradient-radial {
         background: radial-gradient(circle, var(--tw-gradient-stops));
     }

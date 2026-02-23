@@ -22,7 +22,7 @@ export default function UploadBookPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
@@ -35,7 +35,7 @@ export default function UploadBookPage() {
 
   if (profileLoading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Skeleton className="h-12 w-64 mb-8" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -44,7 +44,7 @@ export default function UploadBookPage() {
 
   if (isFetched && !userProfile) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
@@ -63,33 +63,23 @@ export default function UploadBookPage() {
 
   if (submitted) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <CheckCircle className="h-16 w-16 text-green-600" />
+            <div className="mx-auto mb-4 flex h-12 w-12 md:h-16 md:w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+              <CheckCircle className="h-6 w-6 md:h-8 md:w-8 text-green-600 dark:text-green-400" />
             </div>
-            <CardTitle className="font-serif text-3xl">Book Submitted Successfully!</CardTitle>
-            <CardDescription className="text-base mt-2">
+            <CardTitle className="font-serif text-2xl md:text-3xl">Book Submitted Successfully!</CardTitle>
+            <CardDescription className="text-sm md:text-base">
               Your book has been submitted for admin review. You'll be able to see it in your books once it's approved.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <Button onClick={() => navigate({ to: '/my-books' })} className="w-full">
+          <CardContent className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => navigate({ to: '/my-books' })} variant="outline" className="w-full sm:w-auto">
               View My Books
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setSubmitted(false);
-                setFormOpen(true);
-              }} 
-              className="w-full"
-            >
+            <Button onClick={() => setSubmitted(false)} className="w-full sm:w-auto">
               Submit Another Book
-            </Button>
-            <Button variant="ghost" onClick={() => navigate({ to: '/' })} className="w-full">
-              Back to Collection
             </Button>
           </CardContent>
         </Card>
@@ -99,32 +89,33 @@ export default function UploadBookPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="font-serif text-4xl font-bold text-foreground mb-3">Upload Your Book</h1>
-            <p className="text-muted-foreground text-lg">
-              Share your literary work with the community
-            </p>
+          <div className="mb-6 md:mb-8">
+            <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">Upload a Book</h1>
+            <p className="text-muted-foreground text-sm md:text-base">Share your knowledge with the community</p>
           </div>
 
-          <Card className="mb-8">
+          <Card className="mb-6 md:mb-8">
             <CardHeader>
-              <CardTitle className="font-serif text-2xl">Submission Guidelines</CardTitle>
+              <CardTitle className="text-lg md:text-xl">Submission Guidelines</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
-              <p>• Your book will be reviewed by an admin before appearing on the site</p>
-              <p>• Once approved, you can edit your book details up to 3 times</p>
-              <p>• Both you and the admin can delete your book at any time</p>
-              <p>• Please ensure all information is accurate before submitting</p>
+            <CardContent className="space-y-3 md:space-y-4">
+              <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-muted-foreground">
+                <li>Provide accurate book information including title, author, and description</li>
+                <li>Include a valid cover image URL for better presentation</li>
+                <li>Ensure the book content aligns with our community values</li>
+                <li>Your submission will be reviewed by an admin before appearing in the collection</li>
+                <li>You can edit your book up to 3 times after submission</li>
+              </ul>
             </CardContent>
           </Card>
 
           <div className="flex justify-center">
-            <Button 
-              size="lg" 
+            <Button
               onClick={() => setFormOpen(true)}
-              className="gap-2 px-8"
+              size="lg"
+              className="gap-2 w-full sm:w-auto"
             >
               <Upload className="h-5 w-5" />
               Start Upload

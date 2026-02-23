@@ -1,24 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetPendingSubmissions, useApproveBookSubmission, useIsCallerAdmin } from '../hooks/useQueries';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useGetPendingSubmissions, useIsCallerAdmin, useApproveBookSubmission } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Shield, CheckCircle, XCircle, AlertCircle, Inbox } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Shield, AlertCircle, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminReviewPage() {
@@ -36,11 +28,11 @@ export default function AdminReviewPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
-            Please log in to access the review panel.
+            Please log in to access the admin review panel.
           </AlertDescription>
         </Alert>
       </div>
@@ -49,7 +41,7 @@ export default function AdminReviewPage() {
 
   if (isAdminLoading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Skeleton className="h-12 w-64 mb-8" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -58,7 +50,7 @@ export default function AdminReviewPage() {
 
   if (!isAdmin) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -71,7 +63,7 @@ export default function AdminReviewPage() {
 
   const handleApprove = async (isbn: string) => {
     try {
-      await approveSubmission.mutateAsync({ isbn, isApproved: true });
+      await approveSubmission.mutateAsync({ isbn, isApproved: true, rejectionReason: null });
       toast.success('Book approved successfully!');
     } catch (error: any) {
       console.error('Error approving book:', error);
@@ -81,7 +73,6 @@ export default function AdminReviewPage() {
 
   const handleRejectClick = (isbn: string) => {
     setSelectedIsbn(isbn);
-    setRejectionReason('');
     setRejectDialogOpen(true);
   };
 
@@ -89,10 +80,10 @@ export default function AdminReviewPage() {
     if (!selectedIsbn) return;
 
     try {
-      await approveSubmission.mutateAsync({ 
-        isbn: selectedIsbn, 
-        isApproved: false, 
-        rejectionReason: rejectionReason.trim() || 'No reason provided' 
+      await approveSubmission.mutateAsync({
+        isbn: selectedIsbn,
+        isApproved: false,
+        rejectionReason: rejectionReason.trim() || 'No reason provided',
       });
       toast.success('Book rejected.');
       setRejectDialogOpen(false);
@@ -105,115 +96,125 @@ export default function AdminReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Review Submissions</h1>
-            <p className="text-muted-foreground">Approve or reject pending book submissions</p>
-          </div>
-          <Button variant="outline" onClick={() => navigate({ to: '/admin' })}>
-            Back to Admin
-          </Button>
-        </div>
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <Button
+        variant="ghost"
+        onClick={() => navigate({ to: '/admin' })}
+        className="mb-6 md:mb-8 gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Admin Panel
+      </Button>
 
-        {submissionsLoading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-40 w-full" />
-            ))}
-          </div>
-        ) : submissions && submissions.length > 0 ? (
-          <div className="grid gap-4">
-            {submissions.map((submission) => (
-              <Card key={submission.isbn}>
-                <CardHeader>
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex gap-4 flex-1">
-                      <img
-                        src={submission.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
-                        alt={submission.title}
-                        className="w-24 h-36 object-cover rounded shadow-book"
-                      />
-                      <div className="flex-1">
-                        <CardTitle className="font-serif text-2xl mb-2">{submission.title}</CardTitle>
-                        <p className="text-muted-foreground mb-2 text-lg">by {submission.author}</p>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          ISBN: {submission.isbn} • Published: {Number(submission.publicationYear)}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Uploaded by: {submission.uploaderId.toString()}
-                        </p>
+      <div className="mb-6 md:mb-8">
+        <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">Review Submissions</h1>
+        <p className="text-muted-foreground text-sm md:text-base">Approve or reject pending book submissions</p>
+      </div>
+
+      {submissionsLoading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 w-full" />
+          ))}
+        </div>
+      ) : submissions && submissions.length > 0 ? (
+        <div className="grid gap-4">
+          {submissions.map((submission) => (
+            <Card key={submission.isbn}>
+              <CardHeader>
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                  <div className="flex gap-3 md:gap-4 flex-1 w-full">
+                    <img
+                      src={submission.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
+                      alt={submission.title}
+                      className="w-16 h-24 md:w-20 md:h-28 object-cover rounded shadow-book shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <CardTitle className="font-serif text-lg md:text-xl">{submission.title}</CardTitle>
+                        <Badge variant="secondary" className="text-xs">Pending</Badge>
                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleApprove(submission.isbn)}
-                        className="gap-1 bg-green-600 hover:bg-green-700"
-                        disabled={approveSubmission.isPending}
-                      >
-                        <CheckCircle className="h-4 w-4" />
-                        Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleRejectClick(submission.isbn)}
-                        className="gap-1"
-                        disabled={approveSubmission.isPending}
-                      >
-                        <XCircle className="h-4 w-4" />
-                        Reject
-                      </Button>
+                      <p className="text-muted-foreground mb-2 text-sm md:text-base">by {submission.author}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2">
+                        ISBN: {submission.isbn} • Published: {Number(submission.publicationYear)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Submitted by: {submission.uploaderId.toString().slice(0, 10)}...
+                      </p>
+                      {submission.description && (
+                        <p className="text-xs md:text-sm text-muted-foreground mt-2 line-clamp-2">
+                          {submission.description}
+                        </p>
+                      )}
                     </div>
                   </div>
-                </CardHeader>
-                {submission.description && (
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{submission.description}</p>
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Inbox className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground text-lg">No pending submissions to review.</p>
-            </CardContent>
-          </Card>
-        )}
+                  <div className="flex gap-2 w-full md:w-auto">
+                    <Button
+                      onClick={() => handleApprove(submission.isbn)}
+                      disabled={approveSubmission.isPending}
+                      className="gap-1 bg-green-600 hover:bg-green-700 flex-1 md:flex-initial"
+                      size="sm"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      <span>Approve</span>
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleRejectClick(submission.isbn)}
+                      disabled={approveSubmission.isPending}
+                      className="gap-1 flex-1 md:flex-initial"
+                      size="sm"
+                    >
+                      <XCircle className="h-4 w-4" />
+                      <span>Reject</span>
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 md:py-16">
+            <CheckCircle className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground text-base md:text-lg">No pending submissions to review.</p>
+          </CardContent>
+        </Card>
+      )}
 
-        <AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Reject Book Submission</AlertDialogTitle>
-              <AlertDialogDescription>
-                Please provide a reason for rejecting this book submission. This will help the author understand why their book was not approved.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="py-4">
-              <Label htmlFor="reason">Rejection Reason</Label>
-              <Input
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent className="max-w-[90vw] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reject Book Submission</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reason">Rejection Reason (optional)</Label>
+              <Textarea
                 id="reason"
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Enter reason for rejection..."
-                className="mt-2"
+                placeholder="Provide a reason for rejection..."
+                rows={4}
               />
             </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={handleRejectConfirm}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Reject Book
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setRejectDialogOpen(false)} className="w-full sm:w-auto">
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleRejectConfirm}
+              disabled={approveSubmission.isPending}
+              className="w-full sm:w-auto"
+            >
+              {approveSubmission.isPending ? 'Rejecting...' : 'Reject Book'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -39,7 +39,7 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
@@ -52,7 +52,7 @@ export default function AdminPage() {
 
   if (isAdminLoading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Skeleton className="h-12 w-64 mb-8" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -61,7 +61,7 @@ export default function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -111,13 +111,13 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Admin Panel</h1>
-          <p className="text-muted-foreground">Manage the book collection</p>
+          <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">Admin Panel</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Manage the book collection</p>
         </div>
-        <Button onClick={() => navigate({ to: '/admin/review' })} className="gap-2">
+        <Button onClick={() => navigate({ to: '/admin/review' })} className="gap-2 w-full sm:w-auto">
           <ClipboardList className="h-4 w-4" />
           Review Submissions
         </Button>
@@ -134,20 +134,20 @@ export default function AdminPage() {
           {books.map((book) => (
             <Card key={book.isbn}>
               <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                  <div className="flex gap-3 md:gap-4 flex-1 w-full">
                     <img
                       src={book.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
                       alt={book.title}
-                      className="w-20 h-28 object-cover rounded shadow-book"
+                      className="w-16 h-24 md:w-20 md:h-28 object-cover rounded shadow-book shrink-0"
                     />
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <CardTitle className="font-serif text-xl">{book.title}</CardTitle>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <CardTitle className="font-serif text-lg md:text-xl truncate">{book.title}</CardTitle>
                         {getStatusBadge(book.approvalStatus)}
                       </div>
-                      <p className="text-muted-foreground mb-2">by {book.author}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground mb-2 text-sm md:text-base">by {book.author}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground">
                         ISBN: {book.isbn} • Published: {Number(book.publicationYear)}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
@@ -155,24 +155,24 @@ export default function AdminPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full md:w-auto">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleEditBook(book)}
-                      className="gap-1"
+                      className="gap-1 flex-1 md:flex-initial"
                     >
                       <Pencil className="h-4 w-4" />
-                      Edit
+                      <span className="md:inline">Edit</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleDeleteClick(book.isbn)}
-                      className="gap-1 text-destructive hover:text-destructive"
+                      className="gap-1 text-destructive hover:text-destructive flex-1 md:flex-initial"
                     >
                       <Trash2 className="h-4 w-4" />
-                      Delete
+                      <span className="md:inline">Delete</span>
                     </Button>
                   </div>
                 </div>
@@ -182,8 +182,8 @@ export default function AdminPage() {
         </div>
       ) : (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <p className="text-muted-foreground text-lg">No books in the collection yet.</p>
+          <CardContent className="flex flex-col items-center justify-center py-12 md:py-16">
+            <p className="text-muted-foreground text-base md:text-lg">No books in the collection yet.</p>
           </CardContent>
         </Card>
       )}
@@ -197,16 +197,16 @@ export default function AdminPage() {
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the book from the collection.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

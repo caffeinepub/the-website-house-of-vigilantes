@@ -10,33 +10,57 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export type ApprovalStatus = { 'pending' : null } |
-  { 'approved' : null } |
-  { 'rejected' : string };
 export interface Book {
   'coverImageUrl' : string,
   'title' : string,
+  'pdfFileUrl' : string,
   'isbn' : string,
   'createdAt' : bigint,
   'description' : string,
   'author' : string,
-  'approvalStatus' : ApprovalStatus,
+  'approvalStatus' : Usage,
+  'genre' : string,
   'publicationYear' : bigint,
   'editCount' : bigint,
+  'pageCount' : bigint,
   'uploaderId' : Principal,
 }
 export interface BookSubmission {
   'coverImageUrl' : string,
   'title' : string,
+  'pdfFileUrl' : string,
   'isbn' : string,
   'createdAt' : bigint,
   'description' : string,
   'author' : string,
-  'approvalStatus' : ApprovalStatus,
+  'approvalStatus' : Usage,
+  'genre' : string,
   'publicationYear' : bigint,
+  'totalPages' : bigint,
   'editCount' : bigint,
   'uploaderId' : Principal,
 }
+export interface EditRequest {
+  'bookIsbn' : string,
+  'authorId' : Principal,
+  'message' : [] | [string],
+}
+export interface Rating {
+  'bookIsbn' : string,
+  'userId' : Principal,
+  'stars' : bigint,
+  'timestamp' : bigint,
+}
+export interface ReadingProgress {
+  'bookIsbn' : string,
+  'userId' : Principal,
+  'lastUpdated' : bigint,
+  'pagesRead' : bigint,
+}
+export interface Recommendation { 'book' : Book, 'reason' : string }
+export type Usage = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : string };
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -69,24 +93,53 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addRating' : ActorMethod<[string, bigint], undefined>,
   'approveBookSubmission' : ActorMethod<
     [string, boolean, [] | [string]],
     undefined
   >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'clearEditRequests' : ActorMethod<[string], undefined>,
   'deleteBook' : ActorMethod<[string], undefined>,
   'getAllBooks' : ActorMethod<[], Array<Book>>,
   'getAllSubmissions' : ActorMethod<[], Array<BookSubmission>>,
+  'getAllUserProgress' : ActorMethod<
+    [Principal],
+    Array<[string, ReadingProgress]>
+  >,
   'getBook' : ActorMethod<[string], [] | [Book]>,
-  'getBooksByStatus' : ActorMethod<[ApprovalStatus], Array<Book>>,
+  'getBookAverageRating' : ActorMethod<[string], [] | [number]>,
+  'getBookCompletedUsers' : ActorMethod<[string], Array<Principal>>,
+  'getBookRatings' : ActorMethod<[string], Array<Rating>>,
+  'getBookmarkedBooks' : ActorMethod<[Principal], Array<Book>>,
+  'getBooksByAuthor' : ActorMethod<[string], Array<Book>>,
+  'getBooksByGenre' : ActorMethod<[string], Array<Book>>,
+  'getBooksByGenreAndAuthor' : ActorMethod<[string, string], Array<Book>>,
+  'getBooksByStatus' : ActorMethod<[Usage], Array<Book>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getEditRequests' : ActorMethod<[string], Array<EditRequest>>,
   'getPendingSubmissions' : ActorMethod<[], Array<BookSubmission>>,
+  'getPersonalizedRecommendations' : ActorMethod<
+    [Principal],
+    Array<Recommendation>
+  >,
+  'getReadingProgress' : ActorMethod<
+    [Principal, string],
+    [] | [ReadingProgress]
+  >,
+  'getTrendingBooks' : ActorMethod<[], Array<Book>>,
+  'getUserBookProgress' : ActorMethod<[string], [] | [ReadingProgress]>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isBookBookmarked' : ActorMethod<[Principal, string], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'requestMoreEdits' : ActorMethod<[string, [] | [string]], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setPreferredGenres' : ActorMethod<[Array<string>], undefined>,
   'submitBookForApproval' : ActorMethod<[Book], undefined>,
+  'toggleBookmark' : ActorMethod<[string], undefined>,
   'updateBook' : ActorMethod<[string, Book], undefined>,
+  'updateReadingProgress' : ActorMethod<[string, bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

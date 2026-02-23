@@ -1,74 +1,162 @@
 {
   "kind": "build_request",
-  "title": "Update website branding to 'THE HOUSE OF VIGILANTES' while preserving Van Gogh theme",
-  "projectName": "House of Vigilantes",
+  "title": "Van Gogh-inspired homepage with unified navigation and expandable sections",
+  "projectName": "The House of Vigilantes",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Update the Navigation component branding text to display 'THE HOUSE OF VIGILANTES' in all caps, replacing the current 'STARRY NIGHT EXPERIENCE' text",
+      "id": "REQ-1",
+      "text": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-5"
         ],
         "quotes": [
-          "CHANGE THE HEADER/LOGO TO 'THE HOUSE OF VIGILANTES'"
+          "Van Gogh-inspired, with a subtle background image"
         ]
       },
       "acceptanceCriteria": [
-        "Navigation header displays 'THE HOUSE OF VIGILANTES' in all caps",
-        "Van Gogh Starry Night styling and color palette remain unchanged"
+        "Background image features swirling, vibrant colors reminiscent of Van Gogh's style",
+        "Brushstroke textures are visible and artistic",
+        "Image dimensions are 1920x1080 for optimal display on various screens"
       ]
     },
     {
-      "id": "REQ-26",
-      "text": "Update the HomePage hero section h1 title element to display 'THE HOUSE OF VIGILANTES' instead of 'Starry Night Experience'",
+      "id": "REQ-2",
+      "text": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-5"
         ],
         "quotes": [
-          "CHNAGE THE TITLE TO 'THE HOUSE OF VIGILANTES'"
+          "CSS effects for swirling brushstrokes and vibrant colors",
+          "The page should feel unified and artistic"
         ]
       },
       "acceptanceCriteria": [
-        "Hero section h1 displays 'THE HOUSE OF VIGILANTES'",
-        "Van Gogh-inspired artistic typography styling is preserved",
-        "Starry Night artwork and visual theme remain intact"
+        "CSS gradient effects create additional swirling visual elements",
+        "Color scheme uses vibrant Van Gogh-inspired colors (yellows, blues, greens)",
+        "Page maintains a cohesive, unified artistic feel throughout",
+        "Background image is rendered from generated asset in frontend/public/assets/generated"
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Update the browser page title in frontend/index.html to 'THE HOUSE OF VIGILANTES'",
+      "id": "REQ-3",
+      "text": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-5"
         ],
         "quotes": [
-          "UPADTE THE BROWSER TAB TITLE ALSO"
+          "Three-Line Main Options: Browse Books – links to the full book catalog page. Mood-Based Recommendations – expands directly on the homepage to show books by mood. Trending & Popular – expands directly on the homepage to show top-rated and trending books"
         ]
       },
       "acceptanceCriteria": [
-        "Browser tab displays 'THE HOUSE OF VIGILANTES' as the page title"
+        "Three options are visually prominent and clearly labeled",
+        "Browse Books navigates to the existing /browse route",
+        "Mood-Based Recommendations expands a section below showing mood filters and filtered books",
+        "Trending & Popular expands a section below showing trending books using existing useTrendingBooks hook",
+        "Expanded sections appear smoothly without page navigation",
+        "Only one section can be expanded at a time"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Secondary Menu / Platform Features: Collection, Upload Book, My Books, Favorites"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Secondary menu contains four links: Collection (/browse), Upload Book (/upload), My Books (/my-books), Favorites (/favorites)",
+        "Links are styled consistently with the Van Gogh theme",
+        "Menu is visually distinct but complementary to the three main options",
+        "All links navigate to their respective existing routes"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Homepage Function: Serves as the central entry point connecting both existing platform features and Phase 3 recommendation/mood features, giving logged-in users a personalized dashboard experience"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Logged-in users see personalized recommendations when Mood-Based Recommendations is expanded",
+        "Trending & Popular section uses existing trending books logic",
+        "Authentication state is checked using useInternetIdentity hook",
+        "Non-authenticated users see public content or prompts to log in"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "clear typography that stands out against the Van Gogh-inspired background",
+          "Use consistent typography and spacing to maintain a uniform design"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Text has sufficient contrast against colorful backgrounds",
+        "Font choices are consistent throughout the homepage",
+        "Typography complements the artistic Van Gogh aesthetic",
+        "Spacing between elements maintains visual hierarchy and readability"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Update the App.tsx routing to direct users to the new unified homepage as the default route, ensuring it replaces the current HomePage while maintaining access to PersonalizedHomePage logic for authenticated users",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Homepage Function: Serves as the central entry point"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Root route '/' displays the new Van Gogh-inspired unified homepage",
+        "Authenticated user experience integrates personalized content",
+        "All existing routes remain functional",
+        "Navigation component continues to work with the new homepage"
       ]
     }
   ],
   "constraints": [
-    "Preserve all Van Gogh Starry Night visual theme elements including colors (#0B3D91, #FFD700, #0A192F, #1E90FF), flowing shapes, and artwork",
-    "Keep the existing Starry Night-inspired artwork in the hero section",
-    "Maintain all current Van Gogh-inspired typography and design elements"
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
+    "Preserve all existing backend functionality in backend/main.mo",
+    "Maintain compatibility with existing routes and navigation structure",
+    "Use React, Tailwind CSS, and React Query as defined in the system stack"
   ],
   "nonGoals": [
-    "Removing or modifying the Starry Night visual theme",
-    "Changing color palettes or design elements",
-    "Updating Footer branding (already shows 'House of Vigilantes')",
-    "Modifying Van Gogh artwork or artistic styling"
+    "Modifying the backend actor or data models",
+    "Changing the authentication system or Internet Identity integration",
+    "Altering existing page functionality beyond the homepage redesign",
+    "Adding new backend endpoints or state management"
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Van Gogh-inspired background with vibrant swirling colors, yellows, blues, and greens, featuring prominent brushstroke textures (vangogh-hero.dim_1920x1080.png)"
+    ],
     "edits": []
   }
 }

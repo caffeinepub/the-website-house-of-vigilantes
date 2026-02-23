@@ -63,7 +63,11 @@ export default {
                 'starry-primary': 'oklch(var(--starry-primary) / <alpha-value>)',
                 'starry-secondary': 'oklch(var(--starry-secondary) / <alpha-value>)',
                 'starry-background': 'oklch(var(--starry-background) / <alpha-value>)',
-                'starry-accent': 'oklch(var(--starry-accent) / <alpha-value>)'
+                'starry-accent': 'oklch(var(--starry-accent) / <alpha-value>)',
+                'vangogh-yellow': 'oklch(var(--vangogh-yellow) / <alpha-value>)',
+                'vangogh-blue': 'oklch(var(--vangogh-blue) / <alpha-value>)',
+                'vangogh-green': 'oklch(var(--vangogh-green) / <alpha-value>)',
+                'vangogh-orange': 'oklch(var(--vangogh-orange) / <alpha-value>)'
             },
             borderRadius: {
                 lg: 'var(--radius)',
@@ -76,7 +80,8 @@ export default {
                 'book': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                 'book-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
                 'starry': '0 0 30px rgba(255, 215, 0, 0.3), 0 0 60px rgba(30, 144, 255, 0.2)',
-                'starry-glow': '0 0 40px rgba(255, 215, 0, 0.5), 0 0 80px rgba(30, 144, 255, 0.3)'
+                'starry-glow': '0 0 40px rgba(255, 215, 0, 0.5), 0 0 80px rgba(30, 144, 255, 0.3)',
+                'vangogh-glow': '0 0 50px rgba(255, 215, 0, 0.6), 0 0 100px rgba(70, 130, 255, 0.4), 0 10px 30px rgba(0, 0, 0, 0.5)'
             },
             keyframes: {
                 'accordion-down': {

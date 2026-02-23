@@ -24,7 +24,7 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const ApprovalStatus = IDL.Variant({
+export const Usage = IDL.Variant({
   'pending' : IDL.Null,
   'approved' : IDL.Null,
   'rejected' : IDL.Text,
@@ -32,28 +32,55 @@ export const ApprovalStatus = IDL.Variant({
 export const Book = IDL.Record({
   'coverImageUrl' : IDL.Text,
   'title' : IDL.Text,
+  'pdfFileUrl' : IDL.Text,
   'isbn' : IDL.Text,
   'createdAt' : IDL.Int,
   'description' : IDL.Text,
   'author' : IDL.Text,
-  'approvalStatus' : ApprovalStatus,
+  'approvalStatus' : Usage,
+  'genre' : IDL.Text,
   'publicationYear' : IDL.Nat,
   'editCount' : IDL.Nat,
+  'pageCount' : IDL.Nat,
   'uploaderId' : IDL.Principal,
 });
 export const BookSubmission = IDL.Record({
   'coverImageUrl' : IDL.Text,
   'title' : IDL.Text,
+  'pdfFileUrl' : IDL.Text,
   'isbn' : IDL.Text,
   'createdAt' : IDL.Int,
   'description' : IDL.Text,
   'author' : IDL.Text,
-  'approvalStatus' : ApprovalStatus,
+  'approvalStatus' : Usage,
+  'genre' : IDL.Text,
   'publicationYear' : IDL.Nat,
+  'totalPages' : IDL.Nat,
   'editCount' : IDL.Nat,
   'uploaderId' : IDL.Principal,
 });
+export const ReadingProgress = IDL.Record({
+  'bookIsbn' : IDL.Text,
+  'userId' : IDL.Principal,
+  'lastUpdated' : IDL.Int,
+  'pagesRead' : IDL.Nat,
+});
+export const Rating = IDL.Record({
+  'bookIsbn' : IDL.Text,
+  'userId' : IDL.Principal,
+  'stars' : IDL.Nat,
+  'timestamp' : IDL.Int,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const EditRequest = IDL.Record({
+  'bookIsbn' : IDL.Text,
+  'authorId' : IDL.Principal,
+  'message' : IDL.Opt(IDL.Text),
+});
+export const Recommendation = IDL.Record({
+  'book' : Book,
+  'reason' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -83,29 +110,81 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addRating' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   'approveBookSubmission' : IDL.Func(
       [IDL.Text, IDL.Bool, IDL.Opt(IDL.Text)],
       [],
       [],
     ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'clearEditRequests' : IDL.Func([IDL.Text], [], []),
   'deleteBook' : IDL.Func([IDL.Text], [], []),
   'getAllBooks' : IDL.Func([], [IDL.Vec(Book)], ['query']),
   'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookSubmission)], ['query']),
+  'getAllUserProgress' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Tuple(IDL.Text, ReadingProgress))],
+      ['query'],
+    ),
   'getBook' : IDL.Func([IDL.Text], [IDL.Opt(Book)], ['query']),
-  'getBooksByStatus' : IDL.Func([ApprovalStatus], [IDL.Vec(Book)], ['query']),
+  'getBookAverageRating' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(IDL.Float64)],
+      ['query'],
+    ),
+  'getBookCompletedUsers' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'getBookRatings' : IDL.Func([IDL.Text], [IDL.Vec(Rating)], ['query']),
+  'getBookmarkedBooks' : IDL.Func([IDL.Principal], [IDL.Vec(Book)], ['query']),
+  'getBooksByAuthor' : IDL.Func([IDL.Text], [IDL.Vec(Book)], ['query']),
+  'getBooksByGenre' : IDL.Func([IDL.Text], [IDL.Vec(Book)], ['query']),
+  'getBooksByGenreAndAuthor' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(Book)],
+      ['query'],
+    ),
+  'getBooksByStatus' : IDL.Func([Usage], [IDL.Vec(Book)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getEditRequests' : IDL.Func([IDL.Text], [IDL.Vec(EditRequest)], ['query']),
   'getPendingSubmissions' : IDL.Func([], [IDL.Vec(BookSubmission)], ['query']),
+  'getPersonalizedRecommendations' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(Recommendation)],
+      ['query'],
+    ),
+  'getReadingProgress' : IDL.Func(
+      [IDL.Principal, IDL.Text],
+      [IDL.Opt(ReadingProgress)],
+      ['query'],
+    ),
+  'getTrendingBooks' : IDL.Func([], [IDL.Vec(Book)], ['query']),
+  'getUserBookProgress' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(ReadingProgress)],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'isBookBookmarked' : IDL.Func(
+      [IDL.Principal, IDL.Text],
+      [IDL.Bool],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'requestMoreEdits' : IDL.Func([IDL.Text, IDL.Opt(IDL.Text)], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setPreferredGenres' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
   'submitBookForApproval' : IDL.Func([Book], [], []),
+  'toggleBookmark' : IDL.Func([IDL.Text], [], []),
   'updateBook' : IDL.Func([IDL.Text, Book], [], []),
+  'updateReadingProgress' : IDL.Func([IDL.Text, IDL.Nat], [], []),
 });
 
 export const idlInitArgs = [];
@@ -127,7 +206,7 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const ApprovalStatus = IDL.Variant({
+  const Usage = IDL.Variant({
     'pending' : IDL.Null,
     'approved' : IDL.Null,
     'rejected' : IDL.Text,
@@ -135,28 +214,52 @@ export const idlFactory = ({ IDL }) => {
   const Book = IDL.Record({
     'coverImageUrl' : IDL.Text,
     'title' : IDL.Text,
+    'pdfFileUrl' : IDL.Text,
     'isbn' : IDL.Text,
     'createdAt' : IDL.Int,
     'description' : IDL.Text,
     'author' : IDL.Text,
-    'approvalStatus' : ApprovalStatus,
+    'approvalStatus' : Usage,
+    'genre' : IDL.Text,
     'publicationYear' : IDL.Nat,
     'editCount' : IDL.Nat,
+    'pageCount' : IDL.Nat,
     'uploaderId' : IDL.Principal,
   });
   const BookSubmission = IDL.Record({
     'coverImageUrl' : IDL.Text,
     'title' : IDL.Text,
+    'pdfFileUrl' : IDL.Text,
     'isbn' : IDL.Text,
     'createdAt' : IDL.Int,
     'description' : IDL.Text,
     'author' : IDL.Text,
-    'approvalStatus' : ApprovalStatus,
+    'approvalStatus' : Usage,
+    'genre' : IDL.Text,
     'publicationYear' : IDL.Nat,
+    'totalPages' : IDL.Nat,
     'editCount' : IDL.Nat,
     'uploaderId' : IDL.Principal,
   });
+  const ReadingProgress = IDL.Record({
+    'bookIsbn' : IDL.Text,
+    'userId' : IDL.Principal,
+    'lastUpdated' : IDL.Int,
+    'pagesRead' : IDL.Nat,
+  });
+  const Rating = IDL.Record({
+    'bookIsbn' : IDL.Text,
+    'userId' : IDL.Principal,
+    'stars' : IDL.Nat,
+    'timestamp' : IDL.Int,
+  });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const EditRequest = IDL.Record({
+    'bookIsbn' : IDL.Text,
+    'authorId' : IDL.Principal,
+    'message' : IDL.Opt(IDL.Text),
+  });
+  const Recommendation = IDL.Record({ 'book' : Book, 'reason' : IDL.Text });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -186,22 +289,69 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addRating' : IDL.Func([IDL.Text, IDL.Nat], [], []),
     'approveBookSubmission' : IDL.Func(
         [IDL.Text, IDL.Bool, IDL.Opt(IDL.Text)],
         [],
         [],
       ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'clearEditRequests' : IDL.Func([IDL.Text], [], []),
     'deleteBook' : IDL.Func([IDL.Text], [], []),
     'getAllBooks' : IDL.Func([], [IDL.Vec(Book)], ['query']),
     'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookSubmission)], ['query']),
+    'getAllUserProgress' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Tuple(IDL.Text, ReadingProgress))],
+        ['query'],
+      ),
     'getBook' : IDL.Func([IDL.Text], [IDL.Opt(Book)], ['query']),
-    'getBooksByStatus' : IDL.Func([ApprovalStatus], [IDL.Vec(Book)], ['query']),
+    'getBookAverageRating' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(IDL.Float64)],
+        ['query'],
+      ),
+    'getBookCompletedUsers' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'getBookRatings' : IDL.Func([IDL.Text], [IDL.Vec(Rating)], ['query']),
+    'getBookmarkedBooks' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(Book)],
+        ['query'],
+      ),
+    'getBooksByAuthor' : IDL.Func([IDL.Text], [IDL.Vec(Book)], ['query']),
+    'getBooksByGenre' : IDL.Func([IDL.Text], [IDL.Vec(Book)], ['query']),
+    'getBooksByGenreAndAuthor' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(Book)],
+        ['query'],
+      ),
+    'getBooksByStatus' : IDL.Func([Usage], [IDL.Vec(Book)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getEditRequests' : IDL.Func([IDL.Text], [IDL.Vec(EditRequest)], ['query']),
     'getPendingSubmissions' : IDL.Func(
         [],
         [IDL.Vec(BookSubmission)],
+        ['query'],
+      ),
+    'getPersonalizedRecommendations' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(Recommendation)],
+        ['query'],
+      ),
+    'getReadingProgress' : IDL.Func(
+        [IDL.Principal, IDL.Text],
+        [IDL.Opt(ReadingProgress)],
+        ['query'],
+      ),
+    'getTrendingBooks' : IDL.Func([], [IDL.Vec(Book)], ['query']),
+    'getUserBookProgress' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(ReadingProgress)],
         ['query'],
       ),
     'getUserProfile' : IDL.Func(
@@ -209,10 +359,19 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'isBookBookmarked' : IDL.Func(
+        [IDL.Principal, IDL.Text],
+        [IDL.Bool],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'requestMoreEdits' : IDL.Func([IDL.Text, IDL.Opt(IDL.Text)], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setPreferredGenres' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
     'submitBookForApproval' : IDL.Func([Book], [], []),
+    'toggleBookmark' : IDL.Func([IDL.Text], [], []),
     'updateBook' : IDL.Func([IDL.Text, Book], [], []),
+    'updateReadingProgress' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   });
 };
 

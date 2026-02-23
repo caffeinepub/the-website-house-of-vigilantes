@@ -1,172 +1,61 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
-  "summary": "A curated community book platform where registered authors can upload books for free reading after admin approval. The sole admin reviews author profiles and book submissions, while authors retain limited editing rights (3 edits per book) and co-deletion privileges.",
+  "projectStateVersion": 3,
+  "summary": "Book platform with Van Gogh-inspired homepage featuring personalized recommendations, mood-based browsing, and user library management",
   "architectural_notes": [
-    "Multi-role system: sole admin with full control, authors with limited upload/edit/delete rights",
-    "Two-stage approval: author profile approval, then individual book approval before publication",
-    "Edit limit tracking: each book tracks number of edits used by uploader (max 3 after publishing)"
+    "Homepage serves as central dashboard connecting existing platform features and new recommendation/mood system",
+    "Design uses generated Van Gogh background image combined with CSS swirling brushstroke effects",
+    "Expandable sections (Mood-Based, Trending) remain on homepage without page navigation"
   ],
   "known_issues": [],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Van Gogh-inspired background with vibrant swirling colors, yellows, blues, and greens, featuring prominent brushstroke textures (vangogh-hero.dim_1920x1080.png)",
   "existing_features": [
     {
-      "id": "feature-design-and-implement-a-homepage-that-displays-all-books-in-a-responsive-grid-layout-with-book-covers-titles-and-authors",
-      "title": "Design and implement a homepage that displays all books in a responsive grid layout with book covers, titles, and authors",
+      "id": "feature-generate-a-van-gogh-inspired-background-image-with-vibrant-swirling-colors-and-brushstroke-textures-suitable-for-a-homepage-hero-section-dimensions-1920x1080",
+      "title": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-unified-homepage-component-that-replaces-the-existing-homepage-featuring-a-van-gogh-inspired-design-with-css-effects-for-swirling-brushstrokes-and-vibrant-color-gradients-overlaying-the-generated-background-image",
+      "title": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-three-prominent-main-menu-options-in-a-center-or-top-panel-on-the-homepage-browse-books-navigates-to-browse-mood-based-recommendations-expands-content-on-homepage-and-trending-popular-expands-content-on-homepage",
+      "title": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-a-detailed-book-view-page-that-shows-full-information-including-cover-title-author-description-publication-year-and-isbn-when-a-book-is-clicked",
-      "title": "Create a detailed book view page that shows full information including cover, title, author, description, publication year, and ISBN when a book is clicked",
+      "id": "feature-add-a-secondary-menu-with-links-to-collection-upload-book-my-books-and-favorites-integrated-into-the-homepage-design-below-or-beside-the-three-main-options",
+      "title": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-an-admin-interface-with-internet-identity-authentication-to-manage-the-book-collection-add-edit-delete-books",
-      "title": "Implement an admin interface with Internet Identity authentication to manage the book collection (add, edit, delete books)",
+      "id": "feature-ensure-the-homepage-serves-as-a-central-entry-point-and-personalized-dashboard-for-logged-in-users-showing-personalized-content-in-the-expanded-sections-when-available",
+      "title": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-apply-a-sophisticated-book-focused-visual-design-with-a-literary-aesthetic-featuring-warm-earth-tones-elegant-serif-typography-for-headings-and-a-layout-that-emphasizes-the-book-covers-as-hero-elements",
-      "title": "Apply a sophisticated, book-focused visual design with a literary aesthetic featuring warm earth tones, elegant serif typography for headings, and a layout that emphasizes the book covers as hero elements",
+      "id": "feature-style-the-homepage-typography-to-stand-out-clearly-against-the-van-gogh-inspired-background-using-consistent-font-choices-and-spacing-that-maintain-readability-while-complementing-the-artistic-theme",
+      "title": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
       "reqIds": [
         "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-a-dedicated-upload-page-section-in-the-website-where-approved-authors-can-submit-new-books-with-fields-for-title-author-name-cover-image-url-description-publication-year-and-isbn",
-      "title": "Create a dedicated upload page/section in the website where approved authors can submit new books with fields for title, author name, cover image URL, description, publication year, and ISBN",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-modify-frontend-book-listing-queries-to-filter-out-books-with-pending-or-rejected-approval-status-for-public-views-showing-only-approved-books-to-non-admin-users",
-      "title": "Modify frontend book listing queries to filter out books with pending or rejected approval status for public views, showing only approved books to non-admin users",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-create-an-admin-review-page-or-section-showing-pending-book-submissions-with-approve-reject-actions-for-each-book",
-      "title": "Create an admin review page or section showing pending book submissions with approve/reject actions for each book",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-visual-indication-in-author-s-book-management-interface-showing-remaining-edit-count-out-of-3-for-each-of-their-uploaded-books",
-      "title": "Add visual indication in author's book management interface showing remaining edit count (out of 3) for each of their uploaded books",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-required-validation-from-the-isbn-field-in-the-bookform-component-while-keeping-the-field-visible-in-the-upload-form",
-      "title": "Remove required validation from the ISBN field in the BookForm component while keeping the field visible in the upload form",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-conditionally-hide-the-isbn-section-on-the-bookdetailpage-when-the-isbn-field-is-empty-or-not-provided-showing-no-placeholder-text-or-not-provided-message",
-      "title": "Conditionally hide the ISBN section on the BookDetailPage when the ISBN field is empty or not provided, showing no placeholder text or 'Not provided' message",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-website-name-from-book-showcase-to-house-of-vigilantes-in-the-html-page-title-frontend-index-html",
-      "title": "Update the website name from 'Book Showcase' to 'House of Vigilantes' in the HTML page title (frontend/index.html)",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-navigation-component-logo-and-branding-text-to-display-house-of-vigilantes-instead-of-the-current-name",
-      "title": "Update the Navigation component logo and branding text to display 'House of Vigilantes' instead of the current name",
-      "reqIds": [
-        "REQ-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-navigation-component-branding-text-xpath-html-1-body-1-div-1-div-1-header-1-div-1-div-1-a-1-span-1-to-display-starry-night-experience-in-all-caps",
-      "title": "Update the Navigation component branding text (XPath: /html[1]/body[1]/div[1]/div[1]/header[1]/div[1]/div[1]/a[1]/span[1]) to display 'STARRY NIGHT EXPERIENCE' in all caps",
-      "reqIds": [
-        "REQ-20"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-redesign-the-homepage-main-content-area-xpath-html-1-body-1-div-1-div-1-main-1-div-1-div-1-div-2-as-a-hero-section-featuring-a-generated-starry-night-inspired-artwork-with-the-title-starry-night-experience-and-a-short-introduction-about-vincent-van-gogh-s-painting-and-its-meaning",
-      "title": "Redesign the HomePage main content area (XPath: /html[1]/body[1]/div[1]/div[1]/main[1]/div[1]/div[1]/div[2]) as a hero section featuring a generated Starry Night-inspired artwork, with the title 'Starry Night Experience' and a short introduction about Vincent van Gogh's painting and its meaning",
-      "reqIds": [
-        "REQ-21"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-style-the-h1-heading-element-xpath-html-1-body-1-div-1-div-1-main-1-div-1-div-1-div-2-div-1-h1-1-with-elegant-artistic-typography-inspired-by-flowing-brush-strokes-and-van-gogh-s-style",
-      "title": "Style the h1 heading element (XPath: /html[1]/body[1]/div[1]/div[1]/main[1]/div[1]/div[1]/div[2]/div[1]/h1[1]) with elegant, artistic typography inspired by flowing brush strokes and Van Gogh's style",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-comprehensive-van-gogh-starry-night-color-palette-throughout-the-selected-homepage-elements-using-primary-color-0b3d91-deep-blue-secondary-color-ffd700-golden-yellow-background-color-0a192f-midnight-blue-and-accent-color-1e90ff-soft-blue",
-      "title": "Apply a comprehensive Van Gogh Starry Night color palette throughout the selected homepage elements using primary color #0B3D91 (deep blue), secondary color #FFD700 (golden yellow), background color #0A192F (midnight blue), and accent color #1E90FF (soft blue)",
-      "reqIds": [
-        "REQ-23"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-smooth-flowing-shapes-and-design-elements-inspired-by-van-gogh-s-brush-strokes-throughout-the-hero-section-and-navigation-using-css-transitions-curved-borders-and-organic-forms",
-      "title": "Implement smooth, flowing shapes and design elements inspired by Van Gogh's brush strokes throughout the hero section and navigation, using CSS transitions, curved borders, and organic forms",
-      "reqIds": [
-        "REQ-24"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-navigation-component-branding-text-to-display-the-house-of-vigilantes-in-all-caps-replacing-the-current-starry-night-experience-text",
-      "title": "Update the Navigation component branding text to display 'THE HOUSE OF VIGILANTES' in all caps, replacing the current 'STARRY NIGHT EXPERIENCE' text",
-      "reqIds": [
-        "REQ-25"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-homepage-hero-section-h1-title-element-to-display-the-house-of-vigilantes-instead-of-starry-night-experience",
-      "title": "Update the HomePage hero section h1 title element to display 'THE HOUSE OF VIGILANTES' instead of 'Starry Night Experience'",
-      "reqIds": [
-        "REQ-26"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-browser-page-title-in-frontend-index-html-to-the-house-of-vigilantes",
-      "title": "Update the browser page title in frontend/index.html to 'THE HOUSE OF VIGILANTES'",
-      "reqIds": [
-        "REQ-27"
       ],
       "version": 1
     }
@@ -174,117 +63,38 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Display book collection with titles, covers, and descriptions",
+      "summary": "Van Gogh-inspired homepage with swirling colors and brushstroke textures",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create a backend data model to store book information including title, author, cover image URL, description, publication year, and ISBN",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Three-line main menu: Browse Books (navigates), Mood-Based Recommendations (expands), Trending & Popular (expands)",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Implement backend methods to add, retrieve, update, and delete books from the collection",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Secondary menu with Collection, Upload Book, My Books, Favorites",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Implement multi-role authentication system with sole admin and author roles using Internet Identity",
+      "summary": "Unified homepage layout with expanded sections appearing below without navigation",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Create author registration and public profile system with bio/profile that requires admin approval before upload privileges are granted",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Build two-stage approval workflow: admin reviews author profiles first, then reviews book submissions before they go live",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Implement upload interface for approved authors with edit tracking (3 edits maximum per book after publishing)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Add co-deletion system where both admin and original uploader can delete books",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Extend the backend Book type to include uploaderId (Principal), approvalStatus enum (pending/approved/rejected), editCount (Nat), and createdAt timestamp",
-      "reqIds": [
-        "REQ-8"
-      ],
       "status": "pending"
     },
     {
       "id": "AR-11",
-      "summary": "Implement backend method for authors to submit books for approval that creates book entries with pending status and associates them with the uploader's Principal",
+      "summary": "Update the App.tsx routing to direct users to the new unified homepage as the default route, ensuring it replaces the current HomePage while maintaining access to PersonalizedHomePage logic for authenticated users",
       "reqIds": [
-        "REQ-9"
+        "REQ-7"
       ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-12",
-      "summary": "Add backend admin-only method to approve or reject pending book submissions, which updates the book's approvalStatus accordingly",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-13",
-      "summary": "Modify existing book update backend method to enforce 3-edit limit per book for non-admin users, tracking editCount and rejecting updates once limit is reached",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-14",
-      "summary": "Modify existing book deletion backend method to allow both admin and the original uploader (matching uploaderId) to delete books, preventing deletion by other users",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-15",
-      "summary": "Make ISBN field optional in book upload form and hide ISBN section on book detail pages when not provided",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-16",
-      "summary": "Transform homepage with Starry Night theme: deep blue/golden yellow colors, Van Gogh-inspired artwork in hero section, artistic fonts, flowing shapes, and 'STARRY NIGHT EXPERIENCE' branding",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-17",
-      "summary": "Update website branding from 'STARRY NIGHT EXPERIENCE' to 'THE HOUSE OF VIGILANTES' in navigation header, hero section title, and browser tab title while preserving Van Gogh Starry Night visual theme",
-      "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Book Showcase",
+  "projectName": "The House of Vigilantes",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -6,6 +6,8 @@ import AdminPage from './pages/AdminPage';
 import UploadBookPage from './pages/UploadBookPage';
 import MyBooksPage from './pages/MyBooksPage';
 import AdminReviewPage from './pages/AdminReviewPage';
+import BrowseBooksPage from './pages/BrowseBooksPage';
+import FavoritesPage from './pages/FavoritesPage';
 import Navigation from './components/Navigation';
 import ProfileSetupModal from './components/ProfileSetupModal';
 import { Toaster } from '@/components/ui/sonner';
@@ -32,6 +34,12 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: HomePage,
+});
+
+const browseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/browse',
+  component: BrowseBooksPage,
 });
 
 const bookDetailRoute = createRoute({
@@ -64,13 +72,21 @@ const adminReviewRoute = createRoute({
   component: AdminReviewPage,
 });
 
+const favoritesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/favorites',
+  component: FavoritesPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  browseRoute,
   bookDetailRoute,
   adminRoute,
   uploadRoute,
   myBooksRoute,
   adminReviewRoute,
+  favoritesRoute,
 ]);
 
 const router = createRouter({ routeTree });
