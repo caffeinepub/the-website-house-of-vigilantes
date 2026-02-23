@@ -1,115 +1,86 @@
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Menu, X } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Shield, Upload, Library, Menu, BookOpen, Heart } from 'lucide-react';
 import LoginButton from './LoginButton';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useIsCallerAdmin } from '../hooks/useQueries';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export default function Navigation() {
+  const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { identity } = useInternetIdentity();
   const { data: isAdmin } = useIsCallerAdmin();
-  const isAuthenticated = !!identity;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const NavLinks = () => (
-    <>
-      <Link
-        to="/"
-        className="text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-        onClick={() => setMobileMenuOpen(false)}
-      >
-        Collection
-      </Link>
-      <Link
-        to="/browse"
-        className="flex items-center gap-1.5 text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-        onClick={() => setMobileMenuOpen(false)}
-      >
-        <BookOpen className="h-4 w-4" />
-        Browse Books
-      </Link>
-      {isAuthenticated && (
-        <>
-          <Link
-            to="/upload"
-            className="flex items-center gap-1.5 text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Upload className="h-4 w-4" />
-            Upload Book
-          </Link>
-          <Link
-            to="/my-books"
-            className="flex items-center gap-1.5 text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Library className="h-4 w-4" />
-            My Books
-          </Link>
-          <Link
-            to="/favorites"
-            className="flex items-center gap-1.5 text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Heart className="h-4 w-4" />
-            Favorites
-          </Link>
-        </>
-      )}
-      {isAuthenticated && isAdmin && (
-        <Link
-          to="/admin"
-          className="flex items-center gap-1.5 text-sm font-medium text-starry-accent hover:text-starry-secondary transition-all duration-300 rounded-full px-3 py-1 hover:bg-starry-primary/20"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <Shield className="h-4 w-4" />
-          Admin
-        </Link>
-      )}
-    </>
-  );
+  const isAuthenticated = !!identity;
+
+  const mainNavItems = [
+    { label: 'Browse Books', path: '/browse' },
+    { label: 'Mood-Based Recommendations', path: '/' },
+    { label: 'Trending & Popular', path: '/' },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-starry-accent/30 bg-starry-background/95 backdrop-blur supports-[backdrop-filter]:bg-starry-background/80 transition-all duration-500">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-vangogh-yellow/20 shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-all duration-300 group">
-            <img 
-              src="/assets/generated/owl-logo.dim_64x64.png" 
-              alt="House of Vigilantes Owl Logo"
-              className="h-8 w-8 group-hover:scale-110 transition-transform duration-300"
-            />
-            <span className="font-serif text-lg md:text-xl font-bold text-starry-secondary tracking-wide">
-              THE HOUSE OF VIGILANTES
-            </span>
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 font-serif font-bold text-xl hover:text-vangogh-yellow transition-colors"
+          >
+            <BookOpen className="h-6 w-6 text-vangogh-yellow" />
+            <span className="hidden sm:inline">THE HOUSE OF VIGILANTES</span>
+            <span className="sm:hidden">THOV</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            <NavLinks />
-            <LoginButton />
-          </nav>
+          <div className="hidden md:flex items-center gap-6">
+            {mainNavItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => navigate({ to: item.path })}
+                className="text-sm font-medium hover:text-vangogh-yellow transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
 
-          {/* Mobile Navigation */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-4">
             <LoginButton />
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-64">
-                <nav className="flex flex-col gap-4 mt-8">
-                  <NavLinks />
-                </nav>
-              </SheetContent>
-            </Sheet>
+            
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 space-y-2 border-t border-vangogh-yellow/20">
+            {mainNavItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => {
+                  navigate({ to: item.path });
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left px-4 py-2 text-sm font-medium hover:bg-vangogh-yellow/10 rounded-lg transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-    </header>
+    </nav>
   );
 }

@@ -6,23 +6,43 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Heart, AlertCircle } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import AuthPrompt from '../components/AuthPrompt';
 
 export default function FavoritesPage() {
   const { identity } = useInternetIdentity();
   const { data: bookmarkedBooks, isLoading, error } = useBookmarkedBooks();
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
-  if (!identity) {
+  const isAuthenticated = !!identity;
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-starry-background flex items-center justify-center">
-        <div className="text-center space-y-4 px-4">
-          <Heart className="h-16 w-16 text-starry-accent/50 mx-auto" />
-          <h2 className="text-2xl font-serif font-bold text-starry-secondary">
+        <div className="text-center space-y-6 px-4">
+          <div className="flex justify-center">
+            <div className="p-6 bg-starry-secondary/10 rounded-full">
+              <Heart className="h-16 w-16 text-starry-secondary" />
+            </div>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-starry-secondary">
             Login Required
           </h2>
           <p className="text-muted-foreground max-w-md">
-            Please log in to view your favorite books.
+            Please log in to view and manage your favorite books collection.
           </p>
+          <Button
+            onClick={() => setAuthPromptOpen(true)}
+            className="bg-starry-secondary hover:bg-starry-secondary/90 text-white rounded-full px-8"
+          >
+            Log In to View Favorites
+          </Button>
         </div>
+        <AuthPrompt
+          open={authPromptOpen}
+          onOpenChange={setAuthPromptOpen}
+          message="Please log in to view your favorite books and manage your personal collection."
+        />
       </div>
     );
   }

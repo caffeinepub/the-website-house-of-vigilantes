@@ -100,6 +100,7 @@ export interface _SERVICE {
   >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'clearEditRequests' : ActorMethod<[string], undefined>,
+  'deleteAccount' : ActorMethod<[[] | [Principal]], undefined>,
   'deleteBook' : ActorMethod<[string], undefined>,
   'getAllBooks' : ActorMethod<[], Array<Book>>,
   'getAllSubmissions' : ActorMethod<[], Array<BookSubmission>>,

@@ -1,16 +1,15 @@
 # Specification
 
 ## Summary
-**Goal:** Create a unified Van Gogh-inspired homepage with expandable sections and clear navigation menus.
+**Goal:** Add a Van Gogh-inspired landing page with authentication, theme persistence, and post-action redirects to improve user onboarding and session management.
 
 **Planned changes:**
-- Generate a Van Gogh-inspired hero background image with vibrant swirling colors and brushstroke textures
-- Create a new unified HomePage component with Van Gogh-inspired CSS effects overlaying the background
-- Implement three prominent main menu options: "Browse Books" (navigates to /browse), "Mood-Based Recommendations" (expands on homepage), and "Trending & Popular" (expands on homepage)
-- Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites
-- Style expanded sections to show mood-based book filters and trending books
-- Ensure personalized content displays for logged-in users in expanded sections
-- Apply clear typography with sufficient contrast against the artistic background
-- Update App.tsx routing to use the new unified homepage as the default route
+- Create new landing page with Van Gogh background, Sign Up/Log In buttons, and light/dark mode toggle
+- Update routing to show landing page for unauthenticated users and redirect authenticated users to /home
+- Implement theme persistence using localStorage to remember user's light/dark preference across sessions
+- Update Log Out button to redirect to landing page with smooth fade transition after clearing session
+- Update Delete Account flow to redirect to landing page with smooth fade transition after deletion
+- Enhance Delete Account modal with semi-transparent overlay and blurred background
+- Verify backend deleteAccount function properly removes all user data
 
-**User-visible outcome:** Users land on an artistic Van Gogh-inspired homepage with three main navigation options (Browse Books, Mood-Based Recommendations, Trending & Popular) and a secondary menu for platform features. Mood and trending sections expand directly on the homepage, providing a personalized dashboard experience for logged-in users.
+**User-visible outcome:** Users see a welcoming Van Gogh-inspired landing page when first visiting the site, can easily sign up or log in, have their theme preference remembered across sessions, and are smoothly redirected to the landing page after logging out or deleting their account.

@@ -1,89 +1,148 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useGetAllBooks } from '../hooks/useQueries';
 import { useMoodFilter } from '../hooks/useMoodFilter';
 import BookGrid from '../components/BookGrid';
 import MoodFilterChips from '../components/MoodFilterChips';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, BookOpen, Search, Filter, X } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { BookOpen, Filter, X, AlertCircle } from 'lucide-react';
 
 export default function BrowseBooksPage() {
   const { data: books, isLoading, error } = useGetAllBooks();
-  const [selectedGenre, setSelectedGenre] = useState<string>('');
-  const [authorSearch, setAuthorSearch] = useState<string>('');
   const { selectedMoods, toggleMood, clearMoods, genresFromMoods } = useMoodFilter();
+  const [selectedGenre, setSelectedGenre] = useState<string>('all');
+  const [selectedAuthor, setSelectedAuthor] = useState<string>('all');
 
-  // Filter to show only approved books
-  const approvedBooks = books?.filter(book => book.approvalStatus.__kind__ === 'approved') || [];
+  // Extract unique genres and authors from approved books
+  const { genres, authors } = useMemo(() => {
+    if (!books) return { genres: [], authors: [] };
 
-  // Extract unique genres from approved books
-  const uniqueGenres = useMemo(() => {
-    const genres = approvedBooks.map(book => book.genre);
-    return Array.from(new Set(genres)).sort();
-  }, [approvedBooks]);
+    const approvedBooks = books.filter(book => book.approvalStatus.__kind__ === 'approved');
+    const genreSet = new Set(approvedBooks.map(book => book.genre));
+    const authorSet = new Set(approvedBooks.map(book => book.author));
 
-  // Apply filters
+    return {
+      genres: Array.from(genreSet).sort(),
+      authors: Array.from(authorSet).sort(),
+    };
+  }, [books]);
+
+  // Filter books by all criteria: mood-derived genres, selected genre, and selected author
   const filteredBooks = useMemo(() => {
-    let result = approvedBooks;
+    if (!books) return [];
 
-    // Filter by genre
-    if (selectedGenre) {
-      result = result.filter(book => book.genre === selectedGenre);
-    }
-
-    // Filter by author (case-insensitive partial match)
-    if (authorSearch.trim()) {
-      const searchLower = authorSearch.toLowerCase();
-      result = result.filter(book => 
-        book.author.toLowerCase().includes(searchLower)
-      );
-    }
+    let filtered = books.filter(book => book.approvalStatus.__kind__ === 'approved');
 
     // Filter by mood-derived genres
     if (genresFromMoods.length > 0) {
-      result = result.filter(book => genresFromMoods.includes(book.genre));
+      filtered = filtered.filter(book => genresFromMoods.includes(book.genre));
     }
 
-    return result;
-  }, [approvedBooks, selectedGenre, authorSearch, genresFromMoods]);
+    // Filter by selected genre
+    if (selectedGenre !== 'all') {
+      filtered = filtered.filter(book => book.genre === selectedGenre);
+    }
 
-  const hasActiveFilters = selectedGenre || authorSearch.trim() || selectedMoods.length > 0;
+    // Filter by selected author
+    if (selectedAuthor !== 'all') {
+      filtered = filtered.filter(book => book.author === selectedAuthor);
+    }
 
-  const handleClearAllFilters = () => {
-    setSelectedGenre('');
-    setAuthorSearch('');
+    return filtered;
+  }, [books, genresFromMoods, selectedGenre, selectedAuthor]);
+
+  const clearAllFilters = () => {
     clearMoods();
+    setSelectedGenre('all');
+    setSelectedAuthor('all');
   };
 
+  const hasActiveFilters = selectedMoods.length > 0 || selectedGenre !== 'all' || selectedAuthor !== 'all';
+
   return (
-    <div className="min-h-screen bg-starry-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-vangogh-blue/5">
       {/* Hero Section */}
-      <div className="relative w-full bg-gradient-to-b from-starry-primary/20 via-starry-background to-starry-background border-b border-starry-accent/30">
+      <div className="relative w-full bg-gradient-to-b from-vangogh-blue/20 via-vangogh-yellow/10 to-background border-b border-vangogh-yellow/20">
         <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
           <div className="text-center space-y-4 md:space-y-6 max-w-3xl mx-auto">
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-starry-secondary/10 rounded-full">
-                <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-starry-secondary" />
+              <div className="p-4 bg-vangogh-blue/10 rounded-full">
+                <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-vangogh-blue" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-starry-secondary tracking-wide">
-              Browse Our Library
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground tracking-wide">
+              Browse Our Collection
             </h1>
-            <p className="text-base md:text-lg text-starry-accent font-serif leading-relaxed max-w-2xl mx-auto">
-              Explore our complete collection of approved books. Each title has been carefully reviewed to ensure quality and meaningful content.
+            <p className="text-base md:text-lg text-muted-foreground font-serif leading-relaxed max-w-2xl mx-auto">
+              Explore our curated library of books across all genres. Filter by mood, genre, or author to find your next great read.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Books Section */}
+      {/* Filters and Books Section */}
       <section className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
+        {/* Mood Filter Section */}
+        <Card className="mb-8 border-2 border-vangogh-blue/30 rounded-3xl bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="font-serif flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filter by Mood
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MoodFilterChips selectedMoods={selectedMoods} onToggleMood={toggleMood} />
+          </CardContent>
+        </Card>
+
+        {/* Traditional Filters */}
+        <div className="mb-8 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+              <SelectTrigger className="w-full sm:w-[200px] rounded-full">
+                <SelectValue placeholder="All Genres" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Genres</SelectItem>
+                {genres.map(genre => (
+                  <SelectItem key={genre} value={genre}>
+                    {genre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedAuthor} onValueChange={setSelectedAuthor}>
+              <SelectTrigger className="w-full sm:w-[200px] rounded-full">
+                <SelectValue placeholder="All Authors" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Authors</SelectItem>
+                {authors.map(author => (
+                  <SelectItem key={author} value={author}>
+                    {author}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              onClick={clearAllFilters}
+              className="rounded-full w-full md:w-auto"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Clear All Filters
+            </Button>
+          )}
+        </div>
+
+        {/* Error State */}
         {error && (
           <Alert variant="destructive" className="mb-6 rounded-3xl border-2">
             <AlertCircle className="h-4 w-4" />
@@ -93,6 +152,7 @@ export default function BrowseBooksPage() {
           </Alert>
         )}
 
+        {/* Loading State */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -103,171 +163,42 @@ export default function BrowseBooksPage() {
               </div>
             ))}
           </div>
-        ) : approvedBooks.length === 0 ? (
+        ) : filteredBooks.length === 0 ? (
           <div className="text-center py-16 space-y-6">
             <div className="flex justify-center">
-              <div className="p-6 bg-starry-primary/10 rounded-full">
-                <BookOpen className="h-16 w-16 text-starry-accent/50" />
+              <div className="p-6 bg-vangogh-blue/10 rounded-full">
+                <BookOpen className="h-16 w-16 text-muted-foreground" />
               </div>
             </div>
             <div className="space-y-3">
-              <h2 className="text-2xl md:text-3xl font-serif font-bold text-starry-secondary">
-                No Books Yet
+              <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+                No Books Found
               </h2>
               <p className="text-muted-foreground text-base md:text-lg max-w-md mx-auto">
-                Our library is waiting for its first book. Be the first to contribute and share knowledge with the community!
+                {hasActiveFilters
+                  ? 'Try adjusting your filters to see more results.'
+                  : 'No books are available at the moment. Check back soon!'}
               </p>
             </div>
-            <Link to="/upload">
-              <Button 
-                size="lg" 
-                className="bg-starry-secondary hover:bg-starry-secondary/90 text-white rounded-full px-8 py-6 text-base font-medium shadow-starry-glow transition-all duration-300"
+            {hasActiveFilters && (
+              <Button
+                onClick={clearAllFilters}
+                variant="outline"
+                className="rounded-full"
               >
-                Upload Your First Book
+                Clear All Filters
               </Button>
-            </Link>
+            )}
           </div>
         ) : (
           <>
-            {/* Filter Controls Section */}
-            <div className="mb-8 space-y-6">
-              {/* Mood Filter */}
-              <Card className="border-starry-accent/30 rounded-3xl">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-serif font-semibold text-foreground">
-                      Browse by Mood
-                    </h3>
-                    {selectedMoods.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={clearMoods}
-                        className="text-xs"
-                      >
-                        Clear Moods
-                      </Button>
-                    )}
-                  </div>
-                  <MoodFilterChips 
-                    selectedMoods={selectedMoods} 
-                    onToggleMood={toggleMood} 
-                  />
-                  {selectedMoods.length > 0 && (
-                    <p className="text-xs text-muted-foreground mt-3">
-                      Filtering by {selectedMoods.length} {selectedMoods.length === 1 ? 'mood' : 'moods'}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Traditional Filters */}
-              <Card className="border-starry-accent/30 rounded-3xl">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Filter className="h-5 w-5 text-starry-secondary" />
-                    <h3 className="text-lg font-serif font-semibold text-foreground">
-                      Filter Books
-                    </h3>
-                  </div>
-                  
-                  <div className="flex flex-col md:flex-row gap-4">
-                    {/* Genre Filter */}
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor="genre-filter" className="text-sm font-medium text-foreground">
-                        Genre
-                      </Label>
-                      <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-                        <SelectTrigger 
-                          id="genre-filter"
-                          className="w-full bg-background border-border rounded-2xl focus:ring-2 focus:ring-starry-secondary/50 transition-all"
-                        >
-                          <SelectValue placeholder="All Genres" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl">
-                          <SelectItem value="" className="rounded-xl">
-                            All Genres
-                          </SelectItem>
-                          {uniqueGenres.map(genre => (
-                            <SelectItem key={genre} value={genre} className="rounded-xl">
-                              {genre}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Author Search */}
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor="author-search" className="text-sm font-medium text-foreground">
-                        Search by Author
-                      </Label>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="author-search"
-                          type="text"
-                          placeholder="Enter author name..."
-                          value={authorSearch}
-                          onChange={(e) => setAuthorSearch(e.target.value)}
-                          className="pl-10 bg-background border-border rounded-2xl focus:ring-2 focus:ring-starry-secondary/50 transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Clear All Filters Button */}
-                  {hasActiveFilters && (
-                    <div className="mt-4 flex justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleClearAllFilters}
-                        className="rounded-full border-starry-accent/30 hover:bg-starry-accent/10 transition-all"
-                      >
-                        <X className="h-3 w-3 mr-1" />
-                        Clear All Filters
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Book Count and Results */}
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6">
               <p className="text-sm md:text-base text-muted-foreground">
-                {hasActiveFilters ? (
-                  <>
-                    Found <span className="font-semibold text-starry-secondary">{filteredBooks.length}</span> {filteredBooks.length === 1 ? 'book' : 'books'}
-                  </>
-                ) : (
-                  <>
-                    Showing <span className="font-semibold text-starry-secondary">{filteredBooks.length}</span> {filteredBooks.length === 1 ? 'book' : 'books'}
-                  </>
-                )}
+                Showing <span className="font-semibold text-foreground">{filteredBooks.length}</span> {filteredBooks.length === 1 ? 'book' : 'books'}
+                {hasActiveFilters && ' (filtered)'}
               </p>
             </div>
-
-            {filteredBooks.length === 0 ? (
-              <div className="text-center py-16 space-y-4">
-                <div className="flex justify-center">
-                  <div className="p-6 bg-starry-primary/10 rounded-full">
-                    <Search className="h-16 w-16 text-starry-accent/50" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl md:text-2xl font-serif font-bold text-starry-secondary">
-                    No Books Found
-                  </h3>
-                  <p className="text-muted-foreground text-base max-w-md mx-auto">
-                    No books match your current filters. Try adjusting your search criteria.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <BookGrid books={filteredBooks} />
-            )}
+            <BookGrid books={filteredBooks} />
           </>
         )}
       </section>

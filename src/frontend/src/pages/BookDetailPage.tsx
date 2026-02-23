@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { useGetBook, useIsCallerAdmin, useGetUserBookProgress, useUpdateReadingProgress, useIsBookBookmarked, useToggleBookmark, useBookRatings, useAddRating, useBookAverageRating } from '../hooks/useQueries';
+import { useGetBook, useIsCallerAdmin, useGetUserBookProgress, useUpdateReadingProgress, useIsBookBookmarked, useToggleBookmark, useBookRatings, useAddRating, useGetBookAverageRating } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,6 +14,7 @@ import { ArrowLeft, Calendar, Hash, AlertCircle, BookOpen, Plus, Minus, Bookmark
 import { toast } from 'sonner';
 import PdfViewer from '../components/PdfViewer';
 import StarRating from '../components/StarRating';
+import AuthPrompt from '../components/AuthPrompt';
 
 export default function BookDetailPage() {
   const { isbn } = useParams({ from: '/book/$isbn' });
@@ -26,11 +27,13 @@ export default function BookDetailPage() {
   const { data: isBookmarked, isLoading: bookmarkLoading } = useIsBookBookmarked(isbn);
   const toggleBookmark = useToggleBookmark();
   const { data: ratings } = useBookRatings(isbn);
-  const { data: averageRating } = useBookAverageRating(isbn);
+  const { data: averageRating } = useGetBookAverageRating(isbn);
   const addRating = useAddRating();
 
   const [pagesRead, setPagesRead] = useState<number>(0);
   const [userRating, setUserRating] = useState<number>(0);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [authPromptMessage, setAuthPromptMessage] = useState('');
 
   const isAuthenticated = !!identity;
 
@@ -51,9 +54,14 @@ export default function BookDetailPage() {
     }
   }, [ratings, identity]);
 
+  const showAuthPrompt = (message: string) => {
+    setAuthPromptMessage(message);
+    setAuthPromptOpen(true);
+  };
+
   const handleBookmarkToggle = async () => {
     if (!isAuthenticated) {
-      toast.error('Please log in to bookmark books');
+      showAuthPrompt('Please log in to bookmark books and save them to your favorites.');
       return;
     }
 
@@ -67,7 +75,7 @@ export default function BookDetailPage() {
 
   const handleRatingChange = async (stars: number) => {
     if (!isAuthenticated) {
-      toast.error('Please log in to rate books');
+      showAuthPrompt('Please log in to rate books and share your opinion with the community.');
       return;
     }
 
@@ -82,7 +90,7 @@ export default function BookDetailPage() {
 
   const handleUpdateProgress = async () => {
     if (!isAuthenticated) {
-      toast.error('Please log in to track reading progress');
+      showAuthPrompt('Please log in to track your reading progress across all your books.');
       return;
     }
 
@@ -152,7 +160,7 @@ export default function BookDetailPage() {
       <div className="container mx-auto px-4 py-8 md:py-12">
         <Button
           variant="ghost"
-          onClick={() => navigate({ to: '/' })}
+          onClick={() => navigate({ to: '/browse' })}
           className="mb-6 rounded-full hover:bg-starry-accent/10"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -189,7 +197,7 @@ export default function BookDetailPage() {
                       variant="outline"
                       size="icon"
                       onClick={handleBookmarkToggle}
-                      disabled={!isAuthenticated || bookmarkLoading || toggleBookmark.isPending}
+                      disabled={bookmarkLoading || toggleBookmark.isPending}
                       className="rounded-full shrink-0"
                     >
                       {isBookmarked ? (
@@ -217,19 +225,22 @@ export default function BookDetailPage() {
                 </div>
               )}
               
-              {isAuthenticated && (
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">
-                    {userRating > 0 ? 'Your rating:' : 'Rate this book:'}
-                  </Label>
-                  <StarRating 
-                    rating={userRating} 
-                    interactive 
-                    size="lg"
-                    onChange={handleRatingChange}
-                  />
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {isAuthenticated && userRating > 0 ? 'Your rating:' : 'Rate this book:'}
+                </Label>
+                <StarRating 
+                  rating={userRating} 
+                  interactive 
+                  size="lg"
+                  onChange={handleRatingChange}
+                />
+                {!isAuthenticated && (
+                  <p className="text-xs text-muted-foreground">
+                    Log in to rate this book
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="prose prose-sm md:prose-base max-w-none">
@@ -255,86 +266,100 @@ export default function BookDetailPage() {
             </div>
 
             {/* Reading Progress Tracker */}
-            {isAuthenticated && (
-              <Card className="border-starry-accent/30 rounded-3xl">
-                <CardHeader>
-                  <CardTitle className="text-lg font-serif">Reading Progress</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Progress</span>
-                      <span className="font-medium">{progressPercentage.toFixed(0)}%</span>
+            <Card className="border-starry-accent/30 rounded-3xl">
+              <CardHeader>
+                <CardTitle className="text-lg font-serif">Reading Progress</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isAuthenticated ? (
+                  <>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="font-medium">{progressPercentage.toFixed(0)}%</span>
+                      </div>
+                      <Progress value={progressPercentage} className="h-2" />
+                      <p className="text-xs text-muted-foreground">
+                        {progress?.pagesRead.toString() || '0'} of {book.pageCount.toString()} pages
+                      </p>
                     </div>
-                    <Progress value={progressPercentage} className="h-2" />
-                    <p className="text-xs text-muted-foreground">
-                      {progress?.pagesRead.toString() || '0'} of {book.pageCount.toString()} pages
-                    </p>
-                  </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="pages-read" className="text-sm font-medium">
-                      Update Pages Read
-                    </Label>
-                    <div className="flex gap-2">
+                    <div className="space-y-3">
+                      <Label htmlFor="pages-read" className="text-sm font-medium">
+                        Update Pages Read
+                      </Label>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={decrementPages}
+                          disabled={pagesRead === 0}
+                          className="rounded-full shrink-0"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <Input
+                          id="pages-read"
+                          type="number"
+                          min="0"
+                          max={Number(book.pageCount)}
+                          value={pagesRead}
+                          onChange={(e) => setPagesRead(Number(e.target.value))}
+                          className="text-center rounded-full"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={incrementPages}
+                          disabled={pagesRead >= Number(book.pageCount)}
+                          className="rounded-full shrink-0"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={decrementPages}
-                        disabled={pagesRead === 0}
-                        className="rounded-full shrink-0"
+                        onClick={handleUpdateProgress}
+                        disabled={updateProgress.isPending}
+                        className="w-full rounded-full bg-starry-secondary hover:bg-starry-secondary/90"
                       >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <Input
-                        id="pages-read"
-                        type="number"
-                        min="0"
-                        max={Number(book.pageCount)}
-                        value={pagesRead}
-                        onChange={(e) => setPagesRead(Math.max(0, Math.min(Number(book.pageCount), parseInt(e.target.value) || 0)))}
-                        className="text-center rounded-2xl"
-                      />
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={incrementPages}
-                        disabled={pagesRead >= Number(book.pageCount)}
-                        className="rounded-full shrink-0"
-                      >
-                        <Plus className="h-4 w-4" />
+                        {updateProgress.isPending ? 'Updating...' : 'Save Progress'}
                       </Button>
                     </div>
+                  </>
+                ) : (
+                  <div className="text-center py-6 space-y-3">
+                    <p className="text-muted-foreground">
+                      Log in to track your reading progress
+                    </p>
                     <Button
-                      onClick={handleUpdateProgress}
-                      disabled={updateProgress.isPending}
-                      className="w-full rounded-full bg-starry-secondary hover:bg-starry-secondary/90"
+                      onClick={() => showAuthPrompt('Please log in to track your reading progress across all your books.')}
+                      variant="outline"
+                      className="rounded-full"
                     >
-                      {updateProgress.isPending ? 'Updating...' : 'Save Progress'}
+                      Log In to Track Progress
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {!isAuthenticated && (
-              <Alert className="rounded-3xl border-starry-accent/30">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Log in to track your reading progress, bookmark books, and rate them.
-                </AlertDescription>
-              </Alert>
-            )}
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         {/* PDF Viewer */}
-        {book.pdfFileUrl && isAuthenticated && (
+        {book.pdfFileUrl && (
           <div className="mt-8">
+            <h2 className="text-2xl font-serif font-bold mb-4">Read Online</h2>
             <PdfViewer pdfUrl={book.pdfFileUrl} title={book.title} />
           </div>
         )}
       </div>
+
+      {/* Auth Prompt Modal */}
+      <AuthPrompt
+        open={authPromptOpen}
+        onOpenChange={setAuthPromptOpen}
+        message={authPromptMessage}
+      />
     </div>
   );
 }

@@ -1,161 +1,160 @@
 {
   "kind": "build_request",
-  "title": "Van Gogh-inspired homepage with unified navigation and expandable sections",
-  "projectName": "The House of Vigilantes",
+  "title": "Add Van Gogh landing page with post-action redirects and theme persistence",
+  "projectName": "House of Vigilantes",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
+      "text": "Create a new Van Gogh-inspired landing page component at frontend/src/pages/LandingPage.tsx with full-screen Van Gogh painting background, Sign Up and Log In buttons integrated with Internet Identity, and a light/dark mode toggle",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "Van Gogh-inspired, with a subtle background image"
+          "Create new Van Gogh-inspired landing page with login/signup and theme toggle"
         ]
       },
       "acceptanceCriteria": [
-        "Background image features swirling, vibrant colors reminiscent of Van Gogh's style",
-        "Brushstroke textures are visible and artistic",
-        "Image dimensions are 1920x1080 for optimal display on various screens"
+        "Landing page displays a full-screen Van Gogh painting as background",
+        "Sign Up and Log In buttons are prominently displayed and functional",
+        "Light/Dark mode toggle is accessible and functional",
+        "Page uses existing Van Gogh theme styling consistent with other pages"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
+      "text": "Update routing in frontend/src/App.tsx to make the new LandingPage the default route for unauthenticated users, and redirect authenticated users to /home",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "CSS effects for swirling brushstrokes and vibrant colors",
-          "The page should feel unified and artistic"
+          "This landing page will be the first page users see when visiting the website"
         ]
       },
       "acceptanceCriteria": [
-        "CSS gradient effects create additional swirling visual elements",
-        "Color scheme uses vibrant Van Gogh-inspired colors (yellows, blues, greens)",
-        "Page maintains a cohesive, unified artistic feel throughout",
-        "Background image is rendered from generated asset in frontend/public/assets/generated"
+        "Unauthenticated users see the landing page at root path",
+        "Authenticated users are automatically redirected to /home",
+        "Navigation between routes works smoothly"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
+      "text": "Implement theme persistence using browser localStorage to store and retrieve the user's light/dark mode preference across sessions",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "Three-Line Main Options: Browse Books – links to the full book catalog page. Mood-Based Recommendations – expands directly on the homepage to show books by mood. Trending & Popular – expands directly on the homepage to show top-rated and trending books"
+          "Persist user's theme preference across sessions",
+          "Store preference in browser localStorage"
         ]
       },
       "acceptanceCriteria": [
-        "Three options are visually prominent and clearly labeled",
-        "Browse Books navigates to the existing /browse route",
-        "Mood-Based Recommendations expands a section below showing mood filters and filtered books",
-        "Trending & Popular expands a section below showing trending books using existing useTrendingBooks hook",
-        "Expanded sections appear smoothly without page navigation",
-        "Only one section can be expanded at a time"
+        "Theme preference is saved to localStorage when user toggles light/dark mode",
+        "Theme preference is loaded from localStorage on page load",
+        "Theme persists after logout and page refresh"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
+      "text": "Update the Log Out button in frontend/src/components/AppLayout.tsx to redirect to the landing page with a smooth fade transition after clearing frontend session data",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "Secondary Menu / Platform Features: Collection, Upload Book, My Books, Favorites"
+          "Log Out: Ends the current session, Clears any user-specific data in the frontend, Redirects to the landing page",
+          "Smooth UX: Use a fade or slide transition when redirecting"
         ]
       },
       "acceptanceCriteria": [
-        "Secondary menu contains four links: Collection (/browse), Upload Book (/upload), My Books (/my-books), Favorites (/favorites)",
-        "Links are styled consistently with the Van Gogh theme",
-        "Menu is visually distinct but complementary to the three main options",
-        "All links navigate to their respective existing routes"
+        "Log Out button clears Internet Identity session",
+        "Log Out button clears query cache and frontend state",
+        "User is redirected to landing page after logout",
+        "Transition to landing page uses smooth fade animation"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
+      "text": "Update the Delete Account flow in frontend/src/pages/AuthorDashboardPage.tsx to redirect to the landing page with a smooth fade transition after successful account deletion",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "Homepage Function: Serves as the central entry point connecting both existing platform features and Phase 3 recommendation/mood features, giving logged-in users a personalized dashboard experience"
+          "Delete Account: Confirms deletion with a semi-transparent modal, Deletes all user data, After deletion, redirects to the landing page"
         ]
       },
       "acceptanceCriteria": [
-        "Logged-in users see personalized recommendations when Mood-Based Recommendations is expanded",
-        "Trending & Popular section uses existing trending books logic",
-        "Authentication state is checked using useInternetIdentity hook",
-        "Non-authenticated users see public content or prompts to log in"
+        "After confirming deletion in modal, account is deleted from backend",
+        "Frontend session is cleared after deletion",
+        "User is redirected to landing page after deletion",
+        "Transition to landing page uses smooth fade animation",
+        "Success toast message is displayed"
       ]
     },
     {
       "id": "REQ-6",
-      "text": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
+      "text": "Ensure the Delete Account modal in frontend/src/components/DeleteAccountModal.tsx has a semi-transparent overlay with blurred/tinted background for readability",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "clear typography that stands out against the Van Gogh-inspired background",
-          "Use consistent typography and spacing to maintain a uniform design"
+          "Modal overlay: When confirming deletion, keep background blurred/tinted for readability"
         ]
       },
       "acceptanceCriteria": [
-        "Text has sufficient contrast against colorful backgrounds",
-        "Font choices are consistent throughout the homepage",
-        "Typography complements the artistic Van Gogh aesthetic",
-        "Spacing between elements maintains visual hierarchy and readability"
+        "Modal overlay has semi-transparent background",
+        "Background behind modal is visually blurred or tinted",
+        "Modal content remains readable against blurred background"
       ]
     },
     {
       "id": "REQ-7",
-      "text": "Update the App.tsx routing to direct users to the new unified homepage as the default route, ensuring it replaces the current HomePage while maintaining access to PersonalizedHomePage logic for authenticated users",
-      "target": "frontend",
+      "text": "Verify that the backend deleteAccount function in backend/main.mo properly removes all user data including profile, books, reviews/ratings, reading lists, and analytics when called",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "Homepage Function: Serves as the central entry point"
+          "Delete backend data according to the account deletion scope (profile, books, favorites, reading lists, analytics where available)"
         ]
       },
       "acceptanceCriteria": [
-        "Root route '/' displays the new Van Gogh-inspired unified homepage",
-        "Authenticated user experience integrates personalized content",
-        "All existing routes remain functional",
-        "Navigation component continues to work with the new homepage"
+        "deleteAccount removes user profile from profiles map",
+        "deleteAccount removes all user books from books map",
+        "deleteAccount removes user ratings from ratings map",
+        "deleteAccount removes user bookmarks from bookmarks map",
+        "deleteAccount removes user reading progress from progress map",
+        "deleteAccount removes user genre preferences from preferences map"
       ]
     }
   ],
   "constraints": [
-    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
-    "Preserve all existing backend functionality in backend/main.mo",
-    "Maintain compatibility with existing routes and navigation structure",
-    "Use React, Tailwind CSS, and React Query as defined in the system stack"
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts",
+    "Use existing Van Gogh theme styling and color palette from frontend/index.css",
+    "Maintain single-actor architecture in backend/main.mo",
+    "Use React Query for all backend mutations and cache invalidation"
   ],
   "nonGoals": [
-    "Modifying the backend actor or data models",
-    "Changing the authentication system or Internet Identity integration",
-    "Altering existing page functionality beyond the homepage redesign",
-    "Adding new backend endpoints or state management"
+    "Adding new authentication providers beyond Internet Identity",
+    "Implementing server-side session management",
+    "Adding email notifications for account deletion",
+    "Creating new backend data models or schema changes"
   ],
   "imageRequirements": {
     "required": [
-      "Van Gogh-inspired background with vibrant swirling colors, yellows, blues, and greens, featuring prominent brushstroke textures (vangogh-hero.dim_1920x1080.png)"
+      "Full-screen Van Gogh painting for landing page background, artistic and welcoming style (landing-hero.dim_1920x1080.png)"
     ],
     "edits": []
   }

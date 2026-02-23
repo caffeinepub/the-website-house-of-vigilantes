@@ -1,28 +1,41 @@
-import { RouterProvider, createRouter, createRootRoute, createRoute, Outlet } from '@tanstack/react-router';
+import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
-import HomePage from './pages/HomePage';
+import { Toaster } from '@/components/ui/sonner';
+import ProfileSetupModal from './components/ProfileSetupModal';
+import AppLayout from './components/AppLayout';
+import LandingPage from './pages/LandingPage';
+import BrowseBooksPage from './pages/BrowseBooksPage';
 import BookDetailPage from './pages/BookDetailPage';
-import AdminPage from './pages/AdminPage';
 import UploadBookPage from './pages/UploadBookPage';
 import MyBooksPage from './pages/MyBooksPage';
+import AdminPage from './pages/AdminPage';
 import AdminReviewPage from './pages/AdminReviewPage';
-import BrowseBooksPage from './pages/BrowseBooksPage';
 import FavoritesPage from './pages/FavoritesPage';
-import Navigation from './components/Navigation';
-import ProfileSetupModal from './components/ProfileSetupModal';
-import { Toaster } from '@/components/ui/sonner';
+import PersonalizedHomePage from './pages/PersonalizedHomePage';
+import AuthorsPage from './pages/AuthorsPage';
+import ProfilePage from './pages/ProfilePage';
+import AuthorProfilePage from './pages/AuthorProfilePage';
+import AuthorDashboardPage from './pages/AuthorDashboardPage';
+
+const queryClient = new QueryClient();
 
 function RootLayout() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation />
       <ProfileSetupModal />
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
-      <Toaster />
     </div>
+  );
+}
+
+function AuthenticatedLayout() {
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
   );
 }
 
@@ -33,101 +46,114 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: HomePage,
+  component: LandingPage,
+});
+
+const authenticatedRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'authenticated',
+  component: AuthenticatedLayout,
+});
+
+const personalizedRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/home',
+  component: PersonalizedHomePage,
 });
 
 const browseRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/browse',
   component: BrowseBooksPage,
 });
 
+const authorsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/authors',
+  component: AuthorsPage,
+});
+
+const authorProfileRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/author/$authorName',
+  component: AuthorProfilePage,
+});
+
+const authorDashboardRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/author/dashboard',
+  component: AuthorDashboardPage,
+});
+
 const bookDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/book/$isbn',
   component: BookDetailPage,
 });
 
-const adminRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/admin',
-  component: AdminPage,
-});
-
 const uploadRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/upload',
   component: UploadBookPage,
 });
 
 const myBooksRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/my-books',
   component: MyBooksPage,
 });
 
+const adminRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/admin',
+  component: AdminPage,
+});
+
 const adminReviewRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/admin/review',
   component: AdminReviewPage,
 });
 
 const favoritesRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: '/favorites',
   component: FavoritesPage,
 });
 
+const profileRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/profile',
+  component: ProfilePage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  browseRoute,
-  bookDetailRoute,
-  adminRoute,
-  uploadRoute,
-  myBooksRoute,
-  adminReviewRoute,
-  favoritesRoute,
+  authenticatedRoute.addChildren([
+    personalizedRoute,
+    browseRoute,
+    authorsRoute,
+    authorProfileRoute,
+    authorDashboardRoute,
+    bookDetailRoute,
+    uploadRoute,
+    myBooksRoute,
+    adminRoute,
+    adminReviewRoute,
+    favoritesRoute,
+    profileRoute,
+  ]),
 ]);
 
 const router = createRouter({ routeTree });
 
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
-
-function Footer() {
-  const appIdentifier = encodeURIComponent(window.location.hostname || 'house-of-vigilantes');
-  
-  return (
-    <footer className="border-t border-border bg-card mt-auto">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} House of Vigilantes. All rights reserved.
-          </p>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Built with <span className="text-destructive">♥</span> using{' '}
-            <a
-              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
-            >
-              caffeine.ai
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 export default function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <RouterProvider router={router} />
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem storageKey="theme-preference">
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }

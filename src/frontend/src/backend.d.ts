@@ -81,6 +81,7 @@ export interface backendInterface {
     approveBookSubmission(isbn: string, isApproved: boolean, rejectionReason: string | null): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     clearEditRequests(isbn: string): Promise<void>;
+    deleteAccount(targetUser: Principal | null): Promise<void>;
     deleteBook(isbn: string): Promise<void>;
     getAllBooks(): Promise<Array<Book>>;
     getAllSubmissions(): Promise<Array<BookSubmission>>;

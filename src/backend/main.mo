@@ -10,12 +10,12 @@ import Float "mo:core/Float";
 import Order "mo:core/Order";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 
 
-// Apply migration using with clause
 
 actor {
   let accessControlState = AccessControl.initState();
@@ -34,6 +34,7 @@ actor {
 
   type UserProfile = {
     name : Text;
+    // Additional profile fields if needed
   };
 
   public type Book = {
@@ -107,6 +108,88 @@ actor {
   let ratingsMap = Map.empty<Text, List.List<Rating>>();
   let genrePreferencesMap = Map.empty<Principal, List.List<Text>>();
   let lastAccessTime = Map.empty<Text, Int>();
+
+  var initialized : Bool = false; // Track whether the system is initialized
+
+  public shared ({ caller }) func deleteAccount(targetUser : ?Principal) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can delete accounts");
+    };
+
+    // Determine which account to delete
+    let userToDelete = switch (targetUser) {
+      case (null) { caller }; // Delete own account
+      case (?user) {
+        // Only admins can delete other users' accounts
+        if (not (AccessControl.isAdmin(accessControlState, caller))) {
+          Runtime.trap("Unauthorized: Only admins can delete other users' accounts");
+        };
+        user;
+      };
+    };
+
+    // Remove user profile
+    userProfiles.remove(userToDelete);
+
+    // Remove all books authored by the user
+    let userBooks = books.entries().filter(
+      func((_, book)) { book.uploaderId == userToDelete }
+    );
+    for ((isbn, _) in userBooks) {
+      books.remove(isbn);
+    };
+
+    // Remove all book submissions by the user
+    let userSubmissions = bookSubmissions.entries().filter(
+      func((_, submission)) { submission.uploaderId == userToDelete }
+    );
+    for ((isbn, _) in userSubmissions) {
+      bookSubmissions.remove(isbn);
+    };
+
+    // Remove all reading progress for the user
+    let userProgress = readingProgressMap.entries().filter(
+      func((_, progress)) { progress.userId == userToDelete }
+    );
+    for ((key, _) in userProgress) {
+      readingProgressMap.remove(key);
+    };
+
+    // Remove all edit requests by the user
+    let userEditRequests = editRequests.entries().filter(
+      func((_, requests)) {
+        requests.any(func(req) { req.authorId == userToDelete })
+      }
+    );
+    for ((isbn, requests) in userEditRequests) {
+      let filteredRequests = requests.filter(
+        func(req) { req.authorId != userToDelete }
+      );
+      if (filteredRequests.size() > 0) {
+        editRequests.add(isbn, filteredRequests);
+      } else {
+        editRequests.remove(isbn);
+      };
+    };
+
+    // Remove user's bookmarks
+    bookmarksMap.remove(userToDelete);
+
+    // Remove all ratings by the user from all books
+    for ((isbn, ratings) in ratingsMap.entries()) {
+      let filteredRatings = ratings.filter(
+        func(rating) { rating.userId != userToDelete }
+      );
+      if (filteredRatings.isEmpty()) {
+        ratingsMap.remove(isbn);
+      } else {
+        ratingsMap.add(isbn, filteredRatings);
+      };
+    };
+
+    // Remove user's genre preferences
+    genrePreferencesMap.remove(userToDelete);
+  };
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -264,9 +347,11 @@ actor {
   };
 
   public query ({ caller }) func getBook(isbn : Text) : async ?Book {
+    // Allow all authenticated users and guests to view approved books
     switch (books.get(isbn)) {
       case (null) { null };
       case (?book) {
+        // Only admins can see non-approved books
         if (not (AccessControl.isAdmin(accessControlState, caller))) {
           switch (book.approvalStatus) {
             case (#approved) { ?book };
@@ -289,12 +374,16 @@ actor {
           Runtime.trap("Unauthorized: Only admins can view rejected books");
         };
       };
-      case (#approved) {};
+      case (#approved) {
+        // Approved books are public, no restriction
+      };
     };
     books.values().filter(func(b) { b.approvalStatus == status }).toArray();
   };
 
   public query ({ caller }) func getAllBooks() : async [Book] {
+    // Allow all users including guests to view approved books
+    // Only admins can see all books
     if (AccessControl.isAdmin(accessControlState, caller)) {
       books.values().toArray();
     } else {
@@ -310,6 +399,7 @@ actor {
   };
 
   public query ({ caller }) func getBooksByGenre(genre : Text) : async [Book] {
+    // Allow all users including guests to view approved books by genre
     if (AccessControl.isAdmin(accessControlState, caller)) {
       books.values().filter(func(b) { b.genre == genre }).toArray();
     } else {
@@ -324,6 +414,7 @@ actor {
   };
 
   public query ({ caller }) func getBooksByAuthor(author : Text) : async [Book] {
+    // Allow all users including guests to view approved books by author
     if (AccessControl.isAdmin(accessControlState, caller)) {
       books.values().filter(func(b) { b.author == author }).toArray();
     } else {
@@ -338,6 +429,7 @@ actor {
   };
 
   public query ({ caller }) func getBooksByGenreAndAuthor(genre : Text, author : Text) : async [Book] {
+    // Allow all users including guests to view approved books by genre and author
     if (AccessControl.isAdmin(accessControlState, caller)) {
       books.values().filter(
         func(b) { b.genre == genre and b.author == author }
@@ -538,38 +630,91 @@ actor {
   };
 
   public query ({ caller }) func getBookRatings(bookIsbn : Text) : async [Rating] {
-    switch (ratingsMap.get(bookIsbn)) {
-      case (null) { [] };
-      case (?ratings) { ratings.toArray() };
+    // Public information - anyone can view ratings for approved books
+    switch (books.get(bookIsbn)) {
+      case (null) { Runtime.trap("Book not found") };
+      case (?book) {
+        // Only show ratings for approved books to non-admins
+        if (not (AccessControl.isAdmin(accessControlState, caller))) {
+          switch (book.approvalStatus) {
+            case (#approved) {
+              switch (ratingsMap.get(bookIsbn)) {
+                case (null) { [] };
+                case (?ratings) { ratings.toArray() };
+              };
+            };
+            case (_) { [] };
+          };
+        } else {
+          switch (ratingsMap.get(bookIsbn)) {
+            case (null) { [] };
+            case (?ratings) { ratings.toArray() };
+          };
+        };
+      };
     };
   };
 
   public query ({ caller }) func getBookAverageRating(bookIsbn : Text) : async ?Float {
+    // Public information - anyone can view average rating for approved books
     switch (books.get(bookIsbn)) {
       case (null) { Runtime.trap("Book not found") };
-      case (?_) {
-        let ratings = switch (ratingsMap.get(bookIsbn)) {
-          case (null) { List.empty<Rating>() };
-          case (?r) { r };
-        };
-        if (ratings.isEmpty()) { null } else {
-          var totalStars : Float = 0;
-          ratings.forEach(func(rating) { totalStars += rating.stars.toFloat() });
-          ?(if (ratings.size() > 0) {
-            totalStars / ratings.size().toFloat();
-          } else {
-            0;
-          });
+      case (?book) {
+        // Only show ratings for approved books to non-admins
+        if (not (AccessControl.isAdmin(accessControlState, caller))) {
+          switch (book.approvalStatus) {
+            case (#approved) {
+              let ratings = switch (ratingsMap.get(bookIsbn)) {
+                case (null) { List.empty<Rating>() };
+                case (?r) { r };
+              };
+              if (ratings.isEmpty()) { null } else {
+                var totalStars : Float = 0;
+                ratings.forEach(func(rating) { totalStars += rating.stars.toFloat() });
+                ?(if (ratings.size() > 0) {
+                  totalStars / ratings.size().toFloat();
+                } else {
+                  0;
+                });
+              };
+            };
+            case (_) { null };
+          };
+        } else {
+          let ratings = switch (ratingsMap.get(bookIsbn)) {
+            case (null) { List.empty<Rating>() };
+            case (?r) { r };
+          };
+          if (ratings.isEmpty()) { null } else {
+            var totalStars : Float = 0;
+            ratings.forEach(func(rating) { totalStars += rating.stars.toFloat() });
+            ?(if (ratings.size() > 0) {
+              totalStars / ratings.size().toFloat();
+            } else {
+              0;
+            });
+          };
         };
       };
     };
   };
 
   public query ({ caller }) func getTrendingBooks() : async [Book] {
+    // Public information - anyone can view trending approved books
     let currentTime = Time.now();
-    let recentBooks = books.values().filter(
-      func(b) { currentTime - b.createdAt <= 30 * 24 * 60 * 60 * 1000000000 }
-    ).toArray();
+    let recentBooks = if (AccessControl.isAdmin(accessControlState, caller)) {
+      books.values().filter(
+        func(b) { currentTime - b.createdAt <= 30 * 24 * 60 * 60 * 1000000000 }
+      ).toArray();
+    } else {
+      books.values().filter(
+        func(b) { 
+          currentTime - b.createdAt <= 30 * 24 * 60 * 60 * 1000000000 and 
+          b.approvalStatus == #approved 
+        }
+      ).toArray();
+    };
+    
     let compareBooksByRating = func(a : Book, b : Book) : Order.Order {
       let ratingA = switch (ratingsMap.get(a.isbn)) {
         case (null) { 0 };
@@ -589,11 +734,9 @@ actor {
           if (count == 0) { 0 } else { total / count };
         };
       };
-      Float.compare(ratingA.toFloat(), ratingB.toFloat());
+      Float.compare(ratingB.toFloat(), ratingA.toFloat());
     };
-    recentBooks.sort(
-      compareBooksByRating
-    );
+    recentBooks.sort(compareBooksByRating);
   };
 
   public shared ({ caller }) func setPreferredGenres(genres : [Text]) : async () {
@@ -610,7 +753,17 @@ actor {
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own recommendations");
     };
-    let topBooks = books.toArray().sliceToArray(0, Nat.min(5, books.size()));
+    
+    // Filter to only show approved books for non-admins
+    let availableBooks = if (AccessControl.isAdmin(accessControlState, caller)) {
+      books.toArray();
+    } else {
+      books.toArray().filter(
+        func((_, book)) { book.approvalStatus == #approved }
+      );
+    };
+    
+    let topBooks = availableBooks.sliceToArray(0, Nat.min(5, availableBooks.size()));
     let recommendations = topBooks.map(func((_, book)) { { book; reason = "Trending book" } });
     recommendations;
   };

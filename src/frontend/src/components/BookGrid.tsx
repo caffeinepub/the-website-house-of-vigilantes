@@ -3,10 +3,9 @@ import type { Book } from '../backend';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bookmark } from 'lucide-react';
-import { useIsCallerAdmin, useIsBookBookmarked } from '../hooks/useQueries';
+import { useIsCallerAdmin, useIsBookBookmarked, useGetBookAverageRating } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import StarRating from './StarRating';
-import { useBookAverageRating } from '../hooks/useQueries';
 
 interface BookGridProps {
   books: Book[];
@@ -35,7 +34,7 @@ export default function BookGrid({ books }: BookGridProps) {
 function BookCard({ book, isAdmin }: { book: Book; isAdmin?: boolean }) {
   const { identity } = useInternetIdentity();
   const { data: isBookmarked } = useIsBookBookmarked(book.isbn);
-  const { data: averageRating } = useBookAverageRating(book.isbn);
+  const { data: averageRating } = useGetBookAverageRating(book.isbn);
 
   return (
     <Link
@@ -43,13 +42,16 @@ function BookCard({ book, isAdmin }: { book: Book; isAdmin?: boolean }) {
       params={{ isbn: book.isbn }}
       className="group"
     >
-      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-starry-glow hover:scale-105 border-border/50 relative">
+      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-vangogh-glow hover:scale-105 border-2 border-transparent hover:border-vangogh-gold/40 bg-card relative">
         <CardContent className="p-0">
           <div className="aspect-[2/3] overflow-hidden bg-muted relative">
             <img
               src={book.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
               alt={book.title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              onError={(e) => {
+                e.currentTarget.src = '/assets/generated/placeholder-cover.dim_400x600.png';
+              }}
             />
             {isAdmin && book.approvalStatus.__kind__ !== 'approved' && (
               <div className="absolute top-2 right-2">
@@ -63,15 +65,15 @@ function BookCard({ book, isAdmin }: { book: Book; isAdmin?: boolean }) {
             )}
             {identity && isBookmarked && (
               <div className="absolute top-2 left-2">
-                <Bookmark className="h-5 w-5 fill-starry-secondary text-starry-secondary drop-shadow-md" />
+                <Bookmark className="h-5 w-5 fill-vangogh-gold text-vangogh-gold drop-shadow-md" />
               </div>
             )}
           </div>
           <div className="p-3 md:p-4 space-y-2">
-            <h3 className="book-title line-clamp-2 text-sm md:text-base group-hover:text-starry-secondary transition-colors">
+            <h3 className="font-serif font-bold line-clamp-2 text-sm md:text-base group-hover:text-vangogh-gold transition-colors">
               {book.title}
             </h3>
-            <p className="book-author line-clamp-1 text-xs md:text-sm">{book.author}</p>
+            <p className="text-muted-foreground line-clamp-1 text-xs md:text-sm">{book.author}</p>
             {averageRating !== null && averageRating !== undefined && (
               <div className="pt-1">
                 <StarRating rating={averageRating} size="sm" />

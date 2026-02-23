@@ -45,6 +45,19 @@ export function useGetMyBooks() {
   });
 }
 
+export function useGetBooksByAuthor(author: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['booksByAuthor', author],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getBooksByAuthor(author);
+    },
+    enabled: !!actor && !isFetching && !!author,
+  });
+}
+
 export function useSubmitBook() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -78,6 +91,7 @@ export function useUpdateBook() {
       queryClient.invalidateQueries({ queryKey: ['books'] });
       queryClient.invalidateQueries({ queryKey: ['book', variables.isbn] });
       queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+      queryClient.invalidateQueries({ queryKey: ['booksByAuthor'] });
     },
   });
 }
@@ -94,6 +108,7 @@ export function useDeleteBook() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] });
       queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+      queryClient.invalidateQueries({ queryKey: ['booksByAuthor'] });
     },
   });
 }
@@ -129,6 +144,17 @@ export function useSaveCallerUserProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
+}
+
+export function useDeleteAccount() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteAccount(null);
     },
   });
 }
@@ -201,6 +227,20 @@ export function useGetUserBookProgress(bookIsbn: string) {
       return actor.getUserBookProgress(bookIsbn);
     },
     enabled: !!actor && !isFetching && !!identity && !!bookIsbn,
+  });
+}
+
+export function useGetAllUserProgress() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<[string, ReadingProgress][]>({
+    queryKey: ['allProgress', identity?.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!actor || !identity) return [];
+      return actor.getAllUserProgress(identity.getPrincipal());
+    },
+    enabled: !!actor && !isFetching && !!identity,
   });
 }
 
@@ -296,7 +336,7 @@ export function useBookRatings(bookIsbn: string) {
   });
 }
 
-export function useBookAverageRating(bookIsbn: string) {
+export function useGetBookAverageRating(bookIsbn: string) {
   const { actor, isFetching } = useActor();
 
   return useQuery<number | null>({
@@ -309,8 +349,8 @@ export function useBookAverageRating(bookIsbn: string) {
   });
 }
 
-// Trending books
-export function useTrendingBooks() {
+// Trending and recommendations
+export function useGetTrendingBooks() {
   const { actor, isFetching } = useActor();
 
   return useQuery<Book[]>({
@@ -320,12 +360,10 @@ export function useTrendingBooks() {
       return actor.getTrendingBooks();
     },
     enabled: !!actor && !isFetching,
-    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
-// Personalized recommendations
-export function usePersonalizedRecommendations() {
+export function useGetPersonalizedRecommendations() {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
 
@@ -336,20 +374,5 @@ export function usePersonalizedRecommendations() {
       return actor.getPersonalizedRecommendations(identity.getPrincipal());
     },
     enabled: !!actor && !isFetching && !!identity,
-  });
-}
-
-export function useSetPreferredGenres() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (genres: string[]) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.setPreferredGenres(genres);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
-    },
   });
 }

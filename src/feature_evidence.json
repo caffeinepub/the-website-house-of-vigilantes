@@ -2,9 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-generate-a-van-gogh-inspired-background-image-with-vibrant-swirling-colors-and-brushstroke-textures-suitable-for-a-homepage-hero-section-dimensions-1920x1080",
-      "featureTitle": "Generate a Van Gogh-inspired background image with vibrant, swirling colors and brushstroke textures suitable for a homepage hero section (dimensions: 1920x1080)",
-      "files": [],
+      "featureId": "feature-create-a-new-van-gogh-inspired-landing-page-component-at-frontend-src-pages-landingpage-tsx-with-full-screen-van-gogh-painting-background-sign-up-and-log-in-buttons-integrated-with-internet-identity-and-a-light-dark-mode-toggle",
+      "featureTitle": "Create a new Van Gogh-inspired landing page component at frontend/src/pages/LandingPage.tsx with full-screen Van Gogh painting background, Sign Up and Log In buttons integrated with Internet Identity, and a light/dark mode toggle",
+      "files": [
+        "frontend/src/pages/LandingPage.tsx"
+      ],
       "components": [
         "authorization@4.0.0",
         "core-infrastructure@1.0.2",
@@ -20,11 +22,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-a-new-unified-homepage-component-that-replaces-the-existing-homepage-featuring-a-van-gogh-inspired-design-with-css-effects-for-swirling-brushstrokes-and-vibrant-color-gradients-overlaying-the-generated-background-image",
-      "featureTitle": "Create a new unified HomePage component that replaces the existing HomePage, featuring a Van Gogh-inspired design with CSS effects for swirling brushstrokes and vibrant color gradients overlaying the generated background image",
+      "featureId": "feature-update-routing-in-frontend-src-app-tsx-to-make-the-new-landingpage-the-default-route-for-unauthenticated-users-and-redirect-authenticated-users-to-home",
+      "featureTitle": "Update routing in frontend/src/App.tsx to make the new LandingPage the default route for unauthenticated users, and redirect authenticated users to /home",
       "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/App.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -41,11 +42,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-three-prominent-main-menu-options-in-a-center-or-top-panel-on-the-homepage-browse-books-navigates-to-browse-mood-based-recommendations-expands-content-on-homepage-and-trending-popular-expands-content-on-homepage",
-      "featureTitle": "Implement three prominent main menu options in a center or top panel on the homepage: 'Browse Books' (navigates to /browse), 'Mood-Based Recommendations' (expands content on homepage), and 'Trending & Popular' (expands content on homepage)",
+      "featureId": "feature-implement-theme-persistence-using-browser-localstorage-to-store-and-retrieve-the-user-s-light-dark-mode-preference-across-sessions",
+      "featureTitle": "Implement theme persistence using browser localStorage to store and retrieve the user's light/dark mode preference across sessions",
       "files": [
-        "frontend/src/components/MoodFilterChips.tsx",
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/ThemeToggle.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -62,10 +62,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-secondary-menu-with-links-to-collection-upload-book-my-books-and-favorites-integrated-into-the-homepage-design-below-or-beside-the-three-main-options",
-      "featureTitle": "Add a secondary menu with links to Collection, Upload Book, My Books, and Favorites, integrated into the homepage design below or beside the three main options",
+      "featureId": "feature-update-the-log-out-button-in-frontend-src-components-applayout-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-clearing-frontend-session-data",
+      "featureTitle": "Update the Log Out button in frontend/src/components/AppLayout.tsx to redirect to the landing page with a smooth fade transition after clearing frontend session data",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/AppLayout.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -82,10 +82,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-homepage-serves-as-a-central-entry-point-and-personalized-dashboard-for-logged-in-users-showing-personalized-content-in-the-expanded-sections-when-available",
-      "featureTitle": "Ensure the homepage serves as a central entry point and personalized dashboard for logged-in users, showing personalized content in the expanded sections when available",
+      "featureId": "feature-update-the-delete-account-flow-in-frontend-src-pages-authordashboardpage-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-successful-account-deletion",
+      "featureTitle": "Update the Delete Account flow in frontend/src/pages/AuthorDashboardPage.tsx to redirect to the landing page with a smooth fade transition after successful account deletion",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/pages/AuthorDashboardPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -102,11 +102,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-style-the-homepage-typography-to-stand-out-clearly-against-the-van-gogh-inspired-background-using-consistent-font-choices-and-spacing-that-maintain-readability-while-complementing-the-artistic-theme",
-      "featureTitle": "Style the homepage typography to stand out clearly against the Van Gogh-inspired background, using consistent font choices and spacing that maintain readability while complementing the artistic theme",
+      "featureId": "feature-ensure-the-delete-account-modal-in-frontend-src-components-deleteaccountmodal-tsx-has-a-semi-transparent-overlay-with-blurred-tinted-background-for-readability",
+      "featureTitle": "Ensure the Delete Account modal in frontend/src/components/DeleteAccountModal.tsx has a semi-transparent overlay with blurred/tinted background for readability",
       "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/DeleteAccountModal.tsx"
       ],
       "components": [
         "authorization@4.0.0",
