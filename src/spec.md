@@ -1,15 +1,28 @@
 # Specification
 
 ## Summary
-**Goal:** Add a Van Gogh-inspired landing page with authentication, theme persistence, and post-action redirects to improve user onboarding and session management.
+**Goal:** Build a comprehensive next-generation book platform with admin tools, curated collections, enhanced author dashboard, and social features including reviews, discussions, and user following.
 
 **Planned changes:**
-- Create new landing page with Van Gogh background, Sign Up/Log In buttons, and light/dark mode toggle
-- Update routing to show landing page for unauthenticated users and redirect authenticated users to /home
-- Implement theme persistence using localStorage to remember user's light/dark preference across sessions
-- Update Log Out button to redirect to landing page with smooth fade transition after clearing session
-- Update Delete Account flow to redirect to landing page with smooth fade transition after deletion
-- Enhance Delete Account modal with semi-transparent overlay and blurred background
-- Verify backend deleteAccount function properly removes all user data
+- Add curated collections system allowing admins, staff, and authors to create themed book collections
+- Implement admin analytics dashboard showing site-wide trends, user activity, and popular genres/moods
+- Create moderation system for flagging and reviewing user-generated content (reviews, comments, books)
+- Add series support for organizing related books in reading order
+- Implement user reviews and ratings with star ratings, review text, and helpful votes
+- Add follow system allowing users to follow authors and other readers
+- Create discussion threads system for books and genres with nested replies
+- Add AI-generated content placeholder fields (summaryText, moodTags) for future integration
+- Implement personalized recommendations based on reading history and favorite genres/authors
+- Build admin dashboard page with analytics visualizations and key metrics
+- Create admin curated collections management interface
+- Build admin moderation dashboard for reviewing flagged content
+- Enhance author series manager to integrate with backend series data
+- Add reviews and ratings section to book detail pages
+- Create user social features page showing followers and following
+- Build discussion threads page for books and genres
+- Add personalized homepage sections (For You, Continue Reading, Recently Viewed)
+- Extend book form to include summary text and mood tags fields
+- Display curated collections on homepage or dedicated collections page
+- Update author dashboard with account management section (Log Out and Delete Account buttons)
 
-**User-visible outcome:** Users see a welcoming Van Gogh-inspired landing page when first visiting the site, can easily sign up or log in, have their theme preference remembered across sessions, and are smoothly redirected to the landing page after logging out or deleting their account.
+**User-visible outcome:** Users can discover books through curated collections and personalized recommendations, submit reviews and ratings, follow authors and other readers, participate in book discussions, and manage their reading preferences. Authors can organize books into series and track engagement. Admins can curate collections, moderate content, and view platform analytics.

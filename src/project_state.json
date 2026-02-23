@@ -1,63 +1,107 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Van Gogh-inspired book management web app with authentication, user dashboard, and landing page",
+  "summary": "Next-gen book platform with Canva-style design featuring Van Gogh-inspired aesthetics, blue/gold/white color scheme, light/dark mode support, mood-based book recommendations, author dashboards with analytics, backend admin tools, curated collections, moderation capabilities, series navigation, social features (reviews, followers, discussions), and placeholder fields for AI-powered summaries",
   "architectural_notes": [
-    "Landing page serves as entry point with Van Gogh painting background",
-    "Internet Identity integration for Sign Up/Log In on landing page",
-    "Light/Dark mode preference stored in browser localStorage",
-    "Logout clears frontend session and redirects to landing page",
-    "Delete Account removes all backend data (favorites, books, reviews, reading lists, analytics) before redirect"
+    "Phased implementation: Core infrastructure (admin tools, author dashboards, series navigation) first, then personalized recommendations, social features, and gamification in future updates",
+    "Social features implemented with post-and-refresh pattern (no real-time WebSockets) - users must refresh to see new reviews, comments, followers",
+    "Primary colors: blue, gold, white with Van Gogh-inspired textures throughout UI",
+    "Light/dark mode support with dynamic Van Gogh painting backgrounds (light-themed for light mode, dark-themed for dark mode)",
+    "Semi-transparent modals with backdrop blur (Light: rgba(255,255,255,0.85), Dark: rgba(0,0,0,0.85)) for better readability",
+    "Internet Identity authentication with role-based access: public users (browse only), authenticated users (full dashboard, uploads, favorites, reviews)",
+    "Mock data initially for books, moods, trending section, analytics - structured for future backend canister integration",
+    "Fully responsive layout with Canva-style spacing and typography",
+    "Series management with 'Read next in series' prompts and series display functionality",
+    "Admin moderation tools for reviews, comments, and uploaded content with curated collections capability"
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Full-screen Van Gogh painting for landing page background, artistic and welcoming style (landing-hero.dim_1920x1080.png)",
   "existing_features": [
     {
-      "id": "feature-create-a-new-van-gogh-inspired-landing-page-component-at-frontend-src-pages-landingpage-tsx-with-full-screen-van-gogh-painting-background-sign-up-and-log-in-buttons-integrated-with-internet-identity-and-a-light-dark-mode-toggle",
-      "title": "Create a new Van Gogh-inspired landing page component at frontend/src/pages/LandingPage.tsx with full-screen Van Gogh painting background, Sign Up and Log In buttons integrated with Internet Identity, and a light/dark mode toggle",
+      "id": "feature-create-admin-dashboard-page-displaying-site-wide-analytics-from-backend-total-books-total-users-active-users-last-30-days-most-viewed-books-top-10-most-read-books-top-10-popular-moods-genres-distribution-chart-and-trending-books-require-admin-role-for-access",
+      "title": "Create Admin Dashboard page displaying site-wide analytics from backend: total books, total users, active users (last 30 days), most viewed books (top 10), most read books (top 10), popular moods/genres distribution chart, and trending books. Require admin role for access.",
       "reqIds": [
-        "REQ-1"
+        "REQ-10"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-routing-in-frontend-src-app-tsx-to-make-the-new-landingpage-the-default-route-for-unauthenticated-users-and-redirect-authenticated-users-to-home",
-      "title": "Update routing in frontend/src/App.tsx to make the new LandingPage the default route for unauthenticated users, and redirect authenticated users to /home",
+      "id": "feature-build-admin-curated-collections-management-page-allowing-admins-to-create-edit-and-delete-curated-collections-include-form-fields-for-collection-title-description-theme-mood-genre-category-book-selection-interface-search-and-add-books-by-isbn-and-visibility-toggle-display-all-existing-collections-in-a-list-with-edit-delete-actions",
+      "title": "Build Admin Curated Collections Management page allowing admins to create, edit, and delete curated collections. Include form fields for collection title, description, theme/mood/genre category, book selection interface (search and add books by ISBN), and visibility toggle. Display all existing collections in a list with edit/delete actions.",
       "reqIds": [
-        "REQ-2"
+        "REQ-11"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-theme-persistence-using-browser-localstorage-to-store-and-retrieve-the-user-s-light-dark-mode-preference-across-sessions",
-      "title": "Implement theme persistence using browser localStorage to store and retrieve the user's light/dark mode preference across sessions",
+      "id": "feature-create-admin-moderation-dashboard-page-displaying-flagged-content-reviews-comments-books-in-a-queue-for-each-flagged-item-show-content-preview-reporter-information-flag-reason-timestamps-and-action-buttons-approve-reject-remove-include-filtering-by-content-type-and-status-use-post-and-refresh-pattern-no-real-time-updates",
+      "title": "Create Admin Moderation Dashboard page displaying flagged content (reviews, comments, books) in a queue. For each flagged item, show: content preview, reporter information, flag reason, timestamps, and action buttons (approve, reject, remove). Include filtering by content type and status. Use post-and-refresh pattern (no real-time updates).",
       "reqIds": [
-        "REQ-3"
+        "REQ-12"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-log-out-button-in-frontend-src-components-applayout-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-clearing-frontend-session-data",
-      "title": "Update the Log Out button in frontend/src/components/AppLayout.tsx to redirect to the landing page with a smooth fade transition after clearing frontend session data",
+      "id": "feature-enhance-authorseriesmanager-component-to-integrate-with-backend-series-data-instead-of-localstorage-display-author-s-series-with-books-in-reading-order-include-read-next-in-series-prompt-when-viewing-a-book-that-is-part-of-a-series-add-create-series-edit-series-delete-series-and-reorder-books-functionality",
+      "title": "Enhance AuthorSeriesManager component to integrate with backend series data instead of localStorage. Display author's series with books in reading order. Include 'Read next in series' prompt when viewing a book that is part of a series. Add create series, edit series, delete series, and reorder books functionality.",
       "reqIds": [
-        "REQ-4"
+        "REQ-13"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-delete-account-flow-in-frontend-src-pages-authordashboardpage-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-successful-account-deletion",
-      "title": "Update the Delete Account flow in frontend/src/pages/AuthorDashboardPage.tsx to redirect to the landing page with a smooth fade transition after successful account deletion",
+      "id": "feature-add-reviews-and-ratings-section-to-bookdetailpage-allowing-authenticated-users-to-submit-text-reviews-with-star-ratings-display-existing-reviews-in-a-list-with-reviewer-name-rating-review-text-timestamp-and-helpful-votes-count-users-can-mark-reviews-as-helpful-and-flag-inappropriate-reviews-use-post-and-refresh-pattern",
+      "title": "Add Reviews and Ratings section to BookDetailPage allowing authenticated users to submit text reviews with star ratings. Display existing reviews in a list with reviewer name, rating, review text, timestamp, and helpful votes count. Users can mark reviews as helpful and flag inappropriate reviews. Use post-and-refresh pattern.",
       "reqIds": [
-        "REQ-5"
+        "REQ-14"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-the-delete-account-modal-in-frontend-src-components-deleteaccountmodal-tsx-has-a-semi-transparent-overlay-with-blurred-tinted-background-for-readability",
-      "title": "Ensure the Delete Account modal in frontend/src/components/DeleteAccountModal.tsx has a semi-transparent overlay with blurred/tinted background for readability",
+      "id": "feature-create-user-social-features-page-showing-users-you-follow-authors-and-readers-your-followers-follow-unfollow-buttons-and-follower-following-counts-add-follow-unfollow-buttons-to-author-profile-pages-and-user-profile-pages-use-post-and-refresh-pattern-for-follow-status-updates",
+      "title": "Create User Social Features page showing: users you follow (authors and readers), your followers, follow/unfollow buttons, and follower/following counts. Add follow/unfollow buttons to author profile pages and user profile pages. Use post-and-refresh pattern for follow status updates.",
       "reqIds": [
-        "REQ-6"
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-discussion-threads-page-for-books-and-genres-display-list-of-discussion-threads-with-title-creator-post-count-and-last-activity-timestamp-allow-authenticated-users-to-create-new-threads-and-post-messages-support-nested-replies-include-flag-inappropriate-content-button-use-post-and-refresh-pattern-for-new-threads-and-posts",
+      "title": "Build Discussion Threads page for books and genres. Display list of discussion threads with title, creator, post count, and last activity timestamp. Allow authenticated users to create new threads and post messages. Support nested replies. Include flag inappropriate content button. Use post-and-refresh pattern for new threads and posts.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-personalized-homepage-sections-for-you-personalized-recommendations-based-on-reading-history-and-favorite-genres-authors-continue-reading-books-with-incomplete-reading-progress-and-recently-viewed-last-10-books-viewed-display-these-sections-as-horizontal-carousels-above-existing-mood-based-carousels",
+      "title": "Add Personalized Homepage sections: 'For You' (personalized recommendations based on reading history and favorite genres/authors), 'Continue Reading' (books with incomplete reading progress), and 'Recently Viewed' (last 10 books viewed). Display these sections as horizontal carousels above existing mood-based carousels.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-bookform-component-to-include-fields-for-ai-generated-content-placeholders-summary-text-textarea-for-manual-summary-input-mood-tags-multi-select-or-text-input-for-mood-keywords-these-fields-should-be-optional-and-editable-by-admins-and-authors-when-creating-or-editing-books",
+      "title": "Extend BookForm component to include fields for AI-generated content placeholders: Summary Text (textarea for manual summary input), Mood Tags (multi-select or text input for mood keywords). These fields should be optional and editable by admins and authors when creating or editing books.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-curated-collections-on-homepage-or-dedicated-collections-page-show-collection-cards-with-title-description-theme-badge-book-count-and-preview-thumbnails-of-first-3-4-book-covers-clicking-a-collection-navigates-to-a-collection-detail-page-showing-all-books-in-that-collection",
+      "title": "Display curated collections on homepage or dedicated Collections page. Show collection cards with title, description, theme badge, book count, and preview thumbnails of first 3-4 book covers. Clicking a collection navigates to a collection detail page showing all books in that collection.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-authordashboardpage-to-include-account-management-section-with-log-out-button-clears-session-redirects-to-landing-page-and-delete-account-button-opens-confirmation-modal-warning-about-permanent-data-loss-deletes-all-user-data-including-profile-books-analytics-favorites-reading-lists-on-confirmation-then-redirects-to-landing-page",
+      "title": "Update AuthorDashboardPage to include Account Management section with Log Out button (clears session, redirects to landing page) and Delete Account button (opens confirmation modal warning about permanent data loss, deletes all user data including profile, books, analytics, favorites, reading lists on confirmation, then redirects to landing page).",
+      "reqIds": [
+        "REQ-20"
       ],
       "version": 1
     }
@@ -65,38 +109,139 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Van Gogh-inspired landing page with Sign Up/Log In and theme toggle",
+      "summary": "Backend & Admin Tools: curated collections, admin analytics dashboard, moderation tools for reviews/comments/uploads",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Post-action redirects for logout and account deletion to landing page",
+      "summary": "Combined Author Dashboard & Profile: public profile view + private dashboard with analytics, book/series management, series navigation with 'Read next' prompts",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Theme persistence via localStorage across sessions",
+      "summary": "Account management: Log Out and Delete Account with confirmation modal, redirects to landing page",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Delete account flow with backend data removal",
+      "summary": "Semi-transparent modals for editing and uploads with backdrop blur",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Canva-style landing page with Van Gogh background (light/dark mode), Sign Up/Log In buttons, light/dark toggle",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Post-login homepage with hero section, search bar, mood-based recommendation carousels (Happy, Melancholic, Adventurous, Calm, Inspiring, Suspenseful), trending/popular section",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Collapsible vertical sidebar with Home, Books, Authors, Trending, Upload Book, Profile options",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Social features with post-and-refresh: reviews & ratings, followers/following, discussion threads/book clubs, share functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Placeholder text fields for AI-powered book summaries and mood-based tags (structured for future AI integration)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Personalized user experience: recommendations based on reading history, 'For You' section, 'Continue Reading', 'Recently Viewed', mood-adaptive themes",
+      "reqIds": [],
+      "status": "pending"
     },
     {
       "id": "AR-11",
-      "summary": "Verify that the backend deleteAccount function in backend/main.mo properly removes all user data including profile, books, reviews/ratings, reading lists, and analytics when called",
+      "summary": "Create backend data structures and methods for Curated Collections that can be created by admins, staff, or authors. Each collection should have: collection ID, title, description, theme/mood/genre category, list of book ISBNs, creator principal, creation timestamp, and visibility status.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Implement Admin Analytics Dashboard backend methods to aggregate and return: site-wide book trends (most viewed, most read, most favorited), user activity metrics (total users, active users, new users over time period), popular moods (aggregated from genre data), and trending books by time period.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Create backend moderation system for reviews, comments, and uploaded content with: flagging mechanism, moderation queue, approve/reject methods, moderation status tracking (pending, approved, rejected, flagged), and moderator action history.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Extend backend book data structure to support Series with: series ID, series title, series description, ordered list of book ISBNs, and position numbers. Add methods to create series, add/remove books from series, reorder books, and retrieve series by ID or by book ISBN.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add backend support for User Reviews and Ratings with: review ID, book ISBN, reviewer principal, rating (1-5 stars), review text, timestamp, moderation status, and helpful votes count. Include methods to submit reviews, update reviews, flag reviews, and retrieve reviews by book or user.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Implement backend Follow System allowing users to follow authors and other users. Store follower relationships (follower principal, followed principal, follow timestamp) and provide methods to follow/unfollow, get followers list, get following list, and check if user follows another user.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Create backend Discussion Thread System for books and genres with: thread ID, book/genre reference, thread title, creator principal, creation timestamp, posts array (post ID, author principal, content, timestamp, parent post ID for replies), and moderation status. Include methods to create threads, add posts, reply to posts, flag posts, and retrieve threads by book or genre.",
       "reqIds": [
         "REQ-7"
       ],
       "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add backend fields to book data structure for AI-generated content placeholders: summaryText (optional text for AI-generated summary), moodTags (array of mood keywords), and aiGeneratedFlag (boolean). These fields should be editable by admins and authors, stored as optional text until future AI integration.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Implement backend Personalized Recommendations System tracking: user reading history (books read, timestamps), favorite genres (derived from reading history), favorite authors (derived from reading history), and methods to generate personalized book recommendations based on this data.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
     }
   ],
-  "projectName": "House of Vigilantes",
+  "gameProjectType": "none",
+  "projectName": "Canva-Style Book Platform",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

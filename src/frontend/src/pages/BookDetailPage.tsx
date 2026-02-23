@@ -1,365 +1,206 @@
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { useGetBook, useIsCallerAdmin, useGetUserBookProgress, useUpdateReadingProgress, useIsBookBookmarked, useToggleBookmark, useBookRatings, useAddRating, useGetBookAverageRating } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, Bookmark, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, Calendar, Hash, AlertCircle, BookOpen, Plus, Minus, Bookmark, BookmarkCheck } from 'lucide-react';
-import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { useGetBook, useToggleBookmark, useIsBookBookmarked, useAddRating, useGetBookAverageRating, useGetUserBookProgress, useUpdateReadingProgress, useTrackBookView } from '../hooks/useQueries';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import PdfViewer from '../components/PdfViewer';
 import StarRating from '../components/StarRating';
 import AuthPrompt from '../components/AuthPrompt';
+import { toast } from 'sonner';
 
 export default function BookDetailPage() {
   const { isbn } = useParams({ from: '/book/$isbn' });
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: book, isLoading, error } = useGetBook(isbn);
-  const { data: isAdmin } = useIsCallerAdmin();
-  const { data: progress, refetch: refetchProgress } = useGetUserBookProgress(isbn);
-  const updateProgress = useUpdateReadingProgress();
-  const { data: isBookmarked, isLoading: bookmarkLoading } = useIsBookBookmarked(isbn);
-  const toggleBookmark = useToggleBookmark();
-  const { data: ratings } = useBookRatings(isbn);
+  const { data: book, isLoading } = useGetBook(isbn);
+  const { data: isBookmarked = false } = useIsBookBookmarked(isbn);
   const { data: averageRating } = useGetBookAverageRating(isbn);
+  const { data: progress } = useGetUserBookProgress(isbn);
+  const toggleBookmark = useToggleBookmark();
   const addRating = useAddRating();
-
-  const [pagesRead, setPagesRead] = useState<number>(0);
-  const [userRating, setUserRating] = useState<number>(0);
-  const [authPromptOpen, setAuthPromptOpen] = useState(false);
-  const [authPromptMessage, setAuthPromptMessage] = useState('');
+  const updateProgress = useUpdateReadingProgress();
+  const trackView = useTrackBookView();
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [userRating, setUserRating] = useState(0);
 
   const isAuthenticated = !!identity;
 
-  // Update local state when progress data loads
   useEffect(() => {
-    if (progress) {
-      setPagesRead(Number(progress.pagesRead));
+    if (isbn && isAuthenticated) {
+      trackView.mutate(isbn);
     }
-  }, [progress]);
+  }, [isbn, isAuthenticated]);
 
-  // Find user's existing rating
-  useEffect(() => {
-    if (ratings && identity) {
-      const myRating = ratings.find(r => r.userId.toString() === identity.getPrincipal().toString());
-      if (myRating) {
-        setUserRating(Number(myRating.stars));
-      }
-    }
-  }, [ratings, identity]);
-
-  const showAuthPrompt = (message: string) => {
-    setAuthPromptMessage(message);
-    setAuthPromptOpen(true);
-  };
-
-  const handleBookmarkToggle = async () => {
+  const handleBookmark = () => {
     if (!isAuthenticated) {
-      showAuthPrompt('Please log in to bookmark books and save them to your favorites.');
+      setShowAuthPrompt(true);
       return;
     }
-
-    try {
-      await toggleBookmark.mutateAsync(isbn);
-      toast.success(isBookmarked ? 'Removed from favorites' : 'Added to favorites');
-    } catch (error) {
-      toast.error('Failed to update bookmark');
-    }
+    toggleBookmark.mutate(isbn, {
+      onSuccess: () => {
+        toast.success(isBookmarked ? 'Removed from favorites' : 'Added to favorites');
+      },
+    });
   };
 
-  const handleRatingChange = async (stars: number) => {
+  const handleRating = (stars: number) => {
     if (!isAuthenticated) {
-      showAuthPrompt('Please log in to rate books and share your opinion with the community.');
+      setShowAuthPrompt(true);
       return;
     }
-
-    try {
-      await addRating.mutateAsync({ bookIsbn: isbn, stars });
-      setUserRating(stars);
-      toast.success('Rating submitted successfully');
-    } catch (error) {
-      toast.error('Failed to submit rating');
-    }
+    setUserRating(stars);
+    addRating.mutate({ bookIsbn: isbn, stars }, {
+      onSuccess: () => {
+        toast.success('Rating submitted!');
+      },
+    });
   };
 
-  const handleUpdateProgress = async () => {
+  const handleProgressUpdate = (pagesRead: number) => {
     if (!isAuthenticated) {
-      showAuthPrompt('Please log in to track your reading progress across all your books.');
+      setShowAuthPrompt(true);
       return;
     }
-
-    if (pagesRead < 0 || (book && pagesRead > Number(book.pageCount))) {
-      toast.error(`Pages read must be between 0 and ${book?.pageCount}`);
-      return;
-    }
-
-    try {
-      await updateProgress.mutateAsync({
-        bookIsbn: isbn,
-        pagesRead: BigInt(pagesRead),
-      });
-      await refetchProgress();
-      toast.success('Reading progress updated');
-    } catch (error) {
-      toast.error('Failed to update progress');
-    }
-  };
-
-  const incrementPages = () => {
-    if (book && pagesRead < Number(book.pageCount)) {
-      setPagesRead(prev => prev + 1);
-    }
-  };
-
-  const decrementPages = () => {
-    if (pagesRead > 0) {
-      setPagesRead(prev => prev - 1);
-    }
+    updateProgress.mutate({ bookIsbn: isbn, pagesRead: BigInt(pagesRead) });
   };
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <Skeleton className="h-10 w-32 mb-8" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          <Skeleton className="aspect-[2/3] w-full max-w-md mx-auto" />
-          <div className="space-y-4">
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-6 w-1/3" />
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-vangogh-blue mb-4"></div>
+          <p className="text-muted-foreground">Loading book details...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !book) {
+  if (!book) {
     return (
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <Alert variant="destructive" className="rounded-3xl">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Book not found or failed to load. Please try again later.
-          </AlertDescription>
-        </Alert>
+      <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-serif font-bold text-vangogh-blue mb-4">Book Not Found</h2>
+          <Button onClick={() => navigate({ to: '/browse' })} className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full">
+            Browse Books
+          </Button>
+        </div>
       </div>
     );
   }
-
-  const progressPercentage = book.pageCount > 0n ? (Number(progress?.pagesRead || 0n) / Number(book.pageCount)) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-starry-background">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <Button
-          variant="ghost"
-          onClick={() => navigate({ to: '/browse' })}
-          className="mb-6 rounded-full hover:bg-starry-accent/10"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Collection
-        </Button>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <Button
+            variant="ghost"
+            onClick={() => navigate({ to: '/browse' })}
+            className="mb-6 hover:bg-vangogh-yellow/20"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Books
+          </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8">
-          {/* Book Cover */}
-          <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-md">
-              <img
-                src={book.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
-                alt={book.title}
-                className="w-full rounded-3xl shadow-2xl border-4 border-starry-accent/20"
-              />
-            </div>
-          </div>
-
-          {/* Book Details */}
-          <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-starry-secondary mb-3 leading-tight">
-                  {book.title}
-                </h1>
-                <p className="text-xl md:text-2xl text-starry-accent font-serif mb-4">
-                  by {book.author}
-                </p>
-              </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={handleBookmarkToggle}
-                      disabled={bookmarkLoading || toggleBookmark.isPending}
-                      className="rounded-full shrink-0"
-                    >
-                      {isBookmarked ? (
-                        <BookmarkCheck className="h-5 w-5 fill-starry-secondary text-starry-secondary" />
-                      ) : (
-                        <Bookmark className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {!isAuthenticated ? 'Log in to bookmark' : isBookmarked ? 'Remove from favorites' : 'Add to favorites'}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            {/* Rating Display and Input */}
-            <div className="space-y-3">
-              {averageRating !== null && averageRating !== undefined && (
-                <div className="flex items-center gap-2">
-                  <StarRating rating={averageRating} size="lg" count={ratings?.length || 0} />
-                  <span className="text-sm text-muted-foreground">
-                    {averageRating.toFixed(1)} average
-                  </span>
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">
-                  {isAuthenticated && userRating > 0 ? 'Your rating:' : 'Rate this book:'}
-                </Label>
-                <StarRating 
-                  rating={userRating} 
-                  interactive 
-                  size="lg"
-                  onChange={handleRatingChange}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div className="lg:col-span-1">
+              <div className="bg-card rounded-3xl border-2 border-vangogh-yellow/30 p-6 shadow-vangogh-glow sticky top-8">
+                <img
+                  src={book.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
+                  alt={book.title}
+                  className="w-full rounded-2xl shadow-lg mb-6"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/generated/placeholder-cover.dim_400x600.png';
+                  }}
                 />
-                {!isAuthenticated && (
-                  <p className="text-xs text-muted-foreground">
-                    Log in to rate this book
-                  </p>
-                )}
+                <div className="space-y-4">
+                  <Button
+                    onClick={handleBookmark}
+                    variant={isBookmarked ? 'default' : 'outline'}
+                    className="w-full rounded-full"
+                  >
+                    <Bookmark className={`h-4 w-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
+                    {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                  </Button>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-2">Rate this book</p>
+                    <StarRating
+                      rating={userRating}
+                      onChange={handleRating}
+                      size="lg"
+                      interactive
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="prose prose-sm md:prose-base max-w-none">
-              <p className="text-foreground leading-relaxed">{book.description}</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 py-4 border-y border-border">
-              <div className="flex items-center gap-2 text-sm md:text-base">
-                <Calendar className="h-4 w-4 md:h-5 md:w-5 text-starry-secondary" />
-                <span className="text-muted-foreground">Published:</span>
-                <span className="font-medium">{book.publicationYear.toString()}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm md:text-base">
-                <Hash className="h-4 w-4 md:h-5 md:w-5 text-starry-secondary" />
-                <span className="text-muted-foreground">Genre:</span>
-                <span className="font-medium">{book.genre}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm md:text-base col-span-2">
-                <BookOpen className="h-4 w-4 md:h-5 md:w-5 text-starry-secondary" />
-                <span className="text-muted-foreground">Pages:</span>
-                <span className="font-medium">{book.pageCount.toString()}</span>
-              </div>
-            </div>
-
-            {/* Reading Progress Tracker */}
-            <Card className="border-starry-accent/30 rounded-3xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-serif">Reading Progress</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {isAuthenticated ? (
-                  <>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">{progressPercentage.toFixed(0)}%</span>
-                      </div>
-                      <Progress value={progressPercentage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">
-                        {progress?.pagesRead.toString() || '0'} of {book.pageCount.toString()} pages
-                      </p>
+            <div className="lg:col-span-2">
+              <div className="bg-card rounded-3xl border-2 border-vangogh-yellow/30 p-8 shadow-vangogh-glow">
+                <div className="mb-6">
+                  <Badge className="mb-4 bg-vangogh-blue text-white">{book.genre}</Badge>
+                  <h1 className="text-4xl font-serif font-bold text-vangogh-blue mb-2">
+                    {book.title}
+                  </h1>
+                  <p className="text-xl text-muted-foreground mb-4">by {book.author}</p>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <StarRating rating={averageRating || 0} size="md" />
+                      <span className="text-sm text-muted-foreground">
+                        {averageRating ? averageRating.toFixed(1) : 'No ratings'}
+                      </span>
                     </div>
+                    <span className="text-sm text-muted-foreground">
+                      {Number(book.pageCount)} pages
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {Number(book.publicationYear)}
+                    </span>
+                  </div>
+                </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="pages-read" className="text-sm font-medium">
-                        Update Pages Read
-                      </Label>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={decrementPages}
-                          disabled={pagesRead === 0}
-                          className="rounded-full shrink-0"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <Input
-                          id="pages-read"
-                          type="number"
-                          min="0"
-                          max={Number(book.pageCount)}
-                          value={pagesRead}
-                          onChange={(e) => setPagesRead(Number(e.target.value))}
-                          className="text-center rounded-full"
-                        />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={incrementPages}
-                          disabled={pagesRead >= Number(book.pageCount)}
-                          className="rounded-full shrink-0"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                <div className="prose prose-lg max-w-none mb-8">
+                  <h3 className="text-xl font-serif font-bold text-vangogh-blue mb-3">Description</h3>
+                  <p className="text-foreground/80 leading-relaxed">{book.description}</p>
+                </div>
+
+                {progress && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-serif font-bold text-vangogh-blue mb-3">Reading Progress</h3>
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="w-full bg-muted rounded-full h-3">
+                          <div
+                            className="bg-vangogh-blue h-3 rounded-full transition-all duration-300"
+                            style={{ width: `${(Number(progress.pagesRead) / Number(book.pageCount)) * 100}%` }}
+                          />
+                        </div>
                       </div>
-                      <Button
-                        onClick={handleUpdateProgress}
-                        disabled={updateProgress.isPending}
-                        className="w-full rounded-full bg-starry-secondary hover:bg-starry-secondary/90"
-                      >
-                        {updateProgress.isPending ? 'Updating...' : 'Save Progress'}
-                      </Button>
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">
+                        {Number(progress.pagesRead)} / {Number(book.pageCount)} pages
+                      </span>
                     </div>
-                  </>
-                ) : (
-                  <div className="text-center py-6 space-y-3">
-                    <p className="text-muted-foreground">
-                      Log in to track your reading progress
-                    </p>
-                    <Button
-                      onClick={() => showAuthPrompt('Please log in to track your reading progress across all your books.')}
-                      variant="outline"
-                      className="rounded-full"
-                    >
-                      Log In to Track Progress
-                    </Button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+
+                {book.pdfFileUrl && (
+                  <div className="mt-8">
+                    <h3 className="text-xl font-serif font-bold text-vangogh-blue mb-4">Read Book</h3>
+                    <PdfViewer pdfUrl={book.pdfFileUrl} />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* PDF Viewer */}
-        {book.pdfFileUrl && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-serif font-bold mb-4">Read Online</h2>
-            <PdfViewer pdfUrl={book.pdfFileUrl} title={book.title} />
-          </div>
-        )}
       </div>
 
-      {/* Auth Prompt Modal */}
       <AuthPrompt
-        open={authPromptOpen}
-        onOpenChange={setAuthPromptOpen}
-        message={authPromptMessage}
+        open={showAuthPrompt}
+        onOpenChange={setShowAuthPrompt}
+        message="Please log in to bookmark books, rate them, and track your reading progress."
       />
-    </div>
+    </>
   );
 }

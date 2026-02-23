@@ -2,10 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-new-van-gogh-inspired-landing-page-component-at-frontend-src-pages-landingpage-tsx-with-full-screen-van-gogh-painting-background-sign-up-and-log-in-buttons-integrated-with-internet-identity-and-a-light-dark-mode-toggle",
-      "featureTitle": "Create a new Van Gogh-inspired landing page component at frontend/src/pages/LandingPage.tsx with full-screen Van Gogh painting background, Sign Up and Log In buttons integrated with Internet Identity, and a light/dark mode toggle",
+      "featureId": "feature-create-admin-dashboard-page-displaying-site-wide-analytics-from-backend-total-books-total-users-active-users-last-30-days-most-viewed-books-top-10-most-read-books-top-10-popular-moods-genres-distribution-chart-and-trending-books-require-admin-role-for-access",
+      "featureTitle": "Create Admin Dashboard page displaying site-wide analytics from backend: total books, total users, active users (last 30 days), most viewed books (top 10), most read books (top 10), popular moods/genres distribution chart, and trending books. Require admin role for access.",
       "files": [
-        "frontend/src/pages/LandingPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminAnalyticsPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,15 +20,18 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-10"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-routing-in-frontend-src-app-tsx-to-make-the-new-landingpage-the-default-route-for-unauthenticated-users-and-redirect-authenticated-users-to-home",
-      "featureTitle": "Update routing in frontend/src/App.tsx to make the new LandingPage the default route for unauthenticated users, and redirect authenticated users to /home",
+      "featureId": "feature-build-admin-curated-collections-management-page-allowing-admins-to-create-edit-and-delete-curated-collections-include-form-fields-for-collection-title-description-theme-mood-genre-category-book-selection-interface-search-and-add-books-by-isbn-and-visibility-toggle-display-all-existing-collections-in-a-list-with-edit-delete-actions",
+      "featureTitle": "Build Admin Curated Collections Management page allowing admins to create, edit, and delete curated collections. Include form fields for collection title, description, theme/mood/genre category, book selection interface (search and add books by ISBN), and visibility toggle. Display all existing collections in a list with edit/delete actions.",
       "files": [
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminCollectionsPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -37,15 +43,18 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-2"
+        "REQ-11"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-theme-persistence-using-browser-localstorage-to-store-and-retrieve-the-user-s-light-dark-mode-preference-across-sessions",
-      "featureTitle": "Implement theme persistence using browser localStorage to store and retrieve the user's light/dark mode preference across sessions",
+      "featureId": "feature-create-admin-moderation-dashboard-page-displaying-flagged-content-reviews-comments-books-in-a-queue-for-each-flagged-item-show-content-preview-reporter-information-flag-reason-timestamps-and-action-buttons-approve-reject-remove-include-filtering-by-content-type-and-status-use-post-and-refresh-pattern-no-real-time-updates",
+      "featureTitle": "Create Admin Moderation Dashboard page displaying flagged content (reviews, comments, books) in a queue. For each flagged item, show: content preview, reporter information, flag reason, timestamps, and action buttons (approve, reject, remove). Include filtering by content type and status. Use post-and-refresh pattern (no real-time updates).",
       "files": [
-        "frontend/src/components/ThemeToggle.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminModerationPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -57,15 +66,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-3"
+        "REQ-12"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-log-out-button-in-frontend-src-components-applayout-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-clearing-frontend-session-data",
-      "featureTitle": "Update the Log Out button in frontend/src/components/AppLayout.tsx to redirect to the landing page with a smooth fade transition after clearing frontend session data",
+      "featureId": "feature-enhance-authorseriesmanager-component-to-integrate-with-backend-series-data-instead-of-localstorage-display-author-s-series-with-books-in-reading-order-include-read-next-in-series-prompt-when-viewing-a-book-that-is-part-of-a-series-add-create-series-edit-series-delete-series-and-reorder-books-functionality",
+      "featureTitle": "Enhance AuthorSeriesManager component to integrate with backend series data instead of localStorage. Display author's series with books in reading order. Include 'Read next in series' prompt when viewing a book that is part of a series. Add create series, edit series, delete series, and reorder books functionality.",
       "files": [
-        "frontend/src/components/AppLayout.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BookDetailPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -77,15 +87,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-4"
+        "REQ-13"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-delete-account-flow-in-frontend-src-pages-authordashboardpage-tsx-to-redirect-to-the-landing-page-with-a-smooth-fade-transition-after-successful-account-deletion",
-      "featureTitle": "Update the Delete Account flow in frontend/src/pages/AuthorDashboardPage.tsx to redirect to the landing page with a smooth fade transition after successful account deletion",
+      "featureId": "feature-add-reviews-and-ratings-section-to-bookdetailpage-allowing-authenticated-users-to-submit-text-reviews-with-star-ratings-display-existing-reviews-in-a-list-with-reviewer-name-rating-review-text-timestamp-and-helpful-votes-count-users-can-mark-reviews-as-helpful-and-flag-inappropriate-reviews-use-post-and-refresh-pattern",
+      "featureTitle": "Add Reviews and Ratings section to BookDetailPage allowing authenticated users to submit text reviews with star ratings. Display existing reviews in a list with reviewer name, rating, review text, timestamp, and helpful votes count. Users can mark reviews as helpful and flag inappropriate reviews. Use post-and-refresh pattern.",
       "files": [
-        "frontend/src/pages/AuthorDashboardPage.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BookDetailPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -97,15 +108,18 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-5"
+        "REQ-14"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-delete-account-modal-in-frontend-src-components-deleteaccountmodal-tsx-has-a-semi-transparent-overlay-with-blurred-tinted-background-for-readability",
-      "featureTitle": "Ensure the Delete Account modal in frontend/src/components/DeleteAccountModal.tsx has a semi-transparent overlay with blurred/tinted background for readability",
+      "featureId": "feature-create-user-social-features-page-showing-users-you-follow-authors-and-readers-your-followers-follow-unfollow-buttons-and-follower-following-counts-add-follow-unfollow-buttons-to-author-profile-pages-and-user-profile-pages-use-post-and-refresh-pattern-for-follow-status-updates",
+      "featureTitle": "Create User Social Features page showing: users you follow (authors and readers), your followers, follow/unfollow buttons, and follower/following counts. Add follow/unfollow buttons to author profile pages and user profile pages. Use post-and-refresh pattern for follow status updates.",
       "files": [
-        "frontend/src/components/DeleteAccountModal.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/SocialPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -117,7 +131,119 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-6"
+        "REQ-15"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-discussion-threads-page-for-books-and-genres-display-list-of-discussion-threads-with-title-creator-post-count-and-last-activity-timestamp-allow-authenticated-users-to-create-new-threads-and-post-messages-support-nested-replies-include-flag-inappropriate-content-button-use-post-and-refresh-pattern-for-new-threads-and-posts",
+      "featureTitle": "Build Discussion Threads page for books and genres. Display list of discussion threads with title, creator, post count, and last activity timestamp. Allow authenticated users to create new threads and post messages. Support nested replies. Include flag inappropriate content button. Use post-and-refresh pattern for new threads and posts.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BookDetailPage.tsx",
+        "frontend/src/pages/DiscussionsPage.tsx",
+        "frontend/src/pages/ThreadDetailPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-16"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-personalized-homepage-sections-for-you-personalized-recommendations-based-on-reading-history-and-favorite-genres-authors-continue-reading-books-with-incomplete-reading-progress-and-recently-viewed-last-10-books-viewed-display-these-sections-as-horizontal-carousels-above-existing-mood-based-carousels",
+      "featureTitle": "Add Personalized Homepage sections: 'For You' (personalized recommendations based on reading history and favorite genres/authors), 'Continue Reading' (books with incomplete reading progress), and 'Recently Viewed' (last 10 books viewed). Display these sections as horizontal carousels above existing mood-based carousels.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/BookDetailPage.tsx",
+        "frontend/src/pages/PersonalizedHomePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-17"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-extend-bookform-component-to-include-fields-for-ai-generated-content-placeholders-summary-text-textarea-for-manual-summary-input-mood-tags-multi-select-or-text-input-for-mood-keywords-these-fields-should-be-optional-and-editable-by-admins-and-authors-when-creating-or-editing-books",
+      "featureTitle": "Extend BookForm component to include fields for AI-generated content placeholders: Summary Text (textarea for manual summary input), Mood Tags (multi-select or text input for mood keywords). These fields should be optional and editable by admins and authors when creating or editing books.",
+      "files": [
+        "frontend/src/components/BookForm.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-18"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-curated-collections-on-homepage-or-dedicated-collections-page-show-collection-cards-with-title-description-theme-badge-book-count-and-preview-thumbnails-of-first-3-4-book-covers-clicking-a-collection-navigates-to-a-collection-detail-page-showing-all-books-in-that-collection",
+      "featureTitle": "Display curated collections on homepage or dedicated Collections page. Show collection cards with title, description, theme badge, book count, and preview thumbnails of first 3-4 book covers. Clicking a collection navigates to a collection detail page showing all books in that collection.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/CollectionDetailPage.tsx",
+        "frontend/src/pages/CollectionsPage.tsx",
+        "frontend/src/pages/PersonalizedHomePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-19"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-authordashboardpage-to-include-account-management-section-with-log-out-button-clears-session-redirects-to-landing-page-and-delete-account-button-opens-confirmation-modal-warning-about-permanent-data-loss-deletes-all-user-data-including-profile-books-analytics-favorites-reading-lists-on-confirmation-then-redirects-to-landing-page",
+      "featureTitle": "Update AuthorDashboardPage to include Account Management section with Log Out button (clears session, redirects to landing page) and Delete Account button (opens confirmation modal warning about permanent data loss, deletes all user data including profile, books, analytics, favorites, reading lists on confirmation, then redirects to landing page).",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-20"
       ],
       "confidence": "high"
     }

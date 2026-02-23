@@ -56,6 +56,8 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
     pageCount: BigInt(0),
     pdfFileUrl: '',
   });
+  const [summaryText, setSummaryText] = useState('');
+  const [moodTags, setMoodTags] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -74,6 +76,8 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
   useEffect(() => {
     if (initialBook) {
       setFormData(initialBook);
+      setSummaryText('');
+      setMoodTags('');
     } else {
       setFormData({
         title: '',
@@ -90,6 +94,8 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
         pageCount: BigInt(0),
         pdfFileUrl: '',
       });
+      setSummaryText('');
+      setMoodTags('');
       removeFile();
     }
   }, [initialBook, open]);
@@ -109,11 +115,8 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
 
     setIsSubmitting(true);
     try {
-      // For now, we'll store PDF as a data URL if uploaded
-      // In production, this should use proper blob storage
       let pdfUrl = formData.pdfFileUrl;
       if (fileData) {
-        // Create a new Uint8Array with ArrayBuffer to satisfy TypeScript
         const arrayBuffer = new ArrayBuffer(fileData.length);
         const uint8View = new Uint8Array(arrayBuffer);
         uint8View.set(fileData);
@@ -194,48 +197,59 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="isbn" className="text-sm md:text-base">ISBN</Label>
-              <Input
-                id="isbn"
-                value={formData.isbn}
-                onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
-                placeholder="ISBN number (optional)"
-                disabled={mode === 'edit' || !canEdit}
-                className="text-sm md:text-base"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="year" className="text-sm md:text-base">Publication Year</Label>
-              <Input
-                id="year"
-                type="number"
-                value={Number(formData.publicationYear)}
-                onChange={(e) => setFormData({ ...formData, publicationYear: BigInt(e.target.value) })}
-                placeholder="Year"
-                min="1000"
-                max={new Date().getFullYear() + 10}
-                disabled={!canEdit}
-                className="text-sm md:text-base"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-sm md:text-base">Description *</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Book description"
+              required
+              disabled={!canEdit}
+              rows={3}
+              className="text-sm md:text-base resize-none"
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="summaryText" className="text-sm md:text-base">Summary Text (Optional)</Label>
+            <Textarea
+              id="summaryText"
+              value={summaryText}
+              onChange={(e) => setSummaryText(e.target.value)}
+              placeholder="AI-generated summary placeholder - enter manual summary or leave empty"
+              disabled={!canEdit}
+              rows={3}
+              className="text-sm md:text-base resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="moodTags" className="text-sm md:text-base">Mood Tags (Optional)</Label>
+            <Input
+              id="moodTags"
+              value={moodTags}
+              onChange={(e) => setMoodTags(e.target.value)}
+              placeholder="e.g., inspiring, suspenseful, heartwarming"
+              disabled={!canEdit}
+              className="text-sm md:text-base"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="genre" className="text-sm md:text-base">Genre</Label>
+              <Label htmlFor="genre" className="text-sm md:text-base">Genre *</Label>
               <Select
                 value={formData.genre}
                 onValueChange={(value) => setFormData({ ...formData, genre: value })}
                 disabled={!canEdit}
               >
-                <SelectTrigger id="genre" className="text-sm md:text-base">
+                <SelectTrigger className="text-sm md:text-base">
                   <SelectValue placeholder="Select genre" />
                 </SelectTrigger>
                 <SelectContent>
                   {GENRES.map((genre) => (
-                    <SelectItem key={genre} value={genre} className="text-sm md:text-base">
+                    <SelectItem key={genre} value={genre}>
                       {genre}
                     </SelectItem>
                   ))}
@@ -243,14 +257,53 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="pageCount" className="text-sm md:text-base">Page Count</Label>
+              <Label htmlFor="publicationYear" className="text-sm md:text-base">Year *</Label>
+              <Input
+                id="publicationYear"
+                type="number"
+                value={Number(formData.publicationYear)}
+                onChange={(e) => setFormData({ ...formData, publicationYear: BigInt(e.target.value) })}
+                placeholder="2024"
+                required
+                disabled={!canEdit}
+                className="text-sm md:text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pageCount" className="text-sm md:text-base">Pages *</Label>
               <Input
                 id="pageCount"
                 type="number"
                 value={Number(formData.pageCount)}
-                onChange={(e) => setFormData({ ...formData, pageCount: BigInt(Math.max(0, parseInt(e.target.value) || 0)) })}
-                placeholder="Total pages"
-                min="0"
+                onChange={(e) => setFormData({ ...formData, pageCount: BigInt(e.target.value) })}
+                placeholder="0"
+                required
+                disabled={!canEdit}
+                className="text-sm md:text-base"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="isbn" className="text-sm md:text-base">ISBN *</Label>
+              <Input
+                id="isbn"
+                value={formData.isbn}
+                onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
+                placeholder="978-0-123456-78-9"
+                required
+                disabled={mode === 'edit' || !canEdit}
+                className="text-sm md:text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="coverImageUrl" className="text-sm md:text-base">Cover URL</Label>
+              <Input
+                id="coverImageUrl"
+                value={formData.coverImageUrl}
+                onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
+                placeholder="https://..."
                 disabled={!canEdit}
                 className="text-sm md:text-base"
               />
@@ -258,96 +311,64 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="coverUrl" className="text-sm md:text-base">Cover Image URL</Label>
-            <Input
-              id="coverUrl"
-              value={formData.coverImageUrl}
-              onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
-              placeholder="https://example.com/cover.jpg"
-              type="url"
-              disabled={!canEdit}
-              className="text-sm md:text-base"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm md:text-base">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Book description"
-              rows={5}
-              disabled={!canEdit}
-              className="text-sm md:text-base"
-            />
-          </div>
-
-          {/* PDF Upload Section */}
-          <div className="space-y-2">
             <Label className="text-sm md:text-base">PDF File (Optional)</Label>
-            <Alert className="mb-2">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-xs">
-                Note: PDF upload is currently in development. You can upload a PDF, but full viewing functionality will be available soon.
-              </AlertDescription>
-            </Alert>
-            {!file && !formData.pdfFileUrl ? (
+            {!file ? (
               <Card
-                className="border-2 border-dashed cursor-pointer hover:border-primary/50 transition-colors"
+                className="border-2 border-dashed border-vangogh-blue/30 hover:border-vangogh-blue/50 transition-colors cursor-pointer"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                onClick={() => !canEdit ? null : document.getElementById('pdf-upload')?.click()}
               >
-                <CardContent className="flex flex-col items-center justify-center py-8 text-center">
-                  <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                  <p className="text-sm font-medium mb-1">
-                    {canEdit ? 'Click to upload or drag and drop' : 'PDF upload disabled'}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    PDF files only, up to 1GB
-                  </p>
-                  <input
-                    id="pdf-upload"
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileInputChange}
-                    className="hidden"
-                    disabled={!canEdit}
-                  />
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <Upload className="h-10 w-10 text-vangogh-blue mb-3" />
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Drag and drop your PDF file here, or click to browse
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Maximum file size: 1GB
+                    </p>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileInputChange}
+                      className="hidden"
+                      id="pdf-upload"
+                      disabled={!canEdit}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('pdf-upload')?.click()}
+                      disabled={!canEdit}
+                      className="rounded-full"
+                    >
+                      Select PDF File
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card>
-                <CardContent className="flex items-center justify-between py-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <FileText className="h-8 w-8 text-primary shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {fileName || 'Existing PDF'}
-                      </p>
-                      {fileSize > 0 && (
-                        <p className="text-xs text-muted-foreground">
-                          {formatFileSize(fileSize)}
-                        </p>
-                      )}
+              <Card className="border-2 border-vangogh-blue/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-8 w-8 text-vangogh-blue" />
+                      <div>
+                        <p className="text-sm font-medium">{fileName}</p>
+                        <p className="text-xs text-muted-foreground">{formatFileSize(fileSize)}</p>
+                      </div>
                     </div>
-                  </div>
-                  {canEdit && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFile();
-                        setFormData({ ...formData, pdfFileUrl: '' });
-                      }}
-                      className="shrink-0"
+                      onClick={removeFile}
+                      disabled={!canEdit}
+                      className="hover:bg-destructive/10 hover:text-destructive"
                     >
                       <X className="h-4 w-4" />
                     </Button>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -359,18 +380,22 @@ export default function BookForm({ open, onOpenChange, onSubmit, initialBook, mo
             )}
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
+              className="rounded-full"
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || !canEdit} className="w-full sm:w-auto">
-              {isSubmitting 
-                ? 'Saving...' 
-                : mode === 'submit' 
-                  ? 'Submit for Approval' 
-                  : mode === 'create' 
-                    ? 'Add Book' 
-                    : 'Update Book'}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !canEdit}
+              className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full"
+            >
+              {isSubmitting ? 'Saving...' : mode === 'submit' ? 'Submit' : mode === 'create' ? 'Add Book' : 'Update Book'}
             </Button>
           </div>
         </form>

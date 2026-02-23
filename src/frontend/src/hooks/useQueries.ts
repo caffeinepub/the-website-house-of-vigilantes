@@ -75,7 +75,6 @@ export function useSubmitBook() {
   });
 }
 
-// Alias for backward compatibility
 export const useSubmitBookForApproval = useSubmitBook;
 
 export function useUpdateBook() {
@@ -212,6 +211,7 @@ export function useUpdateReadingProgress() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['progress', variables.bookIsbn] });
+      queryClient.invalidateQueries({ queryKey: ['booksWithProgress'] });
     },
   });
 }
@@ -259,7 +259,6 @@ export function useRequestMoreEdits() {
   });
 }
 
-// Bookmarking hooks
 export function useToggleBookmark() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -305,7 +304,6 @@ export function useBookmarkedBooks() {
   });
 }
 
-// Rating hooks
 export function useAddRating() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -349,7 +347,6 @@ export function useGetBookAverageRating(bookIsbn: string) {
   });
 }
 
-// Trending and recommendations
 export function useGetTrendingBooks() {
   const { actor, isFetching } = useActor();
 
@@ -374,5 +371,78 @@ export function useGetPersonalizedRecommendations() {
       return actor.getPersonalizedRecommendations(identity.getPrincipal());
     },
     enabled: !!actor && !isFetching && !!identity,
+  });
+}
+
+// Books with progress for "Continue Reading"
+export function useGetBooksWithProgress() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<Book[]>({
+    queryKey: ['booksWithProgress', identity?.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!actor || !identity) return [];
+      const progressData = await actor.getAllUserProgress(identity.getPrincipal());
+      const booksWithProgress: Book[] = [];
+      
+      for (const [_, progress] of progressData) {
+        const book = await actor.getBook(progress.bookIsbn);
+        if (book && progress.pagesRead < book.pageCount) {
+          booksWithProgress.push(book);
+        }
+      }
+      
+      return booksWithProgress;
+    },
+    enabled: !!actor && !isFetching && !!identity,
+  });
+}
+
+// Recently viewed books (stored in localStorage for now)
+export function useGetRecentlyViewedBooks() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['recentlyViewed'],
+    queryFn: async () => {
+      if (!actor) return [];
+      const viewedIsbnString = localStorage.getItem('recentlyViewedBooks');
+      if (!viewedIsbnString) return [];
+      
+      const viewedIsbns: string[] = JSON.parse(viewedIsbnString);
+      const books: Book[] = [];
+      
+      for (const isbn of viewedIsbns.slice(0, 10)) {
+        const book = await actor.getBook(isbn);
+        if (book) books.push(book);
+      }
+      
+      return books;
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+// Track book view
+export function useTrackBookView() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (isbn: string) => {
+      const viewedIsbnString = localStorage.getItem('recentlyViewedBooks');
+      const viewedIsbns: string[] = viewedIsbnString ? JSON.parse(viewedIsbnString) : [];
+      
+      // Remove if already exists and add to front
+      const filteredIsbns = viewedIsbns.filter(i => i !== isbn);
+      filteredIsbns.unshift(isbn);
+      
+      // Keep only last 10
+      const updatedIsbns = filteredIsbns.slice(0, 10);
+      localStorage.setItem('recentlyViewedBooks', JSON.stringify(updatedIsbns));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recentlyViewed'] });
+    },
   });
 }

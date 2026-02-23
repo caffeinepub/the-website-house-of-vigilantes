@@ -11,12 +11,20 @@ import UploadBookPage from './pages/UploadBookPage';
 import MyBooksPage from './pages/MyBooksPage';
 import AdminPage from './pages/AdminPage';
 import AdminReviewPage from './pages/AdminReviewPage';
+import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
+import AdminCollectionsPage from './pages/AdminCollectionsPage';
+import AdminModerationPage from './pages/AdminModerationPage';
 import FavoritesPage from './pages/FavoritesPage';
 import PersonalizedHomePage from './pages/PersonalizedHomePage';
 import AuthorsPage from './pages/AuthorsPage';
 import ProfilePage from './pages/ProfilePage';
 import AuthorProfilePage from './pages/AuthorProfilePage';
 import AuthorDashboardPage from './pages/AuthorDashboardPage';
+import SocialPage from './pages/SocialPage';
+import DiscussionsPage from './pages/DiscussionsPage';
+import ThreadDetailPage from './pages/ThreadDetailPage';
+import CollectionsPage from './pages/CollectionsPage';
+import CollectionDetailPage from './pages/CollectionDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -115,6 +123,24 @@ const adminReviewRoute = createRoute({
   component: AdminReviewPage,
 });
 
+const adminAnalyticsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/admin/analytics',
+  component: AdminAnalyticsPage,
+});
+
+const adminCollectionsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/admin/collections',
+  component: AdminCollectionsPage,
+});
+
+const adminModerationRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/admin/moderation',
+  component: AdminModerationPage,
+});
+
 const favoritesRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: '/favorites',
@@ -125,6 +151,36 @@ const profileRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: '/profile',
   component: ProfilePage,
+});
+
+const socialRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/social',
+  component: SocialPage,
+});
+
+const discussionsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/discussions',
+  component: DiscussionsPage,
+});
+
+const threadDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/discussions/$threadId',
+  component: ThreadDetailPage,
+});
+
+const collectionsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/collections',
+  component: CollectionsPage,
+});
+
+const collectionDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/collections/$collectionId',
+  component: CollectionDetailPage,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -140,8 +196,16 @@ const routeTree = rootRoute.addChildren([
     myBooksRoute,
     adminRoute,
     adminReviewRoute,
+    adminAnalyticsRoute,
+    adminCollectionsRoute,
+    adminModerationRoute,
     favoritesRoute,
     profileRoute,
+    socialRoute,
+    discussionsRoute,
+    threadDetailRoute,
+    collectionsRoute,
+    collectionDetailRoute,
   ]),
 ]);
 

@@ -1,85 +1,268 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T08:39:15.700Z",
+  "generatedAt": "2026-02-23T09:23:48.972Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 7,
-    "implemented": 6,
+    "total": 20,
+    "implemented": 11,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a new Van Gogh-inspired landing page component at frontend/src/pages/LandingPage.tsx with full-screen Van Gogh painting background, Sign Up and Log In buttons integrated with Internet Identity, and a light/dark mode toggle",
+        "summary": "Create backend data structures and methods for Curated Collections that can be created by admins, staff, or authors. Each collection should have: collection ID, title, description, theme/mood/genre category, list of book ISBNs, creator principal, creation timestamp, and visibility status.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Create Admin Dashboard page displaying site-wide analytics from backend: total books, total users, active users (last 30 days), most viewed books (top 10), most read books (top 10), popular moods/genres distribution chart, and trending books. Require admin role for access.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/pages/AdminAnalyticsPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/pages/AdminAnalyticsPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Build Admin Curated Collections Management page allowing admins to create, edit, and delete curated collections. Include form fields for collection title, description, theme/mood/genre category, book selection interface (search and add books by ISBN), and visibility toggle. Display all existing collections in a list with edit/delete actions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AdminCollectionsPage.tsx",
+          "frontend/src/components/CollectionForm.tsx",
+          "frontend/src/components/BookSearchSelector.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AdminCollectionsPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Create Admin Moderation Dashboard page displaying flagged content (reviews, comments, books) in a queue. For each flagged item, show: content preview, reporter information, flag reason, timestamps, and action buttons (approve, reject, remove). Include filtering by content type and status. Use post-and-refresh pattern (no real-time updates).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AdminModerationPage.tsx",
+          "frontend/src/components/FlaggedItemCard.tsx",
+          "frontend/src/components/ModerationActionDialog.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AdminModerationPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Enhance AuthorSeriesManager component to integrate with backend series data instead of localStorage. Display author's series with books in reading order. Include 'Read next in series' prompt when viewing a book that is part of a series. Add create series, edit series, delete series, and reorder books functionality.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AuthorSeriesManager.tsx",
+          "frontend/src/components/SeriesForm.tsx",
+          "frontend/src/components/NextInSeriesPrompt.tsx",
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Add Reviews and Ratings section to BookDetailPage allowing authenticated users to submit text reviews with star ratings. Display existing reviews in a list with reviewer name, rating, review text, timestamp, and helpful votes count. Users can mark reviews as helpful and flag inappropriate reviews. Use post-and-refresh pattern.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/components/ReviewSubmissionForm.tsx",
+          "frontend/src/components/ReviewsList.tsx",
+          "frontend/src/components/ReviewCard.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Create User Social Features page showing: users you follow (authors and readers), your followers, follow/unfollow buttons, and follower/following counts. Add follow/unfollow buttons to author profile pages and user profile pages. Use post-and-refresh pattern for follow status updates.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/SocialPage.tsx",
+          "frontend/src/components/UserCard.tsx",
+          "frontend/src/components/FollowButton.tsx",
+          "frontend/src/pages/AuthorProfilePage.tsx",
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/SocialPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-16",
+        "summary": "Build Discussion Threads page for books and genres. Display list of discussion threads with title, creator, post count, and last activity timestamp. Allow authenticated users to create new threads and post messages. Support nested replies. Include flag inappropriate content button. Use post-and-refresh pattern for new threads and posts.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/DiscussionsPage.tsx",
+          "frontend/src/pages/ThreadDetailPage.tsx",
+          "frontend/src/components/CreateThreadDialog.tsx",
+          "frontend/src/components/ThreadCard.tsx",
+          "frontend/src/components/PostCard.tsx",
+          "frontend/src/components/ReplyForm.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/DiscussionsPage.tsx",
+          "frontend/src/pages/ThreadDetailPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/pages/BookDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-17",
+        "summary": "Add Personalized Homepage sections: 'For You' (personalized recommendations based on reading history and favorite genres/authors), 'Continue Reading' (books with incomplete reading progress), and 'Recently Viewed' (last 10 books viewed). Display these sections as horizontal carousels above existing mood-based carousels.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/PersonalizedHomePage.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/BookDetailPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/PersonalizedHomePage.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/BookDetailPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-18",
+        "summary": "Extend BookForm component to include fields for AI-generated content placeholders: Summary Text (textarea for manual summary input), Mood Tags (multi-select or text input for mood keywords). These fields should be optional and editable by admins and authors when creating or editing books.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/BookForm.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/BookForm.tsx"
+        ]
+      },
+      {
+        "id": "REQ-19",
+        "summary": "Display curated collections on homepage or dedicated Collections page. Show collection cards with title, description, theme badge, book count, and preview thumbnails of first 3-4 book covers. Clicking a collection navigates to a collection detail page showing all books in that collection.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/CollectionsPage.tsx",
+          "frontend/src/pages/CollectionDetailPage.tsx",
+          "frontend/src/components/CollectionCard.tsx",
+          "frontend/src/pages/PersonalizedHomePage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/CollectionsPage.tsx",
+          "frontend/src/pages/CollectionDetailPage.tsx",
+          "frontend/src/pages/PersonalizedHomePage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Sidebar.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update routing in frontend/src/App.tsx to make the new LandingPage the default route for unauthenticated users, and redirect authenticated users to /home",
+        "summary": "Implement Admin Analytics Dashboard backend methods to aggregate and return: site-wide book trends (most viewed, most read, most favorited), user activity metrics (total users, active users, new users over time period), popular moods (aggregated from genre data), and trending books by time period.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Update AuthorDashboardPage to include Account Management section with Log Out button (clears session, redirects to landing page) and Delete Account button (opens confirmation modal warning about permanent data loss, deletes all user data including profile, books, analytics, favorites, reading lists on confirmation, then redirects to landing page).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/pages/AuthorDashboardPage.tsx",
+          "frontend/src/components/DeleteAccountModal.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Implement theme persistence using browser localStorage to store and retrieve the user's light/dark mode preference across sessions",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/ThemeToggle.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/ThemeToggle.tsx"
-        ]
+        "summary": "Create backend moderation system for reviews, comments, and uploaded content with: flagging mechanism, moderation queue, approve/reject methods, moderation status tracking (pending, approved, rejected, flagged), and moderator action history.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-4",
-        "summary": "Update the Log Out button in frontend/src/components/AppLayout.tsx to redirect to the landing page with a smooth fade transition after clearing frontend session data",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AppLayout.tsx",
-          "frontend/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AppLayout.tsx"
-        ]
+        "summary": "Extend backend book data structure to support Series with: series ID, series title, series description, ordered list of book ISBNs, and position numbers. Add methods to create series, add/remove books from series, reorder books, and retrieve series by ID or by book ISBN.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-5",
-        "summary": "Update the Delete Account flow in frontend/src/pages/AuthorDashboardPage.tsx to redirect to the landing page with a smooth fade transition after successful account deletion",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AuthorDashboardPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AuthorDashboardPage.tsx"
-        ]
+        "summary": "Add backend support for User Reviews and Ratings with: review ID, book ISBN, reviewer principal, rating (1-5 stars), review text, timestamp, moderation status, and helpful votes count. Include methods to submit reviews, update reviews, flag reviews, and retrieve reviews by book or user.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-6",
-        "summary": "Ensure the Delete Account modal in frontend/src/components/DeleteAccountModal.tsx has a semi-transparent overlay with blurred/tinted background for readability",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/DeleteAccountModal.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/DeleteAccountModal.tsx"
-        ]
+        "summary": "Implement backend Follow System allowing users to follow authors and other users. Store follower relationships (follower principal, followed principal, follow timestamp) and provide methods to follow/unfollow, get followers list, get following list, and check if user follows another user.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-7",
-        "summary": "Verify that the backend deleteAccount function in backend/main.mo properly removes all user data including profile, books, reviews/ratings, reading lists, and analytics when called",
+        "summary": "Create backend Discussion Thread System for books and genres with: thread ID, book/genre reference, thread title, creator principal, creation timestamp, posts array (post ID, author principal, content, timestamp, parent post ID for replies), and moderation status. Include methods to create threads, add posts, reply to posts, flag posts, and retrieve threads by book or genre.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Add backend fields to book data structure for AI-generated content placeholders: summaryText (optional text for AI-generated summary), moodTags (array of mood keywords), and aiGeneratedFlag (boolean). These fields should be editable by admins and authors, stored as optional text until future AI integration.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Implement backend Personalized Recommendations System tracking: user reading history (books read, timestamps), favorite genres (derived from reading history), favorite authors (derived from reading history), and methods to generate personalized book recommendations based on this data.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
@@ -92,14 +275,20 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/landing-hero.dim_1920x1080.png",
     "frontend/src/App.tsx",
-    "frontend/src/components/AppLayout.tsx",
-    "frontend/src/components/DeleteAccountModal.tsx",
-    "frontend/src/components/ThemeToggle.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/AuthorDashboardPage.tsx",
-    "frontend/src/pages/LandingPage.tsx",
+    "frontend/src/components/BookForm.tsx",
+    "frontend/src/components/Sidebar.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminAnalyticsPage.tsx",
+    "frontend/src/pages/AdminCollectionsPage.tsx",
+    "frontend/src/pages/AdminModerationPage.tsx",
+    "frontend/src/pages/BookDetailPage.tsx",
+    "frontend/src/pages/CollectionDetailPage.tsx",
+    "frontend/src/pages/CollectionsPage.tsx",
+    "frontend/src/pages/DiscussionsPage.tsx",
+    "frontend/src/pages/PersonalizedHomePage.tsx",
+    "frontend/src/pages/SocialPage.tsx",
+    "frontend/src/pages/ThreadDetailPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

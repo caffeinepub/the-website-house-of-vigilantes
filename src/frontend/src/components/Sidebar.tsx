@@ -1,32 +1,45 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router';
-import { Home, BookOpen, Users, TrendingUp, Upload, User, ChevronLeft, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Home, BookOpen, Users, TrendingUp, Upload, User, ChevronLeft, ChevronRight, LayoutDashboard, BarChart3, FolderHeart, Shield, MessageSquare, UsersRound } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useIsCallerAdmin } from '../hooks/useQueries';
 
 interface NavItem {
   label: string;
   path: string;
   icon: React.ReactNode;
   authRequired?: boolean;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   { label: 'Home', path: '/home', icon: <Home className="h-5 w-5" /> },
   { label: 'Books', path: '/browse', icon: <BookOpen className="h-5 w-5" /> },
   { label: 'Authors', path: '/authors', icon: <Users className="h-5 w-5" /> },
+  { label: 'Collections', path: '/collections', icon: <FolderHeart className="h-5 w-5" /> },
+  { label: 'Discussions', path: '/discussions', icon: <MessageSquare className="h-5 w-5" /> },
+  { label: 'Social', path: '/social', icon: <UsersRound className="h-5 w-5" />, authRequired: true },
   { label: 'Trending', path: '/home', icon: <TrendingUp className="h-5 w-5" /> },
   { label: 'Upload Book', path: '/upload', icon: <Upload className="h-5 w-5" /> },
   { label: 'Dashboard', path: '/author/dashboard', icon: <LayoutDashboard className="h-5 w-5" />, authRequired: true },
   { label: 'Profile', path: '/profile', icon: <User className="h-5 w-5" /> },
 ];
 
+const adminItems: NavItem[] = [
+  { label: 'Admin', path: '/admin', icon: <Shield className="h-5 w-5" />, adminOnly: true },
+  { label: 'Analytics', path: '/admin/analytics', icon: <BarChart3 className="h-5 w-5" />, adminOnly: true },
+  { label: 'Collections', path: '/admin/collections', icon: <FolderHeart className="h-5 w-5" />, adminOnly: true },
+  { label: 'Moderation', path: '/admin/moderation', icon: <Shield className="h-5 w-5" />, adminOnly: true },
+];
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const routerState = useRouterState();
   const { identity } = useInternetIdentity();
+  const { data: isAdmin } = useIsCallerAdmin();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const currentPath = routerState.location.pathname;
@@ -36,13 +49,14 @@ export default function Sidebar() {
     navigate({ to: path });
   };
 
-  // Filter nav items based on authentication
   const visibleNavItems = navItems.filter(item => {
     if (item.authRequired && !isAuthenticated) {
       return false;
     }
     return true;
   });
+
+  const visibleAdminItems = isAdmin ? adminItems : [];
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -54,92 +68,131 @@ export default function Sidebar() {
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo/Brand */}
           <div className={cn(
             'p-6 border-b border-border transition-all duration-300',
             !isExpanded && 'p-4'
           )}>
-            {isExpanded ? (
-              <div>
-                <h2 className="text-lg font-serif font-bold text-vangogh-blue">
-                  Book Haven
+            <div className="flex items-center justify-between">
+              {isExpanded && (
+                <h2 className="text-xl font-serif font-bold text-vangogh-blue">
+                  THE HOUSE OF VIGILANTES
                 </h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Van Gogh Inspired
-                </p>
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-vangogh-blue to-vangogh-yellow flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-white" />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Items */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {visibleNavItems.map((item) => {
-              const isActive = currentPath === item.path;
-              
-              const buttonContent = (
-                <button
-                  onClick={() => handleNavigation(item.path)}
-                  className={cn(
-                    'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
-                    'text-left font-medium',
-                    isActive
-                      ? 'bg-gradient-to-r from-vangogh-gold to-vangogh-yellow text-vangogh-blue shadow-lg font-bold'
-                      : 'text-foreground hover:bg-accent hover:text-accent-foreground',
-                    !isExpanded && 'justify-center px-2'
-                  )}
-                >
-                  <span className={cn(isActive && 'scale-110 transition-transform')}>
-                    {item.icon}
-                  </span>
-                  {isExpanded && <span>{item.label}</span>}
-                </button>
-              );
-
-              if (!isExpanded) {
-                return (
-                  <Tooltip key={item.path}>
-                    <TooltipTrigger asChild>
-                      {buttonContent}
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>{item.label}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              }
-
-              return <div key={item.path}>{buttonContent}</div>;
-            })}
-          </nav>
-
-          {/* Toggle Button */}
-          <div className="p-4 border-t border-border">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-full hover:bg-accent"
-            >
-              {isExpanded ? (
-                <ChevronLeft className="h-5 w-5" />
-              ) : (
-                <ChevronRight className="h-5 w-5" />
               )}
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="ml-auto hover:bg-vangogh-yellow/20"
+              >
+                {isExpanded ? (
+                  <ChevronLeft className="h-5 w-5" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
           </div>
+
+          <nav className="flex-1 overflow-y-auto py-4">
+            <ul className="space-y-1 px-3">
+              {visibleNavItems.map((item) => {
+                const isActive = currentPath === item.path;
+                return (
+                  <li key={item.path}>
+                    {isExpanded ? (
+                      <button
+                        onClick={() => handleNavigation(item.path)}
+                        className={cn(
+                          'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
+                          'hover:bg-vangogh-yellow/20 hover:text-vangogh-blue',
+                          isActive
+                            ? 'bg-vangogh-blue text-white shadow-vangogh-glow'
+                            : 'text-foreground/70'
+                        )}
+                      >
+                        {item.icon}
+                        <span className="font-medium">{item.label}</span>
+                      </button>
+                    ) : (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => handleNavigation(item.path)}
+                            className={cn(
+                              'w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200',
+                              'hover:bg-vangogh-yellow/20 hover:text-vangogh-blue',
+                              isActive
+                                ? 'bg-vangogh-blue text-white shadow-vangogh-glow'
+                                : 'text-foreground/70'
+                            )}
+                          >
+                            {item.icon}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.label}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {visibleAdminItems.length > 0 && (
+              <>
+                <div className="my-4 px-3">
+                  <div className="border-t border-border" />
+                </div>
+                <ul className="space-y-1 px-3">
+                  {visibleAdminItems.map((item) => {
+                    const isActive = currentPath === item.path;
+                    return (
+                      <li key={item.path}>
+                        {isExpanded ? (
+                          <button
+                            onClick={() => handleNavigation(item.path)}
+                            className={cn(
+                              'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
+                              'hover:bg-vangogh-yellow/20 hover:text-vangogh-blue',
+                              isActive
+                                ? 'bg-vangogh-blue text-white shadow-vangogh-glow'
+                                : 'text-foreground/70'
+                            )}
+                          >
+                            {item.icon}
+                            <span className="font-medium">{item.label}</span>
+                          </button>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => handleNavigation(item.path)}
+                                className={cn(
+                                  'w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200',
+                                  'hover:bg-vangogh-yellow/20 hover:text-vangogh-blue',
+                                  isActive
+                                    ? 'bg-vangogh-blue text-white shadow-vangogh-glow'
+                                    : 'text-foreground/70'
+                                )}
+                              >
+                                {item.icon}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                              <p>{item.label}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+          </nav>
         </div>
       </aside>
-
-      {/* Mobile Sidebar - Simple overlay version */}
-      <div className="lg:hidden">
-        {/* Mobile navigation would go here - simplified for now */}
-      </div>
     </TooltipProvider>
   );
 }
