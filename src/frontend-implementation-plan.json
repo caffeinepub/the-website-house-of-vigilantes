@@ -1,430 +1,293 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend Implementation for Comprehensive Next-Gen Book Platform with Admin Tools and Social Features",
+  "title": "Build comprehensive sidebar navigation with full UI pages (Stage 1)",
   "requirements": [
     {
-      "id": "REQ-10",
-      "summary": "Create Admin Analytics Dashboard page displaying site-wide metrics, trending books, and genre distribution",
+      "id": "REQ-1",
+      "summary": "Replace the existing sidebar navigation with a comprehensive design including navigation items: Home, Books, Authors, Trending, Upload Book, and Profile with collapsible behavior",
       "acceptanceCriteria": [
-        "Dashboard shows key metrics: total books, total users, active users",
-        "Dashboard displays top 10 most viewed and most read books",
-        "Dashboard includes visual chart showing genre/mood distribution",
-        "Page is only accessible to users with admin role"
+        "Sidebar contains all six navigation items: Home, Books, Authors, Trending, Upload Book, Profile",
+        "Collapsible/expandable behavior works smoothly with content resizing",
+        "Navigation items link to their respective pages",
+        "Sidebar maintains localStorage persistence for collapsed/expanded state"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminAnalyticsPage.tsx",
-          "operation": "create",
-          "description": "Create new admin analytics dashboard page that fetches site-wide metrics from backend capabilities for total books, total users, active users, most viewed/read books, popular moods/genres distribution, and trending books. Display metrics in stat cards using DashboardStatsCard component. Include visual chart for genre distribution using a chart library. Add admin-only authorization check using useIsCallerAdmin hook to restrict access."
+          "path": "frontend/src/components/Sidebar.tsx",
+          "operation": "modify",
+          "description": "Update the sidebar component to include all six navigation items (Home, Books, Authors, Trending, Upload Book, Profile) with proper routing. Ensure the collapsible behavior using useSidebarState hook is maintained. Remove or consolidate any existing navigation items that don't match the required set. Verify that localStorage persistence for the collapsed/expanded state continues to work as expected from Version 24."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Update the sidebar styling to use blue, gold, and white as primary colors with Van Gogh-inspired subtle textures and light/dark mode support",
+      "acceptanceCriteria": [
+        "Sidebar uses blue, gold, and white colors consistently",
+        "Van Gogh-inspired textures are applied subtly to the sidebar",
+        "Light and dark mode both render correctly with appropriate color adjustments",
+        "Theme preference persists across sessions via localStorage"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Sidebar.tsx",
+          "operation": "modify",
+          "description": "Apply Van Gogh-inspired styling with blue, gold, and white color scheme to the sidebar component. Use Tailwind classes that reference the existing OKLCH color variables defined in index.css (e.g., sidebar-bg, sidebar-border, primary colors). Add subtle texture effects using CSS patterns or background gradients. Ensure all styling adapts properly for both light and dark modes by leveraging the existing theme system."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Review and adjust the existing Van Gogh-inspired color palette CSS variables for the sidebar to ensure blue, gold, and white are properly represented in both light and dark modes. Add any missing color variables needed for the sidebar styling. Ensure the theme toggle continues to work with localStorage persistence as already implemented."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Verify that the Tailwind configuration extends the OKLCH color system to include all necessary sidebar color tokens (blue, gold, white variants). Add any custom utility classes needed for Van Gogh-inspired textures or sidebar-specific styling patterns."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Create a Home page that displays a hero section with personalized book recommendations and trending books with dynamic content resizing",
+      "acceptanceCriteria": [
+        "Home page displays a hero section at the top",
+        "Personalized recommendations section shows placeholder book cards",
+        "Trending books section displays placeholder books",
+        "Page content dynamically resizes when sidebar state changes",
+        "Navigation from sidebar 'Home' item successfully routes to this page"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PersonalizedHomePage.tsx",
+          "operation": "modify",
+          "description": "Update the existing PersonalizedHomePage to include a hero section at the top with welcoming content. Ensure the personalized recommendations section displays placeholder book cards using the existing RecommendationCard component. Add or enhance the trending books section using the TrendingSection component with placeholder data. Verify that the page content dynamically adjusts its width/margin when the sidebar collapses or expands (this should already be handled by AppLayout). Ensure this page is accessible via the /home route."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route registration for /admin/analytics pointing to AdminAnalyticsPage component. Place route under admin-protected routes alongside existing AdminPage and AdminReviewPage."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Analytics' navigation item to sidebar under admin section, visible only when user is admin. Link to /admin/analytics route."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for fetching admin analytics data: useGetAdminAnalytics (site-wide metrics), useGetMostViewedBooks, useGetMostReadBooks, useGetPopularMoods, and useGetTrendingBooks. Include proper error handling and loading states."
+          "description": "Verify that the /home route is properly configured to render PersonalizedHomePage and that it's accessible from the sidebar Home navigation item. Ensure route guards redirect unauthenticated users appropriately if needed."
         }
       ]
     },
     {
-      "id": "REQ-11",
-      "summary": "Build Admin Curated Collections Management page for creating, editing, and managing curated book collections",
+      "id": "REQ-4",
+      "summary": "Build a Books browse page with advanced search input, filter dropdowns for genres and authors, sorting options, and mood-based carousels with placeholder data",
       "acceptanceCriteria": [
-        "Admins can create new curated collections with title, description, and category",
-        "Collection editor includes search interface to add books by ISBN",
-        "Collections list shows all existing collections with edit/delete options",
-        "Visibility can be toggled between public, private, and draft"
+        "Page includes a search input field for books",
+        "Filter dropdowns for genre and author selection are functional",
+        "Sorting options (e.g., by rating, title, date) are available",
+        "Books display in mood-based horizontal carousels",
+        "Trending section highlights popular books",
+        "Navigation from sidebar 'Books' item routes to this page"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminCollectionsPage.tsx",
-          "operation": "create",
-          "description": "Create admin collections management page displaying all curated collections in a list/grid. Include action buttons for creating new collections, editing existing ones, and deleting collections. Add admin authorization check using useIsCallerAdmin hook."
-        },
-        {
-          "path": "frontend/src/components/CollectionForm.tsx",
-          "operation": "create",
-          "description": "Create dialog form component for creating and editing curated collections. Include fields for title (text input), description (textarea), theme/mood/genre category (select dropdown), book selection interface with ISBN search and multi-select, and visibility toggle (public/private/draft radio buttons). Use controlled form state and validation."
-        },
-        {
-          "path": "frontend/src/components/BookSearchSelector.tsx",
-          "operation": "create",
-          "description": "Create reusable component for searching and selecting books by ISBN or title. Display search results in a list with book cover thumbnails, titles, and authors. Include add/remove buttons for multi-selection. Fetch books using useGetAllBooks hook."
+          "path": "frontend/src/pages/BrowseBooksPage.tsx",
+          "operation": "modify",
+          "description": "Enhance the existing BrowseBooksPage to include an advanced search input field at the top for book searches. Add filter dropdowns for genre and author selection with proper state management. Implement sorting options (by rating, title, publication date) with a dropdown or button group. Ensure mood-based carousels are displayed using the MoodCarousel component with placeholder data. Add a trending section that highlights popular books using the TrendingSection component. Verify that all filters, search, and sorting work together cohesively with placeholder data."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route registration for /admin/collections pointing to AdminCollectionsPage component under admin-protected routes."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Collections' navigation item to sidebar under admin section, visible only when user is admin. Link to /admin/collections route."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for curated collections: useGetAllCollections, useCreateCollection mutation, useUpdateCollection mutation, useDeleteCollection mutation. Include cache invalidation for getAllCollections query after mutations."
+          "description": "Verify that the /browse route is properly configured to render BrowseBooksPage and that it's accessible from the sidebar Books navigation item."
         }
       ]
     },
     {
-      "id": "REQ-12",
-      "summary": "Create Admin Moderation Dashboard page for reviewing and managing flagged content",
+      "id": "REQ-5",
+      "summary": "Create an Authors list page that displays all authors with avatars and brief bios, with clickable entries navigating to public profile pages",
       "acceptanceCriteria": [
-        "Moderation queue displays all flagged items with content previews",
-        "Each item shows reporter info, flag reason, and timestamp",
-        "Admins can approve, reject, or remove flagged content",
-        "Queue supports filtering by content type (reviews, comments, books) and status",
-        "Page refreshes to show updated moderation queue after actions"
+        "Page displays a list or grid of authors",
+        "Each author shows an avatar image and brief bio",
+        "Clicking an author navigates to their profile page",
+        "Navigation from sidebar 'Authors' item routes to this page",
+        "Uses placeholder data for all author information"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminModerationPage.tsx",
-          "operation": "create",
-          "description": "Create admin moderation dashboard page displaying flagged content queue. Show flagged items in a list/table with content preview, reporter information, flag reason, timestamp, and moderation status. Include action buttons for approve, reject, and remove. Add filter controls for content type (reviews, comments, books) and moderation status (pending, approved, rejected, flagged). Add admin authorization check. Use post-and-refresh pattern after moderation actions."
-        },
-        {
-          "path": "frontend/src/components/FlaggedItemCard.tsx",
-          "operation": "create",
-          "description": "Create card component for displaying individual flagged content items. Show content preview (truncated text for reviews/comments, book info for books), reporter principal/name, flag reason, timestamp, and current moderation status. Include action buttons for approve, reject (with reason dialog), and remove that trigger moderation mutations."
-        },
-        {
-          "path": "frontend/src/components/ModerationActionDialog.tsx",
-          "operation": "create",
-          "description": "Create dialog component for confirming moderation actions (approve, reject, remove). For reject action, include textarea for rejection reason. Display warning message about action consequences. Include cancel and confirm buttons."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/AuthorsPage.tsx",
           "operation": "modify",
-          "description": "Add route registration for /admin/moderation pointing to AdminModerationPage component under admin-protected routes."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Moderation' navigation item to sidebar under admin section, visible only when user is admin. Link to /admin/moderation route."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for moderation: useGetFlaggedContent (with filtering options), useFlagContent mutation, useApproveContent mutation, useRejectContent mutation, useRemoveContent mutation. Include cache invalidation for flagged content queries after moderation actions."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Enhance AuthorSeriesManager component to integrate with backend series data and display reading order",
-      "acceptanceCriteria": [
-        "Component fetches and displays series from backend instead of localStorage",
-        "Series shows books in correct reading order with position numbers",
-        "Authors can create, edit, delete series and reorder books within series",
-        "Book detail pages show 'Read next in series' prompt when applicable"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AuthorSeriesManager.tsx",
-          "operation": "modify",
-          "description": "Replace localStorage-based series management with backend integration. Fetch author's series using useGetAuthorSeries hook. Display series with books in reading order showing position numbers. Add create, edit, delete, and reorder functionality using backend mutations. Remove localStorage usage and replace with backend API calls."
-        },
-        {
-          "path": "frontend/src/components/SeriesForm.tsx",
-          "operation": "create",
-          "description": "Create dialog form component for creating and editing book series. Include fields for series title (text input), series description (textarea), and book selection interface showing ordered list of books with drag-and-drop reordering capability. Use BookSearchSelector component for adding books to series. Include position number indicators for each book in the series."
-        },
-        {
-          "path": "frontend/src/components/NextInSeriesPrompt.tsx",
-          "operation": "create",
-          "description": "Create component that displays a 'Read next in series' prompt showing the next book in reading order. Include book cover thumbnail, title, author, and 'Read Now' button linking to the next book's detail page. Styled with Van Gogh theme colors."
-        },
-        {
-          "path": "frontend/src/pages/BookDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add NextInSeriesPrompt component to book detail page when the current book is part of a series and is not the last book. Fetch series information using useGetBookSeries hook and determine next book in reading order. Display prompt below or above the PDF viewer section."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for series management: useGetAuthorSeries (fetch all series by author), useGetBookSeries (fetch series containing a specific book ISBN), useCreateSeries mutation, useUpdateSeries mutation (for editing title/description and reordering books), useDeleteSeries mutation, useAddBookToSeries mutation, useRemoveBookFromSeries mutation. Include cache invalidation."
-        }
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "summary": "Add Reviews and Ratings section to BookDetailPage with submission, display, helpful votes, and flagging",
-      "acceptanceCriteria": [
-        "Authenticated users can submit reviews with 1-5 star rating and text",
-        "Book detail page displays all approved reviews with ratings",
-        "Users can mark reviews as helpful with vote counts",
-        "Users can flag reviews for moderation",
-        "Page refreshes to show newly submitted or updated reviews"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/BookDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add Reviews and Ratings section to book detail page below book information and PDF viewer. Display existing approved reviews using ReviewsList component. Include ReviewSubmissionForm component for authenticated users to submit new reviews. Fetch reviews using useGetBookReviews hook. Use post-and-refresh pattern after review submission."
-        },
-        {
-          "path": "frontend/src/components/ReviewSubmissionForm.tsx",
-          "operation": "create",
-          "description": "Create form component for submitting book reviews. Include StarRating component for selecting 1-5 stars rating and textarea for review text. Add validation requiring both rating and text. Include submit button that calls useSubmitReview mutation. Show toast notification on success/error. Clear form after successful submission. Only visible to authenticated users."
-        },
-        {
-          "path": "frontend/src/components/ReviewsList.tsx",
-          "operation": "create",
-          "description": "Create component displaying list of approved book reviews. For each review show reviewer name (from getUserProfile), star rating using StarRating component, review text, timestamp, and helpful votes count. Include 'Mark as helpful' button (disabled if already marked) and 'Flag' button for reporting inappropriate reviews. Use useMarkReviewHelpful and useFlagReview mutations."
-        },
-        {
-          "path": "frontend/src/components/ReviewCard.tsx",
-          "operation": "create",
-          "description": "Create card component for displaying individual review. Show reviewer avatar/initial, name, star rating, review text (with expand/collapse for long reviews), timestamp formatted as relative time, helpful votes count with thumbs-up icon, and action buttons for marking helpful and flagging. Style with Van Gogh theme."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for reviews: useGetBookReviews (fetch approved reviews by ISBN), useSubmitReview mutation, useUpdateReview mutation, useFlagReview mutation, useMarkReviewHelpful mutation. Include cache invalidation for getBookReviews after mutations."
-        }
-      ]
-    },
-    {
-      "id": "REQ-15",
-      "summary": "Create User Social Features page showing followers, following, and follow/unfollow functionality",
-      "acceptanceCriteria": [
-        "Social page displays lists of followers and following with counts",
-        "Author profile pages include follow/unfollow buttons",
-        "Follow button state reflects current follow status",
-        "Page refreshes to show updated follower/following lists after actions"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/SocialPage.tsx",
-          "operation": "create",
-          "description": "Create user social features page displaying two sections: followers and following. Show count for each section. Display user cards with avatar, name, and follow/unfollow button for each user. Fetch followers using useGetFollowers and following using useGetFollowing hooks. Include authentication check with AuthPrompt for guests. Use post-and-refresh pattern after follow/unfollow actions."
-        },
-        {
-          "path": "frontend/src/components/UserCard.tsx",
-          "operation": "create",
-          "description": "Create card component for displaying user information in social lists. Show user avatar/initial, user name, follow/unfollow button (with loading state), and optional stats (books authored, followers count). Use useFollowUser and useUnfollowUser mutations for follow actions. Style with Van Gogh theme."
-        },
-        {
-          "path": "frontend/src/components/FollowButton.tsx",
-          "operation": "create",
-          "description": "Create reusable follow/unfollow button component that checks current follow status using useIsFollowing hook and displays appropriate button state (Follow/Following/Unfollow). Include loading spinner during mutation. Call useFollowUser or useUnfollowUser mutation on click. Props include targetUserId (Principal)."
+          "description": "Update the existing AuthorsPage to display authors in a grid layout with placeholder avatar images and brief bio text for each author. Make each author entry clickable, linking to their public profile page at /author/:authorName. Use placeholder data for author information (avatars, bios) alongside the existing logic that extracts author names from books. Ensure the page is responsive and accessible via the /authors route from the sidebar."
         },
         {
           "path": "frontend/src/pages/AuthorProfilePage.tsx",
           "operation": "modify",
-          "description": "Add FollowButton component to author profile page header next to author name and bio. Only show for authenticated users viewing other authors' profiles (not their own). Fetch current follow status and display button accordingly."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Add FollowButton component to user profile page header when viewing another user's profile (not your own). Only visible to authenticated users. Fetch follow status and enable follow/unfollow actions."
+          "description": "Verify that the AuthorProfilePage properly displays the public profile for an author, including their avatar, bio, social links, and books. Ensure placeholder data is used for author details that aren't currently stored in the backend. Confirm navigation from AuthorsPage works correctly."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route registration for /social pointing to SocialPage component under authenticated routes."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Social' navigation item to sidebar with Users icon, visible to authenticated users. Link to /social route."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for social features: useGetFollowers, useGetFollowing, useFollowUser mutation, useUnfollowUser mutation, useIsFollowing query, useGetFollowerCount, useGetFollowingCount. Include cache invalidation for follower/following queries after follow/unfollow mutations."
+          "description": "Verify that the /authors route renders AuthorsPage and the /author/:authorName route renders AuthorProfilePage, both accessible from sidebar navigation."
         }
       ]
     },
     {
-      "id": "REQ-16",
-      "summary": "Build Discussion Threads page for books and genres with nested replies and moderation flagging",
+      "id": "REQ-6",
+      "summary": "Build a Trending page that displays trending or popular books and collections, highlighting currently popular moods, genres, and top-rated books",
       "acceptanceCriteria": [
-        "Page displays discussion threads for selected book or genre",
-        "Users can create new discussion threads with title and initial post",
-        "Users can post replies to threads with nested reply support",
-        "Users can flag inappropriate posts for moderation",
-        "Page refreshes to display new threads and posts"
+        "Page displays a section for trending books",
+        "Popular moods are highlighted with visual indicators",
+        "Top-rated books section shows highly-rated placeholder books",
+        "Genre-based trending sections are visible",
+        "Navigation from sidebar 'Trending' item routes to this page"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/DiscussionsPage.tsx",
+          "path": "frontend/src/pages/TrendingPage.tsx",
           "operation": "create",
-          "description": "Create discussions page displaying list of discussion threads filtered by book or genre (from URL params). Show thread cards with title, creator name, post count, last activity timestamp. Include 'New Thread' button for authenticated users. Include filter controls for book/genre selection. Fetch threads using useGetDiscussionThreads hook with filtering params. Add authentication check with AuthPrompt for thread creation."
-        },
-        {
-          "path": "frontend/src/pages/ThreadDetailPage.tsx",
-          "operation": "create",
-          "description": "Create thread detail page displaying thread title, original post, and all replies in nested tree structure. Show post author, content, timestamp for each post. Include reply buttons on each post for authenticated users. Include flag button on each post. Fetch thread with posts using useGetThreadById hook. Use post-and-refresh pattern after posting replies."
-        },
-        {
-          "path": "frontend/src/components/CreateThreadDialog.tsx",
-          "operation": "create",
-          "description": "Create dialog form for creating new discussion threads. Include fields for thread title (text input), book/genre reference (select or hidden param from context), and initial post content (textarea). Add validation requiring title and content. Use useCreateThread mutation. Show toast notification on success/error."
-        },
-        {
-          "path": "frontend/src/components/ThreadCard.tsx",
-          "operation": "create",
-          "description": "Create card component displaying thread summary. Show thread title, creator name (fetch with getUserProfile), post count, last activity timestamp formatted as relative time, and preview of first post. Include click handler to navigate to thread detail page. Style with Van Gogh theme."
-        },
-        {
-          "path": "frontend/src/components/PostCard.tsx",
-          "operation": "create",
-          "description": "Create card component for displaying individual posts in thread. Show post author name (fetch with getUserProfile), post content, timestamp, reply button (for authenticated users), and flag button. Support nested replies by rendering child PostCard components indented. Use useReplyToPost mutation for replies and useFlagPost mutation for flagging."
-        },
-        {
-          "path": "frontend/src/components/ReplyForm.tsx",
-          "operation": "create",
-          "description": "Create inline reply form component showing textarea for reply content and submit/cancel buttons. Appears below post when reply button clicked. Use useReplyToPost mutation with parent post ID. Clear form and hide after successful reply."
+          "description": "Create a new TrendingPage component that displays trending and popular books. Include a section for trending books using the TrendingSection component with placeholder data. Add a popular moods section that highlights currently popular moods with visual indicators (emoji badges or colored chips). Create a top-rated books section displaying highly-rated placeholder books in a grid or carousel format. Add genre-based trending sections that showcase popular books by genre. Use placeholder data for all content. Ensure the page is responsive and follows the Van Gogh-inspired design theme."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route registrations for /discussions (DiscussionsPage) and /discussions/:threadId (ThreadDetailPage) under authenticated routes."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Discussions' navigation item to sidebar with MessageSquare icon, visible to all users. Link to /discussions route."
-        },
-        {
-          "path": "frontend/src/pages/BookDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add 'Join Discussion' button or section on book detail page linking to /discussions?bookIsbn=[isbn] to view/create discussion threads for this book."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for discussions: useGetDiscussionThreads (with book/genre filtering), useGetThreadById, useCreateThread mutation, useReplyToPost mutation, useFlagPost mutation. Include cache invalidation for thread queries after mutations."
+          "description": "Add a new route for /trending that renders the TrendingPage component. Ensure it's accessible from the sidebar Trending navigation item and properly integrated into the router configuration."
         }
       ]
     },
     {
-      "id": "REQ-17",
-      "summary": "Add Personalized Homepage sections with 'For You', 'Continue Reading', and 'Recently Viewed' carousels",
+      "id": "REQ-7",
+      "summary": "Create an Upload Book page or modal with a form for book file upload, metadata entry, cover image upload, and series management fields, accessible to all users",
       "acceptanceCriteria": [
-        "Homepage includes 'For You' carousel with personalized book recommendations",
-        "'Continue Reading' carousel shows books with saved reading progress",
-        "'Recently Viewed' carousel displays last 10 books user has visited",
-        "Personalized sections appear above mood-based recommendation carousels"
+        "Upload Book form is accessible from sidebar navigation",
+        "Form includes fields for: book file upload, title, author, description, genre, cover image",
+        "Series management fields (series name, book order) are included",
+        "Modal overlay has semi-transparent background with blur effect",
+        "Form has submit and cancel buttons",
+        "Currently accessible to all users without authentication checks"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/PersonalizedHomePage.tsx",
+          "path": "frontend/src/pages/UploadBookPage.tsx",
           "operation": "modify",
-          "description": "Add three new carousel sections above existing mood carousels: 'For You' (using useGetPersonalizedRecommendations hook), 'Continue Reading' (using useGetBooksWithProgress hook filtering incomplete books), and 'Recently Viewed' (using useGetRecentlyViewedBooks hook limited to 10). Use BookCarousel component for each section with appropriate heading. Only display personalized sections for authenticated users. Maintain existing hero section and mood carousels below."
+          "description": "Update the existing UploadBookPage to ensure it includes all required form fields: book file upload (PDF), title, author, description, genre, cover image upload, series name, and book order fields. The page already has a dialog-based BookForm component; verify it includes series management fields. Ensure the form is presented with a semi-transparent background and blur effect (may be handled by the dialog component styling). Add submit and cancel buttons if not already present. Remove any authentication checks or restrictions so the form is accessible to all users for now (authentication will be added in Stage 3)."
         },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for personalized content: useGetPersonalizedRecommendations (fetch backend recommendations with reasons), useGetBooksWithProgress (fetch books with incomplete reading progress), useGetRecentlyViewedBooks (fetch last N viewed books with timestamps), useTrackBookView mutation (track when user views a book). Include proper caching and error handling."
-        },
-        {
-          "path": "frontend/src/pages/BookDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add useEffect to track book views for authenticated users using useTrackBookView mutation when page loads or ISBN changes. This populates the recently viewed list for personalized homepage."
-        }
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "summary": "Extend BookForm component with AI-generated content placeholder fields for summary text and mood tags",
-      "acceptanceCriteria": [
-        "Book creation/edit form includes optional Summary Text textarea field",
-        "Book creation/edit form includes Mood Tags input for multiple mood keywords",
-        "Fields are optional and can be left empty",
-        "Summary text and mood tags are saved to backend when provided"
-      ],
-      "file_operations": [
         {
           "path": "frontend/src/components/BookForm.tsx",
           "operation": "modify",
-          "description": "Add two new optional fields to book form: Summary Text (textarea with placeholder 'AI-generated summary placeholder - enter manual summary or leave empty') and Mood Tags (multi-select input or comma-separated text input with placeholder 'e.g., inspiring, suspenseful, heartwarming'). Place these fields after description field. Include these fields in form state and validation (optional fields). Submit values to backend when creating or updating books."
-        }
-      ]
-    },
-    {
-      "id": "REQ-19",
-      "summary": "Display curated collections on homepage or dedicated Collections page with collection cards and detail view",
-      "acceptanceCriteria": [
-        "Collections are displayed as cards with title, description, and theme",
-        "Collection cards show preview thumbnails of included books",
-        "Clicking a collection navigates to detail page with full book list",
-        "Only public/visible collections are shown to non-admin users"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/CollectionsPage.tsx",
-          "operation": "create",
-          "description": "Create public collections page displaying all public/visible curated collections in a grid. Show collection cards using CollectionCard component. Fetch collections using useGetPublicCollections hook (filters for public visibility). Include page header with title 'Curated Collections' and description."
-        },
-        {
-          "path": "frontend/src/pages/CollectionDetailPage.tsx",
-          "operation": "create",
-          "description": "Create collection detail page showing collection title, description, theme badge, creator name, and full list of books in the collection. Use BookGrid component to display books. Fetch collection by ID using useGetCollectionById hook. Include back navigation to collections page."
-        },
-        {
-          "path": "frontend/src/components/CollectionCard.tsx",
-          "operation": "create",
-          "description": "Create card component for displaying collection summary. Show collection title, description (truncated), theme badge with emoji/icon, book count, and preview thumbnails of first 3-4 book covers in a grid. Include click handler to navigate to collection detail page. Style with Van Gogh theme with hover effects."
-        },
-        {
-          "path": "frontend/src/pages/PersonalizedHomePage.tsx",
-          "operation": "modify",
-          "description": "Add 'Curated Collections' horizontal carousel section below trending books section or between mood sections. Fetch featured/recent public collections using useGetFeaturedCollections hook (limited to 6-8). Use CollectionCard components in carousel format similar to BookCarousel."
+          "description": "Verify and enhance the BookForm component to include all required fields: PDF file upload (already using usePdfUpload hook), title, author, description, genre, cover image upload, series name, and book order. Ensure the form dialog has proper styling with semi-transparent overlay and blur effects matching the Van Gogh-inspired theme. Add validation for all fields and clear submit/cancel button functionality."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route registrations for /collections (CollectionsPage) and /collections/:collectionId (CollectionDetailPage)."
-        },
-        {
-          "path": "frontend/src/components/Sidebar.tsx",
-          "operation": "modify",
-          "description": "Add 'Collections' navigation item to sidebar with FolderHeart icon, visible to all users. Link to /collections route."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for public collections: useGetPublicCollections (fetch visible collections), useGetCollectionById, useGetFeaturedCollections (fetch recent or highlighted collections). Include proper caching and error handling."
+          "description": "Verify that the /upload route is properly configured to render UploadBookPage and that it's accessible from the sidebar Upload Book navigation item without authentication restrictions."
         }
       ]
     },
     {
-      "id": "REQ-20",
-      "summary": "Update AuthorDashboardPage with Account Management section including Log Out and Delete Account functionality",
+      "id": "REQ-8",
+      "summary": "Build a Profile page that displays user avatar, name, bio, reading lists, and favorites with Log Out and Delete Account buttons",
       "acceptanceCriteria": [
-        "Dashboard includes Account Management section with Log Out and Delete Account buttons",
-        "Log Out button clears authentication and redirects to landing page",
-        "Delete Account button opens confirmation modal with data loss warning",
-        "Confirmed deletion removes all user data and redirects to landing page"
+        "Profile page displays user avatar, name, and bio",
+        "Reading lists section shows placeholder books",
+        "Favorites section displays bookmarked books",
+        "Log Out button is visible and functional (clears session, redirects to landing page)",
+        "Delete Account button opens a confirmation modal",
+        "Delete Account confirmation modal has cancel and confirm buttons",
+        "Upon Delete Account confirmation, user is redirected to landing page",
+        "Navigation from sidebar 'Profile' item routes to this page"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AuthorDashboardPage.tsx",
+          "path": "frontend/src/pages/ProfilePage.tsx",
           "operation": "modify",
-          "description": "Add new 'Account Management' tab to existing tabs (Profile, Books, Analytics, Series, Interaction). In Account Management tab content, include Log Out button and Delete Account button with danger styling. Log Out button calls handleLogout function (existing pattern from AppLayout). Delete Account button opens DeleteAccountModal component. Both actions redirect to landing page after completion."
+          "description": "Update the existing ProfilePage to display user avatar (placeholder image), name, and bio. Add a reading lists section that shows placeholder books (can use a carousel or grid of book cards). Ensure the favorites section displays bookmarked books using the existing getBookmarkedBooks query. Add visible Log Out and Delete Account buttons prominently on the page. Wire the Log Out button to clear the session using the Internet Identity context and redirect to the landing page (/). Wire the Delete Account button to open the DeleteAccountModal component."
         },
         {
           "path": "frontend/src/components/DeleteAccountModal.tsx",
           "operation": "modify",
-          "description": "Update existing DeleteAccountModal component to ensure it displays warning about permanent data loss including profile, books, analytics, favorites, reading lists. Include two action buttons: Cancel (closes modal) and Delete Account (calls useDeleteAccount mutation with confirmation, shows loading state, redirects to landing page on success). Use danger/destructive button styling for delete action."
+          "description": "Verify the DeleteAccountModal component has proper styling with the Van Gogh-inspired theme, a clear warning message, and cancel/confirm buttons. Ensure that upon confirmation, the modal triggers the deleteAccount mutation (or clears the session if backend deletion isn't implemented yet) and redirects to the landing page. The modal should have a semi-transparent backdrop with blur effect."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Verify useDeleteAccount mutation exists (already in backend interface). Ensure mutation clears query cache, calls clear() from useInternetIdentity after successful deletion, and supports optional targetUser parameter (null for self-deletion)."
+          "description": "Verify that the /profile route is properly configured to render ProfilePage and that it's accessible from the sidebar Profile navigation item."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add social feature UI elements throughout the platform including followers/following counters, review sections on book pages, and share functionality buttons",
+      "acceptanceCriteria": [
+        "Followers/following counters appear on profile and author pages with placeholder numbers",
+        "Book detail pages include a reviews section showing placeholder reviews",
+        "Share buttons are visible on book pages and collections",
+        "All social elements use placeholder data",
+        "Interactions are visual only (no backend calls yet)"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Add followers/following counters to the ProfilePage header section with placeholder numbers (e.g., '234 Followers', '89 Following'). Style these counters consistently with the Van Gogh-inspired theme. Ensure they are prominently displayed near the user's avatar and name."
+        },
+        {
+          "path": "frontend/src/pages/AuthorProfilePage.tsx",
+          "operation": "modify",
+          "description": "Add followers/following counters to the AuthorProfilePage with placeholder numbers. Display these counters near the author's bio and avatar. Use consistent styling with the ProfilePage counters."
+        },
+        {
+          "path": "frontend/src/pages/BookDetailPage.tsx",
+          "operation": "modify",
+          "description": "Add a reviews section to the BookDetailPage that displays placeholder reviews with mock review text, star ratings, usernames, and timestamps. Include a share button (with icons for social media platforms) that is visible but non-functional for now. Position the reviews section below the book description and above or alongside the PDF viewer. Use placeholder data for all review content."
+        },
+        {
+          "path": "frontend/src/pages/CollectionDetailPage.tsx",
+          "operation": "modify",
+          "description": "Add share buttons to the CollectionDetailPage that are visible but non-functional. Include social media icons (Twitter, Facebook, etc.) styled consistently with the Van Gogh theme. Display a placeholder message indicating that collection sharing will be available once backend support is added."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Ensure the sidebar and all new pages are fully responsive across desktop, tablet, and mobile devices with hamburger menu on mobile",
+      "acceptanceCriteria": [
+        "Sidebar renders correctly on desktop, tablet, and mobile screens",
+        "On mobile, sidebar collapses into a hamburger menu or overlay",
+        "All new pages (Home, Books, Authors, Trending, Upload Book, Profile) are responsive",
+        "Content adjusts appropriately for different screen sizes",
+        "Touch interactions work smoothly on mobile devices"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Sidebar.tsx",
+          "operation": "modify",
+          "description": "Ensure the Sidebar component is fully responsive. On mobile screens (below tablet breakpoint), the sidebar should either collapse into a hamburger menu or display as an overlay that can be toggled. Use Tailwind responsive classes (e.g., md:, lg:) to adjust layout and visibility. Verify that touch interactions work smoothly and the mobile menu can be opened and closed easily. The collapsed/expanded state should still persist via localStorage across all devices."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Verify that AppLayout properly handles responsive layout adjustments for the sidebar and main content area. Ensure the mobile menu toggle button in the header is functional and the content area adjusts margins appropriately on all screen sizes. Test that the layout transitions smoothly between desktop, tablet, and mobile breakpoints."
+        },
+        {
+          "path": "frontend/src/pages/PersonalizedHomePage.tsx",
+          "operation": "modify",
+          "description": "Add responsive design adjustments to PersonalizedHomePage. Ensure the hero section, recommendations, and trending sections adapt to different screen sizes using Tailwind responsive utilities. Test that carousels and grids stack or adjust properly on mobile and tablet devices."
+        },
+        {
+          "path": "frontend/src/pages/BrowseBooksPage.tsx",
+          "operation": "modify",
+          "description": "Ensure BrowseBooksPage is fully responsive. Adjust the search input, filter dropdowns, sorting options, and book carousels/grids to stack or reflow appropriately on smaller screens. Use Tailwind responsive classes to optimize the layout for mobile and tablet devices."
+        },
+        {
+          "path": "frontend/src/pages/AuthorsPage.tsx",
+          "operation": "modify",
+          "description": "Make AuthorsPage responsive by adjusting the author grid to show fewer columns on tablet and mobile screens. Ensure author cards remain readable and clickable on all devices."
+        },
+        {
+          "path": "frontend/src/pages/TrendingPage.tsx",
+          "operation": "modify",
+          "description": "Apply responsive design patterns to TrendingPage. Ensure trending sections, mood indicators, and book grids/carousels adapt to different screen sizes. Test that all content is accessible and usable on mobile and tablet devices."
+        },
+        {
+          "path": "frontend/src/pages/UploadBookPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the UploadBookPage and BookForm dialog are responsive. The form should be easily usable on mobile and tablet devices with appropriate input sizing and touch-friendly controls. Verify that file upload areas work with touch interactions."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Add responsive design adjustments to ProfilePage. Ensure the avatar, name, bio, reading lists, favorites, and action buttons are properly laid out on mobile and tablet screens. Use Tailwind responsive utilities to stack or reflow content as needed."
         }
       ]
     }

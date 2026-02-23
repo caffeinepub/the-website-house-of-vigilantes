@@ -1,27 +1,35 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import {
   useGetCallerUserProfile,
   useBookmarkedBooks,
   useGetAllBooks,
+  useDeleteAccount,
 } from '../hooks/useQueries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User, BookOpen, Bookmark, Star, Edit } from 'lucide-react';
+import { User, BookOpen, Bookmark, Star, Edit, LogOut, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import EditProfileDialog from '../components/EditProfileDialog';
-import { useNavigate } from '@tanstack/react-router';
+import DeleteAccountModal from '../components/DeleteAccountModal';
 import AuthPrompt from '../components/AuthPrompt';
+import { toast } from 'sonner';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { identity } = useInternetIdentity();
+  const queryClient = useQueryClient();
+  const { identity, clear } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
   const { data: bookmarkedBooks, isLoading: bookmarksLoading } = useBookmarkedBooks();
   const { data: allBooks, isLoading: booksLoading } = useGetAllBooks();
+  const deleteAccount = useDeleteAccount();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isAuthenticated = !!identity;
 
@@ -37,7 +45,7 @@ export default function ProfilePage() {
     return {
       booksRead: userBooks.length,
       bookmarks: bookmarkedBooks?.length || 0,
-      ratingsGiven: 0, // This would need to be calculated from ratings data
+      ratingsGiven: 0, // Placeholder - would need ratings data
     };
   }, [allBooks, bookmarkedBooks, identity]);
 
@@ -55,6 +63,37 @@ export default function ProfilePage() {
       .slice(0, 5)
       .map(([genre]) => genre);
   }, [bookmarkedBooks]);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await clear();
+      queryClient.clear();
+      toast.success('Logged out successfully');
+      setTimeout(() => {
+        navigate({ to: '/' });
+      }, 300);
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to log out');
+      setIsLoggingOut(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount.mutateAsync(null);
+      await clear();
+      queryClient.clear();
+      toast.success('Account deleted successfully');
+      setTimeout(() => {
+        navigate({ to: '/' });
+      }, 300);
+    } catch (error: any) {
+      console.error('Delete account error:', error);
+      toast.error(error.message || 'Failed to delete account');
+    }
+  };
 
   if (!isAuthenticated) {
     return (
@@ -103,13 +142,17 @@ export default function ProfilePage() {
     );
   }
 
+  // Placeholder followers/following counts
+  const followersCount = 234;
+  const followingCount = 89;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-vangogh-blue/5">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Profile Header */}
           <Card className="rounded-3xl border-2 border-vangogh-yellow/30 bg-gradient-to-br from-vangogh-blue/5 to-vangogh-yellow/5">
-            <CardContent className="p-8">
+            <CardContent className="p-6 md:p-8">
               <div className="flex flex-col md:flex-row items-center gap-6">
                 {/* Avatar */}
                 <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-vangogh-blue/30 to-vangogh-yellow/30 flex items-center justify-center">
@@ -117,30 +160,61 @@ export default function ProfilePage() {
                 </div>
 
                 {/* User Info */}
-                <div className="flex-1 text-center md:text-left space-y-2">
-                  <h1 className="text-3xl font-serif font-bold text-foreground">
+                <div className="flex-1 text-center md:text-left space-y-3">
+                  <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
                     {userProfile?.name || 'Anonymous User'}
                   </h1>
-                  <p className="text-sm text-muted-foreground font-mono">
+                  <p className="text-sm text-muted-foreground font-mono break-all md:break-normal">
                     {identity?.getPrincipal().toString().slice(0, 20)}...
                   </p>
+                  
+                  {/* Followers/Following Counters */}
+                  <div className="flex items-center justify-center md:justify-start gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-vangogh-blue">{followersCount}</span>
+                      <span className="text-muted-foreground">Followers</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-vangogh-blue">{followingCount}</span>
+                      <span className="text-muted-foreground">Following</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Edit Button */}
-                <Button
-                  onClick={() => setEditDialogOpen(true)}
-                  variant="outline"
-                  className="rounded-full border-2 border-vangogh-blue/30 hover:bg-vangogh-blue/10"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3 w-full md:w-auto">
+                  <Button
+                    onClick={() => setEditDialogOpen(true)}
+                    variant="outline"
+                    className="rounded-full border-2 border-vangogh-blue/30 hover:bg-vangogh-blue/10 w-full md:w-auto"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    variant="outline"
+                    className="rounded-full border-2 border-vangogh-yellow/30 hover:bg-vangogh-yellow/10 w-full md:w-auto"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {isLoggingOut ? 'Logging out...' : 'Log Out'}
+                  </Button>
+                  <Button
+                    onClick={() => setDeleteModalOpen(true)}
+                    variant="outline"
+                    className="rounded-full border-2 border-destructive/30 hover:bg-destructive/10 text-destructive w-full md:w-auto"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Account
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <Card className="rounded-3xl border-2 border-vangogh-blue/20 hover:shadow-lg transition-shadow">
               <CardContent className="p-6 text-center space-y-2">
                 <BookOpen className="h-8 w-8 mx-auto text-vangogh-blue" />
@@ -227,6 +301,14 @@ export default function ProfilePage() {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         currentProfile={userProfile}
+      />
+
+      {/* Delete Account Modal */}
+      <DeleteAccountModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteAccount}
+        isDeleting={deleteAccount.isPending}
       />
     </div>
   );

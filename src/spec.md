@@ -1,28 +1,18 @@
 # Specification
 
 ## Summary
-**Goal:** Build a comprehensive next-generation book platform with admin tools, curated collections, enhanced author dashboard, and social features including reviews, discussions, and user following.
+**Goal:** Build comprehensive sidebar navigation with six navigation items (Home, Books, Authors, Trending, Upload Book, Profile) and create fully functional UI pages for each item with Van Gogh-inspired styling.
 
 **Planned changes:**
-- Add curated collections system allowing admins, staff, and authors to create themed book collections
-- Implement admin analytics dashboard showing site-wide trends, user activity, and popular genres/moods
-- Create moderation system for flagging and reviewing user-generated content (reviews, comments, books)
-- Add series support for organizing related books in reading order
-- Implement user reviews and ratings with star ratings, review text, and helpful votes
-- Add follow system allowing users to follow authors and other readers
-- Create discussion threads system for books and genres with nested replies
-- Add AI-generated content placeholder fields (summaryText, moodTags) for future integration
-- Implement personalized recommendations based on reading history and favorite genres/authors
-- Build admin dashboard page with analytics visualizations and key metrics
-- Create admin curated collections management interface
-- Build admin moderation dashboard for reviewing flagged content
-- Enhance author series manager to integrate with backend series data
-- Add reviews and ratings section to book detail pages
-- Create user social features page showing followers and following
-- Build discussion threads page for books and genres
-- Add personalized homepage sections (For You, Continue Reading, Recently Viewed)
-- Extend book form to include summary text and mood tags fields
-- Display curated collections on homepage or dedicated collections page
-- Update author dashboard with account management section (Log Out and Delete Account buttons)
+- Replace existing sidebar with navigation items: Home, Books, Authors, Trending, Upload Book, and Profile
+- Update sidebar styling to blue, gold, and white color scheme with Van Gogh-inspired textures and light/dark mode support
+- Create Home page with hero section, personalized recommendations, and trending books
+- Build Books browse page with search, filters, sorting, and mood-based carousels
+- Create Authors list page with avatars, bios, and clickable profiles
+- Build Trending page displaying popular books, moods, genres, and top-rated books
+- Create Upload Book page/modal with form for book file upload, metadata entry, cover image, and series management
+- Build Profile page with avatar, bio, reading lists, favorites, and Log Out/Delete Account buttons
+- Add social feature UI elements including followers/following counters, review sections, and share buttons
+- Ensure full responsiveness across desktop, tablet, and mobile with hamburger menu on mobile
 
-**User-visible outcome:** Users can discover books through curated collections and personalized recommendations, submit reviews and ratings, follow authors and other readers, participate in book discussions, and manage their reading preferences. Authors can organize books into series and track engagement. Admins can curate collections, moderate content, and view platform analytics.
+**User-visible outcome:** Users can navigate through a comprehensive sidebar to access Home, Books, Authors, Trending, Upload Book, and Profile pages, each with placeholder content and Van Gogh-inspired styling. The sidebar collapses smoothly and all pages resize dynamically. On mobile, the sidebar becomes a hamburger menu. Social features and account actions are visible but use placeholder data.

@@ -1,119 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import type { Book, UserProfile, BookSubmission, ReadingProgress, Rating, Recommendation } from '../backend';
+import type { Book, UserProfile, Rating, Recommendation } from '../backend';
+import { Principal } from '@dfinity/principal';
 
-export function useGetAllBooks() {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<Book[]>({
-    queryKey: ['books'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllBooks();
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-export function useGetBook(isbn: string) {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<Book | null>({
-    queryKey: ['book', isbn],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getBook(isbn);
-    },
-    enabled: !!actor && !isFetching && !!isbn,
-  });
-}
-
-export function useGetMyBooks() {
-  const { actor, isFetching } = useActor();
-  const { identity } = useInternetIdentity();
-
-  return useQuery<Book[]>({
-    queryKey: ['myBooks', identity?.getPrincipal().toString()],
-    queryFn: async () => {
-      if (!actor || !identity) return [];
-      const allBooks = await actor.getAllBooks();
-      const myPrincipal = identity.getPrincipal().toString();
-      return allBooks.filter(book => book.uploaderId.toString() === myPrincipal);
-    },
-    enabled: !!actor && !isFetching && !!identity,
-  });
-}
-
-export function useGetBooksByAuthor(author: string) {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<Book[]>({
-    queryKey: ['booksByAuthor', author],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getBooksByAuthor(author);
-    },
-    enabled: !!actor && !isFetching && !!author,
-  });
-}
-
-export function useSubmitBook() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (book: Book) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.submitBookForApproval(book);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['books'] });
-      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
-      queryClient.invalidateQueries({ queryKey: ['submissions'] });
-    },
-  });
-}
-
-export const useSubmitBookForApproval = useSubmitBook;
-
-export function useUpdateBook() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ isbn, book }: { isbn: string; book: Book }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.updateBook(isbn, book);
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['books'] });
-      queryClient.invalidateQueries({ queryKey: ['book', variables.isbn] });
-      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
-      queryClient.invalidateQueries({ queryKey: ['booksByAuthor'] });
-    },
-  });
-}
-
-export function useDeleteBook() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (isbn: string) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteBook(isbn);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['books'] });
-      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
-      queryClient.invalidateQueries({ queryKey: ['booksByAuthor'] });
-    },
-  });
-}
-
+// User Profile Queries
 export function useGetCallerUserProfile() {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   const query = useQuery<UserProfile | null>({
     queryKey: ['currentUserProfile'],
@@ -121,13 +14,13 @@ export function useGetCallerUserProfile() {
       if (!actor) throw new Error('Actor not available');
       return actor.getCallerUserProfile();
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !isFetching,
     retry: false,
   });
 
   return {
     ...query,
-    isLoading: actorFetching || query.isLoading,
+    isLoading: isFetching || query.isLoading,
     isFetched: !!actor && query.isFetched,
   };
 }
@@ -147,22 +40,12 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-export function useDeleteAccount() {
-  const { actor } = useActor();
-
-  return useMutation({
-    mutationFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteAccount(null);
-    },
-  });
-}
-
+// Admin Queries
 export function useIsCallerAdmin() {
   const { actor, isFetching } = useActor();
 
   return useQuery<boolean>({
-    queryKey: ['isAdmin'],
+    queryKey: ['isCallerAdmin'],
     queryFn: async () => {
       if (!actor) return false;
       return actor.isCallerAdmin();
@@ -171,10 +54,143 @@ export function useIsCallerAdmin() {
   });
 }
 
+// Book Queries
+export function useGetAllBooks() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['books'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllBooks();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetMyBooks() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<Book[]>({
+    queryKey: ['myBooks', identity?.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!actor || !identity) return [];
+      const allBooks = await actor.getAllBooks();
+      const userPrincipal = identity.getPrincipal().toString();
+      return allBooks.filter(book => book.uploaderId.toString() === userPrincipal);
+    },
+    enabled: !!actor && !isFetching && !!identity,
+  });
+}
+
+export function useGetBook(isbn: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book | null>({
+    queryKey: ['book', isbn],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getBook(isbn);
+    },
+    enabled: !!actor && !isFetching && !!isbn,
+  });
+}
+
+export function useGetBooksByGenre(genre: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['books', 'genre', genre],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getBooksByGenre(genre);
+    },
+    enabled: !!actor && !isFetching && !!genre,
+  });
+}
+
+export function useGetBooksByAuthor(author: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['books', 'author', author],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getBooksByAuthor(author);
+    },
+    enabled: !!actor && !isFetching && !!author,
+  });
+}
+
+export function useGetTrendingBooks() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Book[]>({
+    queryKey: ['books', 'trending'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getTrendingBooks();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+// Book Mutations
+export function useSubmitBook() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (book: Book) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.submitBookForApproval(book);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+      queryClient.invalidateQueries({ queryKey: ['submissions'] });
+    },
+  });
+}
+
+export function useUpdateBook() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ isbn, book }: { isbn: string; book: Book }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateBook(isbn, book);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+    },
+  });
+}
+
+export function useDeleteBook() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (isbn: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteBook(isbn);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+    },
+  });
+}
+
+// Admin Book Queries
 export function useGetPendingSubmissions() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<BookSubmission[]>({
+  return useQuery({
     queryKey: ['submissions', 'pending'],
     queryFn: async () => {
       if (!actor) return [];
@@ -189,9 +205,17 @@ export function useApproveBookSubmission() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ isbn, isApproved, rejectionReason }: { isbn: string; isApproved: boolean; rejectionReason: string | null }) => {
+    mutationFn: async ({
+      isbn,
+      isApproved,
+      rejectionReason,
+    }: {
+      isbn: string;
+      isApproved: boolean;
+      rejectionReason?: string;
+    }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.approveBookSubmission(isbn, isApproved, rejectionReason);
+      return actor.approveBookSubmission(isbn, isApproved, rejectionReason || null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['submissions'] });
@@ -200,96 +224,7 @@ export function useApproveBookSubmission() {
   });
 }
 
-export function useUpdateReadingProgress() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ bookIsbn, pagesRead }: { bookIsbn: string; pagesRead: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.updateReadingProgress(bookIsbn, pagesRead);
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['progress', variables.bookIsbn] });
-      queryClient.invalidateQueries({ queryKey: ['booksWithProgress'] });
-    },
-  });
-}
-
-export function useGetUserBookProgress(bookIsbn: string) {
-  const { actor, isFetching } = useActor();
-  const { identity } = useInternetIdentity();
-
-  return useQuery<ReadingProgress | null>({
-    queryKey: ['progress', bookIsbn, identity?.getPrincipal().toString()],
-    queryFn: async () => {
-      if (!actor || !identity) return null;
-      return actor.getUserBookProgress(bookIsbn);
-    },
-    enabled: !!actor && !isFetching && !!identity && !!bookIsbn,
-  });
-}
-
-export function useGetAllUserProgress() {
-  const { actor, isFetching } = useActor();
-  const { identity } = useInternetIdentity();
-
-  return useQuery<[string, ReadingProgress][]>({
-    queryKey: ['allProgress', identity?.getPrincipal().toString()],
-    queryFn: async () => {
-      if (!actor || !identity) return [];
-      return actor.getAllUserProgress(identity.getPrincipal());
-    },
-    enabled: !!actor && !isFetching && !!identity,
-  });
-}
-
-export function useRequestMoreEdits() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ isbn, message }: { isbn: string; message: string | null }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.requestMoreEdits(isbn, message);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
-    },
-  });
-}
-
-export function useToggleBookmark() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  const { identity } = useInternetIdentity();
-
-  return useMutation({
-    mutationFn: async (bookIsbn: string) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.toggleBookmark(bookIsbn);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookmarks', identity?.getPrincipal().toString()] });
-      queryClient.invalidateQueries({ queryKey: ['bookmarkStatus'] });
-    },
-  });
-}
-
-export function useIsBookBookmarked(bookIsbn: string) {
-  const { actor, isFetching } = useActor();
-  const { identity } = useInternetIdentity();
-
-  return useQuery<boolean>({
-    queryKey: ['bookmarkStatus', bookIsbn, identity?.getPrincipal().toString()],
-    queryFn: async () => {
-      if (!actor || !identity) return false;
-      return actor.isBookBookmarked(identity.getPrincipal(), bookIsbn);
-    },
-    enabled: !!actor && !isFetching && !!identity && !!bookIsbn,
-  });
-}
-
+// Bookmark Queries
 export function useBookmarkedBooks() {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -304,6 +239,51 @@ export function useBookmarkedBooks() {
   });
 }
 
+export function useIsBookBookmarked(isbn: string) {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<boolean>({
+    queryKey: ['bookmark', isbn, identity?.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!actor || !identity) return false;
+      return actor.isBookBookmarked(identity.getPrincipal(), isbn);
+    },
+    enabled: !!actor && !isFetching && !!identity && !!isbn,
+  });
+}
+
+export function useToggleBookmark() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  const { identity } = useInternetIdentity();
+
+  return useMutation({
+    mutationFn: async (isbn: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.toggleBookmark(isbn);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
+      queryClient.invalidateQueries({ queryKey: ['bookmark'] });
+    },
+  });
+}
+
+// Rating Queries
+export function useGetBookAverageRating(isbn: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<number | null>({
+    queryKey: ['rating', 'average', isbn],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getBookAverageRating(isbn);
+    },
+    enabled: !!actor && !isFetching && !!isbn,
+  });
+}
+
 export function useAddRating() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -314,52 +294,41 @@ export function useAddRating() {
       return actor.addRating(bookIsbn, BigInt(stars));
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['ratings', variables.bookIsbn] });
-      queryClient.invalidateQueries({ queryKey: ['averageRating', variables.bookIsbn] });
-      queryClient.invalidateQueries({ queryKey: ['trending'] });
+      queryClient.invalidateQueries({ queryKey: ['rating', 'average', variables.bookIsbn] });
     },
   });
 }
 
-export function useBookRatings(bookIsbn: string) {
+// Reading Progress Queries
+export function useGetUserBookProgress(isbn: string) {
   const { actor, isFetching } = useActor();
 
-  return useQuery<Rating[]>({
-    queryKey: ['ratings', bookIsbn],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getBookRatings(bookIsbn);
-    },
-    enabled: !!actor && !isFetching && !!bookIsbn,
-  });
-}
-
-export function useGetBookAverageRating(bookIsbn: string) {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<number | null>({
-    queryKey: ['averageRating', bookIsbn],
+  return useQuery({
+    queryKey: ['progress', isbn],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getBookAverageRating(bookIsbn);
+      return actor.getUserBookProgress(isbn);
     },
-    enabled: !!actor && !isFetching && !!bookIsbn,
+    enabled: !!actor && !isFetching && !!isbn,
   });
 }
 
-export function useGetTrendingBooks() {
-  const { actor, isFetching } = useActor();
+export function useUpdateReadingProgress() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
 
-  return useQuery<Book[]>({
-    queryKey: ['trending'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getTrendingBooks();
+  return useMutation({
+    mutationFn: async ({ bookIsbn, pagesRead }: { bookIsbn: string; pagesRead: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateReadingProgress(bookIsbn, pagesRead);
     },
-    enabled: !!actor && !isFetching,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['progress', variables.bookIsbn] });
+    },
   });
 }
 
+// Personalized Recommendations
 export function useGetPersonalizedRecommendations() {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -374,7 +343,7 @@ export function useGetPersonalizedRecommendations() {
   });
 }
 
-// Books with progress for "Continue Reading"
+// Books with Progress
 export function useGetBooksWithProgress() {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -383,23 +352,22 @@ export function useGetBooksWithProgress() {
     queryKey: ['booksWithProgress', identity?.getPrincipal().toString()],
     queryFn: async () => {
       if (!actor || !identity) return [];
-      const progressData = await actor.getAllUserProgress(identity.getPrincipal());
-      const booksWithProgress: Book[] = [];
-      
-      for (const [_, progress] of progressData) {
-        const book = await actor.getBook(progress.bookIsbn);
-        if (book && progress.pagesRead < book.pageCount) {
-          booksWithProgress.push(book);
-        }
-      }
-      
-      return booksWithProgress;
+      const allProgress = await actor.getAllUserProgress(identity.getPrincipal());
+      const booksWithProgress = await Promise.all(
+        allProgress.map(async ([_, progress]) => {
+          const book = await actor.getBook(progress.bookIsbn);
+          return book;
+        })
+      );
+      return booksWithProgress.filter((book): book is Book => book !== null);
     },
     enabled: !!actor && !isFetching && !!identity,
   });
 }
 
-// Recently viewed books (stored in localStorage for now)
+// Recently Viewed Books
+const RECENTLY_VIEWED_KEY = 'recentlyViewedBooks';
+
 export function useGetRecentlyViewedBooks() {
   const { actor, isFetching } = useActor();
 
@@ -407,42 +375,63 @@ export function useGetRecentlyViewedBooks() {
     queryKey: ['recentlyViewed'],
     queryFn: async () => {
       if (!actor) return [];
-      const viewedIsbnString = localStorage.getItem('recentlyViewedBooks');
-      if (!viewedIsbnString) return [];
-      
-      const viewedIsbns: string[] = JSON.parse(viewedIsbnString);
-      const books: Book[] = [];
-      
-      for (const isbn of viewedIsbns.slice(0, 10)) {
-        const book = await actor.getBook(isbn);
-        if (book) books.push(book);
-      }
-      
-      return books;
+      const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
+      const books = await Promise.all(
+        recentlyViewed.slice(0, 10).map(async (isbn) => {
+          try {
+            return await actor.getBook(isbn);
+          } catch {
+            return null;
+          }
+        })
+      );
+      return books.filter((book): book is Book => book !== null);
     },
     enabled: !!actor && !isFetching,
   });
 }
 
-// Track book view
 export function useTrackBookView() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (isbn: string) => {
-      const viewedIsbnString = localStorage.getItem('recentlyViewedBooks');
-      const viewedIsbns: string[] = viewedIsbnString ? JSON.parse(viewedIsbnString) : [];
-      
-      // Remove if already exists and add to front
-      const filteredIsbns = viewedIsbns.filter(i => i !== isbn);
-      filteredIsbns.unshift(isbn);
-      
-      // Keep only last 10
-      const updatedIsbns = filteredIsbns.slice(0, 10);
-      localStorage.setItem('recentlyViewedBooks', JSON.stringify(updatedIsbns));
+      const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
+      const filtered = recentlyViewed.filter((id) => id !== isbn);
+      const updated = [isbn, ...filtered].slice(0, 20);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentlyViewed'] });
+    },
+  });
+}
+
+// Request More Edits
+export function useRequestMoreEdits() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ isbn, message }: { isbn: string; message?: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.requestMoreEdits(isbn, message || null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      queryClient.invalidateQueries({ queryKey: ['myBooks'] });
+    },
+  });
+}
+
+// Delete Account
+export function useDeleteAccount() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (targetUser: Principal | null) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteAccount(targetUser);
     },
   });
 }

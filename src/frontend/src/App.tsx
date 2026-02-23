@@ -25,6 +25,7 @@ import DiscussionsPage from './pages/DiscussionsPage';
 import ThreadDetailPage from './pages/ThreadDetailPage';
 import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
+import TrendingPage from './pages/TrendingPage';
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,12 @@ const authorsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: '/authors',
   component: AuthorsPage,
+});
+
+const trendingRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: '/trending',
+  component: TrendingPage,
 });
 
 const authorProfileRoute = createRoute({
@@ -189,6 +196,7 @@ const routeTree = rootRoute.addChildren([
     personalizedRoute,
     browseRoute,
     authorsRoute,
+    trendingRoute,
     authorProfileRoute,
     authorDashboardRoute,
     bookDetailRoute,

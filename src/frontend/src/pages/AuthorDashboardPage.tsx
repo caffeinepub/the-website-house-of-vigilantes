@@ -23,237 +23,182 @@ export default function AuthorDashboardPage() {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [selectedBookIsbn, setSelectedBookIsbn] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
+  const deleteAccountMutation = useDeleteAccount();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const deleteAccountMutation = useDeleteAccount();
 
   const isAuthenticated = !!identity;
 
+  // Load extended profile from localStorage
+  const extendedProfile = isAuthenticated
+    ? JSON.parse(localStorage.getItem(`extendedProfile_${identity?.getPrincipal().toString()}`) || '{}')
+    : {};
+
   const handleDeleteAccount = async () => {
     try {
-      setIsDeleting(true);
-      await deleteAccountMutation.mutateAsync();
-      toast.success('Your account has been permanently deleted');
+      await deleteAccountMutation.mutateAsync(null);
       await clear();
       queryClient.clear();
-      setDeleteModalOpen(false);
-      
-      // Add smooth fade transition before navigation
+      toast.success('Account deleted successfully');
       setTimeout(() => {
         navigate({ to: '/' });
-        setIsDeleting(false);
       }, 300);
     } catch (error: any) {
       console.error('Delete account error:', error);
       toast.error(error.message || 'Failed to delete account');
-      setDeleteModalOpen(false);
-      setIsDeleting(false);
     }
   };
 
-  // Show auth prompt for guests
   if (!isAuthenticated) {
     return (
-      <>
-        <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5 flex items-center justify-center p-4">
-          <div className="text-center">
-            <User className="h-24 w-24 mx-auto text-vangogh-blue mb-6" />
-            <h1 className="text-4xl font-serif font-bold text-vangogh-blue mb-4">
-              Author Dashboard
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Please log in to access your author dashboard
-            </p>
-            <Button
-              onClick={() => setShowAuthPrompt(true)}
-              className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full px-8 py-6 text-lg"
-            >
-              Login to Continue
-            </Button>
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="p-6 bg-vangogh-blue/10 rounded-full">
+              <User className="h-16 w-16 text-vangogh-blue" />
+            </div>
           </div>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+            Author Dashboard Access Required
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Please log in to access your author dashboard and manage your books.
+          </p>
+          <Button
+            onClick={() => setShowAuthPrompt(true)}
+            className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full px-8"
+          >
+            Log In to Continue
+          </Button>
         </div>
         <AuthPrompt
           open={showAuthPrompt}
           onOpenChange={setShowAuthPrompt}
-          message="Please log in to access your author dashboard and manage your books."
+          message="Please log in to access your author dashboard, manage your books, and view analytics."
         />
-      </>
-    );
-  }
-
-  // Loading state
-  if (profileLoading || !isFetched) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-vangogh-blue mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
       </div>
     );
   }
-
-  // Load extended profile data from localStorage (bio, avatar, social links stored in frontend until backend supports)
-  const storedExtendedProfile = localStorage.getItem('authorExtendedProfile');
-  const extendedProfile = storedExtendedProfile 
-    ? JSON.parse(storedExtendedProfile)
-    : {
-        bio: 'Passionate writer creating stories that inspire and entertain readers worldwide.',
-        website: '',
-        social: {
-          twitter: '',
-          facebook: '',
-          instagram: '',
-        },
-      };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-vangogh-blue/5 to-vangogh-yellow/5">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Author Profile Header */}
-        <div className="bg-card rounded-3xl border-2 border-vangogh-yellow/30 p-8 mb-8 shadow-vangogh-glow">
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-vangogh-blue to-vangogh-yellow flex items-center justify-center shadow-lg">
-                <User className="h-12 w-12 text-white" />
-              </div>
-            </div>
-
-            {/* Profile Info */}
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                <div>
-                  <h1 className="text-3xl font-serif font-bold text-vangogh-blue">
-                    {userProfile?.name || 'Author'}
-                  </h1>
-                  <p className="text-muted-foreground">Author Dashboard</p>
-                </div>
-                <Button
-                  onClick={() => setEditProfileOpen(true)}
-                  variant="outline"
-                  className="rounded-full border-vangogh-blue text-vangogh-blue hover:bg-vangogh-blue hover:text-white"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-              </div>
-              <p className="text-foreground/80 leading-relaxed">
-                {extendedProfile.bio}
-              </p>
-            </div>
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      {/* Dashboard Header */}
+      <div className="mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Author Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Welcome back, {userProfile?.name || 'Author'}!
+            </p>
           </div>
+          <Button
+            onClick={() => setEditProfileOpen(true)}
+            variant="outline"
+            className="rounded-full border-2 border-vangogh-blue/30 hover:bg-vangogh-blue/10"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit Profile
+          </Button>
         </div>
 
-        {/* Dashboard Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            <Tabs defaultValue="books" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-6 bg-card border-2 border-vangogh-yellow/30 rounded-2xl p-1">
-                <TabsTrigger value="books" className="rounded-xl data-[state=active]:bg-vangogh-blue data-[state=active]:text-white">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Books</span>
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="rounded-xl data-[state=active]:bg-vangogh-blue data-[state=active]:text-white">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Analytics</span>
-                </TabsTrigger>
-                <TabsTrigger value="series" className="rounded-xl data-[state=active]:bg-vangogh-blue data-[state=active]:text-white">
-                  <List className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Series</span>
-                </TabsTrigger>
-                <TabsTrigger value="readers" className="rounded-xl data-[state=active]:bg-vangogh-blue data-[state=active]:text-white">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Readers</span>
-                </TabsTrigger>
-                <TabsTrigger value="settings" className="rounded-xl data-[state=active]:bg-vangogh-blue data-[state=active]:text-white">
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Settings</span>
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="books">
-                <AuthorBookManager onSelectBook={setSelectedBookIsbn} />
-              </TabsContent>
-
-              <TabsContent value="analytics">
-                <AuthorAnalytics selectedBookIsbn={selectedBookIsbn} />
-              </TabsContent>
-
-              <TabsContent value="series">
-                <AuthorSeriesManager />
-              </TabsContent>
-
-              <TabsContent value="readers">
-                <AuthorReaderInteraction />
-              </TabsContent>
-
-              <TabsContent value="settings">
-                <div className="bg-card rounded-3xl border-2 border-vangogh-yellow/30 p-8 shadow-vangogh-glow">
-                  <h2 className="text-2xl font-serif font-bold text-vangogh-blue mb-6">
-                    Account Settings
-                  </h2>
-                  
-                  {/* Delete Account Section */}
-                  <div className="border-2 border-destructive/30 rounded-2xl p-6 bg-destructive/5">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
-                          <Trash2 className="h-6 w-6 text-destructive" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-serif font-bold text-destructive mb-2">
-                          Delete Account
-                        </h3>
-                        <p className="text-foreground/80 mb-4 leading-relaxed">
-                          Permanently delete your account and all associated data. This action cannot be undone.
-                          All your books, analytics, reading progress, and ratings will be removed.
-                        </p>
-                        <Button
-                          onClick={() => setDeleteModalOpen(true)}
-                          variant="destructive"
-                          className="rounded-full"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete My Account
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Stats Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-4">
-              <h3 className="text-xl font-serif font-bold text-vangogh-blue mb-4">
-                Quick Stats
-              </h3>
-              <DashboardStatsCard
-                icon={<BookOpen className="h-5 w-5" />}
-                label="Total Books"
-                value="0"
-              />
-              <DashboardStatsCard
-                icon={<BarChart3 className="h-5 w-5" />}
-                label="Total Reads"
-                value="0"
-              />
-              <DashboardStatsCard
-                icon={<User className="h-5 w-5" />}
-                label="Avg Rating"
-                value="0.0"
-              />
-            </div>
-          </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <DashboardStatsCard
+            icon={<BookOpen className="h-6 w-6" />}
+            label="Total Books"
+            value="0"
+            trend="+0 this month"
+          />
+          <DashboardStatsCard
+            icon={<User className="h-6 w-6" />}
+            label="Total Readers"
+            value="0"
+            trend="+0 this month"
+          />
+          <DashboardStatsCard
+            icon={<BarChart3 className="h-6 w-6" />}
+            label="Avg. Rating"
+            value="0.0"
+            trend="No ratings yet"
+          />
+          <DashboardStatsCard
+            icon={<MessageSquare className="h-6 w-6" />}
+            label="Reviews"
+            value="0"
+            trend="No reviews yet"
+          />
         </div>
       </div>
+
+      {/* Dashboard Tabs */}
+      <Tabs defaultValue="books" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2">
+          <TabsTrigger value="books" className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">Books</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="gap-2">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Analytics</span>
+          </TabsTrigger>
+          <TabsTrigger value="series" className="gap-2">
+            <List className="h-4 w-4" />
+            <span className="hidden sm:inline">Series</span>
+          </TabsTrigger>
+          <TabsTrigger value="readers" className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">Readers</span>
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="gap-2">
+            <Settings className="h-4 w-4" />
+            <span className="hidden sm:inline">Settings</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="books">
+          <AuthorBookManager onSelectBook={setSelectedBookIsbn} />
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <AuthorAnalytics selectedBookIsbn={selectedBookIsbn} />
+        </TabsContent>
+
+        <TabsContent value="series">
+          <AuthorSeriesManager />
+        </TabsContent>
+
+        <TabsContent value="readers">
+          <AuthorReaderInteraction />
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <div className="space-y-6">
+            <div className="bg-card rounded-3xl border-2 border-vangogh-yellow/30 p-6">
+              <h3 className="font-serif text-xl font-bold text-foreground mb-4">
+                Account Settings
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">Danger Zone</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Permanently delete your account and all associated data. This action cannot be undone.
+                  </p>
+                  <Button
+                    onClick={() => setDeleteModalOpen(true)}
+                    variant="destructive"
+                    className="rounded-full"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Account
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Edit Profile Dialog */}
       <EditAuthorProfileDialog
@@ -268,7 +213,7 @@ export default function AuthorDashboardPage() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteAccount}
-        isDeleting={isDeleting}
+        isDeleting={deleteAccountMutation.isPending}
       />
     </div>
   );

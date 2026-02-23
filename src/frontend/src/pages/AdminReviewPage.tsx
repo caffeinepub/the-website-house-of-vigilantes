@@ -63,7 +63,7 @@ export default function AdminReviewPage() {
 
   const handleApprove = async (isbn: string) => {
     try {
-      await approveSubmission.mutateAsync({ isbn, isApproved: true, rejectionReason: null });
+      await approveSubmission.mutateAsync({ isbn, isApproved: true });
       toast.success('Book approved successfully!');
     } catch (error: any) {
       console.error('Error approving book:', error);

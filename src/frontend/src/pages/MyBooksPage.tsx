@@ -3,13 +3,15 @@ import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useGetMyBooks, useUpdateBook, useDeleteBook, useRequestMoreEdits } from '../hooks/useQueries';
 import type { Book } from '../backend';
-import BookForm from '../components/BookForm';
-import RequestMoreEditsDialog from '../components/RequestMoreEditsDialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Edit, Trash2, AlertCircle, BookOpen, ArrowLeft } from 'lucide-react';
+import BookForm from '../components/BookForm';
+import RequestMoreEditsDialog from '../components/RequestMoreEditsDialog';
+import AuthPrompt from '../components/AuthPrompt';
+import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +22,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Shield, Pencil, Trash2, BookOpen, Clock, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
-import { toast } from 'sonner';
-import AuthPrompt from '../components/AuthPrompt';
 
 export default function MyBooksPage() {
   const navigate = useNavigate();
@@ -30,273 +29,266 @@ export default function MyBooksPage() {
   const { data: books, isLoading } = useGetMyBooks();
   const updateBook = useUpdateBook();
   const deleteBook = useDeleteBook();
-  const requestMoreEdits = useRequestMoreEdits();
+  const requestEdits = useRequestMoreEdits();
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Book | undefined>(undefined);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [bookToDelete, setBookToDelete] = useState<string | null>(null);
-  const [requestDialogOpen, setRequestDialogOpen] = useState(false);
-  const [bookForRequest, setBookForRequest] = useState<Book | null>(null);
-  const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [deletingIsbn, setDeletingIsbn] = useState<string | null>(null);
+  const [requestEditsBook, setRequestEditsBook] = useState<Book | null>(null);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   const isAuthenticated = !!identity;
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center">
-        <div className="text-center space-y-6 px-4">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="text-center space-y-6">
           <div className="flex justify-center">
-            <div className="p-6 bg-primary/10 rounded-full">
-              <BookOpen className="h-16 w-16 text-primary" />
+            <div className="p-6 bg-vangogh-blue/10 rounded-full">
+              <BookOpen className="h-16 w-16 text-vangogh-blue" />
             </div>
           </div>
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
-            Login Required
+            Authentication Required
           </h2>
-          <p className="text-muted-foreground max-w-md">
+          <p className="text-muted-foreground max-w-md mx-auto">
             Please log in to view and manage your uploaded books.
           </p>
           <Button
-            onClick={() => setAuthPromptOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8"
+            onClick={() => setShowAuthPrompt(true)}
+            className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full px-8"
           >
-            Log In to View My Books
+            Log In to Continue
           </Button>
         </div>
         <AuthPrompt
-          open={authPromptOpen}
-          onOpenChange={setAuthPromptOpen}
-          message="Please log in to view and manage your uploaded books and submissions."
+          open={showAuthPrompt}
+          onOpenChange={setShowAuthPrompt}
+          message="Please log in to view and manage your uploaded books, track their approval status, and make edits."
         />
       </div>
     );
   }
 
-  const handleEditBook = (book: Book) => {
-    setSelectedBook(book);
-    setFormOpen(true);
+  const handleEdit = (book: Book) => {
+    setEditingBook(book);
   };
 
-  const handleDeleteClick = (isbn: string) => {
-    setBookToDelete(isbn);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!bookToDelete) return;
-
+  const handleDelete = async (isbn: string) => {
     try {
-      await deleteBook.mutateAsync(bookToDelete);
-      toast.success('Book deleted successfully!');
-      setDeleteDialogOpen(false);
-      setBookToDelete(null);
+      await deleteBook.mutateAsync(isbn);
+      toast.success('Book deleted successfully');
+      setDeletingIsbn(null);
     } catch (error: any) {
-      console.error('Error deleting book:', error);
-      toast.error(error.message || 'Failed to delete book. Please try again.');
+      console.error('Delete error:', error);
+      toast.error(error.message || 'Failed to delete book');
     }
   };
 
-  const handleFormSubmit = async (book: Book) => {
-    await updateBook.mutateAsync({ isbn: book.isbn, book });
-  };
-
-  const handleRequestMoreEdits = (book: Book) => {
-    setBookForRequest(book);
-    setRequestDialogOpen(true);
-  };
-
-  const handleRequestSubmit = async (message: string) => {
-    if (!bookForRequest) return;
-
+  const handleUpdateBook = async (book: Book) => {
+    if (!editingBook) return;
     try {
-      await requestMoreEdits.mutateAsync({
-        isbn: bookForRequest.isbn,
-        message: message || null,
+      await updateBook.mutateAsync({ isbn: editingBook.isbn, book });
+      toast.success('Book updated successfully');
+      setEditingBook(null);
+    } catch (error: any) {
+      console.error('Update error:', error);
+      toast.error(error.message || 'Failed to update book');
+    }
+  };
+
+  const handleRequestMoreEdits = async (message?: string) => {
+    if (!requestEditsBook) return;
+    try {
+      await requestEdits.mutateAsync({
+        isbn: requestEditsBook.isbn,
+        message: message || undefined,
       });
-      toast.success('Edit request submitted successfully! An admin will review your request.');
+      toast.success('Edit request submitted successfully');
+      setRequestEditsBook(null);
     } catch (error: any) {
-      console.error('Error submitting request:', error);
-      toast.error(error.message || 'Failed to submit request. Please try again.');
+      console.error('Request edits error:', error);
+      toast.error(error.message || 'Failed to submit edit request');
     }
   };
 
-  const getStatusBadge = (status: Book['approvalStatus']) => {
-    if (status.__kind__ === 'approved') {
-      return <Badge variant="default" className="gap-1 text-xs"><CheckCircle className="h-3 w-3" /> Approved</Badge>;
-    } else if (status.__kind__ === 'pending') {
-      return <Badge variant="secondary" className="gap-1 text-xs"><Clock className="h-3 w-3" /> Pending</Badge>;
-    } else {
-      return <Badge variant="destructive" className="gap-1 text-xs"><XCircle className="h-3 w-3" /> Rejected</Badge>;
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <Skeleton className="h-12 w-48 mb-8" />
+        <div className="grid gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="mb-6 md:mb-8">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">My Books</h1>
-          <p className="text-muted-foreground text-sm md:text-base">Manage your uploaded books</p>
-        </div>
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <Button
+        variant="ghost"
+        onClick={() => navigate({ to: '/home' })}
+        className="mb-6 md:mb-8 gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Home
+      </Button>
 
-        {isLoading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-32 md:h-40 w-full" />
-            ))}
-          </div>
-        ) : !books || books.length === 0 ? (
-          <Card className="rounded-3xl border-2 border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
-              <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg md:text-xl font-semibold mb-2">No books yet</h3>
-              <p className="text-sm md:text-base text-muted-foreground mb-6 max-w-md">
-                You haven't uploaded any books yet. Start sharing your work with the community!
-              </p>
-              <Button
-                onClick={() => navigate({ to: '/upload' })}
-                className="rounded-full w-full md:w-auto"
-              >
-                Upload Your First Book
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4 md:space-y-6">
-            {books.map((book) => (
-              <Card key={book.isbn} className="rounded-3xl border-2 hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                    <div className="flex-1">
-                      <CardTitle className="font-serif text-xl md:text-2xl mb-2">{book.title}</CardTitle>
-                      <p className="text-sm md:text-base text-muted-foreground">by {book.author}</p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {getStatusBadge(book.approvalStatus)}
-                      {book.approvalStatus.__kind__ === 'approved' && (
-                        <Badge variant="outline" className="text-xs">
-                          Edits: {Number(book.editCount)}/3
+      <div className="mb-6 md:mb-8">
+        <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">My Books</h1>
+        <p className="text-muted-foreground text-sm md:text-base">Manage your uploaded books and track their status</p>
+      </div>
+
+      {!books || books.length === 0 ? (
+        <Card className="border-2 border-vangogh-yellow/30 rounded-3xl">
+          <CardContent className="py-12 md:py-16 text-center">
+            <BookOpen className="h-12 w-12 md:h-16 md:w-16 mx-auto text-muted-foreground mb-4" />
+            <p className="text-lg md:text-xl text-muted-foreground mb-4">
+              You haven't uploaded any books yet
+            </p>
+            <Button
+              onClick={() => navigate({ to: '/upload' })}
+              className="bg-vangogh-blue hover:bg-vangogh-blue/90 text-white rounded-full"
+            >
+              Upload Your First Book
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {books.map((book) => (
+            <Card key={book.isbn} className="border-2 border-vangogh-yellow/30 rounded-3xl">
+              <CardHeader>
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                  <div className="flex gap-3 md:gap-4 flex-1 w-full">
+                    <img
+                      src={book.coverImageUrl || '/assets/generated/placeholder-cover.dim_400x600.png'}
+                      alt={book.title}
+                      className="w-16 h-24 md:w-20 md:h-28 object-cover rounded shadow-book shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.src = '/assets/generated/placeholder-cover.dim_400x600.png';
+                      }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <CardTitle className="font-serif text-lg md:text-xl">{book.title}</CardTitle>
+                        <Badge
+                          variant={
+                            book.approvalStatus.__kind__ === 'approved'
+                              ? 'default'
+                              : book.approvalStatus.__kind__ === 'rejected'
+                              ? 'destructive'
+                              : 'secondary'
+                          }
+                          className="text-xs"
+                        >
+                          {book.approvalStatus.__kind__ === 'approved'
+                            ? 'Approved'
+                            : book.approvalStatus.__kind__ === 'rejected'
+                            ? 'Rejected'
+                            : 'Pending'}
                         </Badge>
+                      </div>
+                      <p className="text-muted-foreground mb-2 text-sm md:text-base">by {book.author}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2">
+                        ISBN: {book.isbn} • {Number(book.pageCount)} pages
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Edits used: {Number(book.editCount)} / 3
+                      </p>
+                      {book.approvalStatus.__kind__ === 'rejected' && (
+                        <div className="mt-2 p-2 bg-destructive/10 rounded-lg">
+                          <p className="text-xs text-destructive flex items-start gap-1">
+                            <AlertCircle className="h-3 w-3 mt-0.5 shrink-0" />
+                            <span>
+                              Rejection reason: {book.approvalStatus.rejected || 'No reason provided'}
+                            </span>
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1 grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Genre:</span>
-                        <span className="ml-2 font-medium">{book.genre}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Year:</span>
-                        <span className="ml-2 font-medium">{book.publicationYear.toString()}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Pages:</span>
-                        <span className="ml-2 font-medium">{book.pageCount.toString()}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">ISBN:</span>
-                        <span className="ml-2 font-medium">{book.isbn}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {book.approvalStatus.__kind__ === 'rejected' && (
-                    <Alert variant="destructive" className="rounded-2xl">
-                      <XCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        <strong>Rejection Reason:</strong> {book.approvalStatus.rejected || 'No reason provided'}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                    {book.approvalStatus.__kind__ === 'approved' && (
-                      <>
-                        {Number(book.editCount) < 3 ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditBook(book)}
-                            className="rounded-full w-full sm:w-auto"
-                          >
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit Book
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRequestMoreEdits(book)}
-                            className="rounded-full w-full sm:w-auto"
-                          >
-                            <MessageSquare className="h-4 w-4 mr-2" />
-                            Request More Edits
-                          </Button>
-                        )}
-                      </>
+                  <div className="flex gap-2 w-full md:w-auto">
+                    <Button
+                      onClick={() => handleEdit(book)}
+                      disabled={Number(book.editCount) >= 3}
+                      size="sm"
+                      variant="outline"
+                      className="gap-1 flex-1 md:flex-initial"
+                    >
+                      <Edit className="h-4 w-4" />
+                      <span>Edit</span>
+                    </Button>
+                    {Number(book.editCount) >= 3 && (
+                      <Button
+                        onClick={() => setRequestEditsBook(book)}
+                        size="sm"
+                        variant="outline"
+                        className="gap-1 flex-1 md:flex-initial"
+                      >
+                        Request More Edits
+                      </Button>
                     )}
                     <Button
-                      variant="destructive"
+                      onClick={() => setDeletingIsbn(book.isbn)}
                       size="sm"
-                      onClick={() => handleDeleteClick(book.isbn)}
-                      className="rounded-full w-full sm:w-auto"
+                      variant="outline"
+                      className="gap-1 text-destructive hover:bg-destructive hover:text-white flex-1 md:flex-initial"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
+                      <Trash2 className="h-4 w-4" />
+                      <span>Delete</span>
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                </div>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {/* Book Form Dialog */}
-      {selectedBook && (
+      {/* Edit Book Dialog */}
+      {editingBook && (
         <BookForm
-          open={formOpen}
-          onOpenChange={setFormOpen}
-          initialBook={selectedBook}
-          onSubmit={handleFormSubmit}
+          open={!!editingBook}
+          onOpenChange={(open) => !open && setEditingBook(null)}
           mode="edit"
+          initialBook={editingBook}
+          onSubmit={handleUpdateBook}
+        />
+      )}
+
+      {/* Request More Edits Dialog */}
+      {requestEditsBook && (
+        <RequestMoreEditsDialog
+          open={!!requestEditsBook}
+          onOpenChange={(open) => !open && setRequestEditsBook(null)}
+          onSubmit={handleRequestMoreEdits}
+          bookTitle={requestEditsBook.title}
+          editCount={Number(requestEditsBook.editCount)}
         />
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="rounded-3xl">
+      <AlertDialog open={!!deletingIsbn} onOpenChange={() => setDeletingIsbn(null)}>
+        <AlertDialogContent className="rounded-3xl border-2 border-vangogh-yellow/30 max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Book</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your book from the platform.
+              Are you sure you want to delete this book? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="rounded-full w-full sm:w-auto">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              className="rounded-full bg-destructive hover:bg-destructive/90"
+              onClick={() => deletingIsbn && handleDelete(deletingIsbn)}
+              className="bg-destructive hover:bg-destructive/90 text-white rounded-full w-full sm:w-auto"
             >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Request More Edits Dialog */}
-      {bookForRequest && (
-        <RequestMoreEditsDialog
-          open={requestDialogOpen}
-          onOpenChange={setRequestDialogOpen}
-          bookTitle={bookForRequest.title}
-          editCount={Number(bookForRequest.editCount)}
-          onSubmit={handleRequestSubmit}
-        />
-      )}
     </div>
   );
 }
