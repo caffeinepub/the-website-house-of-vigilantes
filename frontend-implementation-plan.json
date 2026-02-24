@@ -1,0 +1,506 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Implement fully responsive mobile-first design across entire platform",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement mobile-first responsive Navigation with hamburger menu for screens <768px",
+      "acceptanceCriteria": [
+        "Navigation displays as horizontal bar on desktop (≥768px)",
+        "Navigation shows hamburger menu icon on mobile (<768px)",
+        "Tapping hamburger opens full-screen or overlay mobile menu",
+        "Mobile menu items have minimum 44px touch targets",
+        "Mobile menu closes when item is selected or close button is tapped"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Navigation.tsx",
+          "operation": "modify",
+          "description": "Add mobile-first responsive navigation with hamburger menu for screens <768px. Implement state for toggling mobile menu overlay, ensure menu icon is touch-friendly (44x44px), and create full-screen mobile menu with touch-optimized spacing. Include mobile menu close functionality on item selection. Use Tailwind responsive utilities (hidden md:flex, block md:hidden) to toggle desktop/mobile layouts."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Make all interactive elements touch-friendly with minimum 44x44px targets and 8px spacing",
+      "acceptanceCriteria": [
+        "All buttons have minimum 44x44px dimensions on mobile",
+        "Form inputs have minimum 44px height on mobile",
+        "Interactive elements have 8px minimum spacing between them",
+        "Touch targets do not overlap or cause mis-taps"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Update button to have minimum 44px height on mobile using responsive classes (min-h-[44px]) and ensure adequate horizontal padding for touch targets."
+        },
+        {
+          "path": "frontend/src/components/ThemeToggle.tsx",
+          "operation": "modify",
+          "description": "Ensure theme toggle button meets 44x44px minimum touch target using min-w-[44px] min-h-[44px] classes."
+        },
+        {
+          "path": "frontend/src/components/StarRating.tsx",
+          "operation": "modify",
+          "description": "Ensure star buttons in interactive mode have minimum 44x44px touch targets and 8px spacing between stars using responsive gap classes."
+        },
+        {
+          "path": "frontend/src/components/MoodFilterChips.tsx",
+          "operation": "modify",
+          "description": "Update mood chip buttons to have minimum 44px height and add gap-2 (8px) spacing between chips using Tailwind utilities."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Ensure HomePage/LandingPage displays responsively with scaled background and readable text on all screen sizes from 320px+",
+      "acceptanceCriteria": [
+        "Van Gogh background scales and positions correctly on mobile",
+        "Heading text sizes appropriately on small screens",
+        "Login button remains visible and accessible on all devices",
+        "Theme toggle is accessible on mobile",
+        "No horizontal scrolling or content overflow"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive styling to Van Gogh background using bg-cover bg-center bg-fixed. Scale heading text responsively (text-3xl sm:text-4xl md:text-5xl lg:text-6xl). Ensure login button and theme toggle remain accessible with proper positioning and z-index. Add padding and max-width constraints to prevent overflow on small screens."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive styling to Van Gogh background using bg-cover bg-center. Scale heading text responsively (text-3xl sm:text-4xl md:text-5xl lg:text-6xl). Ensure login button and theme toggle are accessible on mobile with min-h-screen and proper spacing. Prevent horizontal overflow with max-w-full and px-4."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Make PersonalizedHomePage fully responsive with stacked sections on mobile",
+      "acceptanceCriteria": [
+        "All sections stack vertically on mobile (<768px)",
+        "Section headings remain readable and properly sized",
+        "Carousel controls are touch-friendly",
+        "Book cards display in appropriate grid (1 column on mobile)",
+        "No content is cut off or requires horizontal scrolling"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PersonalizedHomePage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with vertical stacking using flex flex-col and responsive spacing (space-y-6 md:space-y-8 lg:space-y-12). Scale section headings responsively (text-xl sm:text-2xl md:text-3xl). Ensure all carousels and grids adapt to mobile viewport with proper padding (px-4 sm:px-6 lg:px-8) and prevent overflow."
+        },
+        {
+          "path": "frontend/src/components/BookCarousel.tsx",
+          "operation": "modify",
+          "description": "Ensure carousel is touch-friendly with swipe support, navigation arrows sized at minimum 44x44px for mobile, and proper horizontal scrolling behavior. Use responsive gap classes and ensure book cards display at appropriate sizes for each breakpoint."
+        },
+        {
+          "path": "frontend/src/components/MoodCarousel.tsx",
+          "operation": "modify",
+          "description": "Add touch-friendly navigation arrows (min-w-[44px] min-h-[44px]), implement smooth horizontal scrolling, and ensure book cards scale appropriately on mobile. Add swipe gesture support using touch events or scroll-snap for better mobile UX."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Make BrowseBooksPage responsive with mobile-optimized filters and adaptive book grid (1/2/3+ columns)",
+      "acceptanceCriteria": [
+        "Filter dropdowns are touch-friendly on mobile",
+        "Mood filter chips wrap to multiple lines on narrow screens",
+        "Book grid uses 1 column layout on screens <640px",
+        "Book grid uses 2 columns on tablets (640-1024px)",
+        "Book grid uses 3+ columns on desktop (≥1024px)",
+        "All book covers scale proportionally"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BrowseBooksPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked filters on mobile. Ensure genre/author dropdowns have minimum 44px height and are touch-friendly. Add responsive padding (px-4 sm:px-6 lg:px-8) and allow mood chips to wrap using flex-wrap."
+        },
+        {
+          "path": "frontend/src/components/BookGrid.tsx",
+          "operation": "modify",
+          "description": "Implement responsive grid layout using grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 with appropriate gap spacing (gap-4 md:gap-6). Ensure book cards and images scale proportionally using aspect-ratio utilities and object-fit."
+        },
+        {
+          "path": "frontend/src/components/HeroSection.tsx",
+          "operation": "modify",
+          "description": "Make hero section responsive with scaled heading text (text-2xl sm:text-3xl md:text-4xl), appropriately sized search input (min-h-[44px]), and proper padding for mobile (px-4 sm:px-6). Ensure gradient background scales correctly."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Make BookDetailPage fully responsive with stacked layout and mobile-optimized PDF viewer",
+      "acceptanceCriteria": [
+        "Book details stack vertically on mobile",
+        "Book cover scales to fit screen without distortion",
+        "PDF viewer displays at appropriate size for mobile reading",
+        "Action buttons (bookmark, download, rate) are touch-friendly",
+        "Star rating component works with touch input",
+        "Reviews section displays properly on mobile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BookDetailPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with vertical stacking using flex flex-col on mobile and grid layout on desktop (md:grid md:grid-cols-2 lg:grid-cols-3). Ensure book cover uses responsive sizing (max-w-full md:max-w-sm) and maintains aspect ratio. Make action buttons touch-friendly (min-h-[44px]) with adequate spacing (gap-2). Add responsive padding and ensure all sections stack properly on small screens."
+        },
+        {
+          "path": "frontend/src/components/PdfViewer.tsx",
+          "operation": "modify",
+          "description": "Make PDF viewer responsive by adjusting iframe dimensions using responsive width/height utilities (w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]). Ensure download and open buttons are touch-friendly (min-h-[44px]) and accessible on mobile."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Make UploadBookPage responsive with single-column form layout and touch-friendly file upload",
+      "acceptanceCriteria": [
+        "Form fields stack vertically on mobile",
+        "File upload dropzones are touch-friendly and large enough",
+        "All input fields have minimum 44px height on mobile",
+        "BookForm dialog fits mobile screen without overflow",
+        "Submit and cancel buttons are easily tappable"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/UploadBookPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive layout with appropriate padding (px-4 sm:px-6 lg:px-8) and centered content (max-w-4xl mx-auto). Ensure BookForm component renders with mobile-friendly spacing."
+        },
+        {
+          "path": "frontend/src/components/BookForm.tsx",
+          "operation": "modify",
+          "description": "Ensure form dialog is responsive with single-column layout on mobile. Apply min-h-[44px] to all inputs, make file upload dropzones touch-friendly with adequate size (min-h-[120px] on mobile), and ensure submit/cancel buttons meet 44px minimum height. Add responsive padding and max-height with scroll for mobile screens (max-h-[90vh] overflow-y-auto)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Make ProfilePage and AuthorDashboardPage responsive with stacked layouts and mobile-friendly tabs",
+      "acceptanceCriteria": [
+        "Profile information displays clearly on mobile",
+        "Statistics cards use 1 column on mobile (<640px)",
+        "Dashboard tabs remain accessible on mobile (scroll or dropdown)",
+        "Edit profile button is touch-friendly",
+        "Bookmarked books grid adapts to mobile (1 column)",
+        "Delete account button remains accessible but not accidentally tappable"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with vertical stacking. Use responsive grid for statistics (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4). Ensure action buttons are touch-friendly (min-h-[44px]) with adequate spacing. Apply responsive padding (px-4 sm:px-6 lg:px-8) and ensure bookmarked books grid uses 1 column on mobile."
+        },
+        {
+          "path": "frontend/src/pages/AuthorDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Make dashboard tabs mobile-friendly using horizontal scroll (flex overflow-x-auto) or convert to dropdown on mobile. Ensure tab buttons meet 44px minimum height. Apply responsive padding and ensure all dashboard sections stack vertically on mobile."
+        },
+        {
+          "path": "frontend/src/components/DashboardStatsCard.tsx",
+          "operation": "modify",
+          "description": "Ensure stat cards are responsive with adequate padding (p-4 sm:p-6) and touch-friendly minimum sizes. Scale text responsively (text-sm sm:text-base for labels, text-2xl sm:text-3xl for values)."
+        },
+        {
+          "path": "frontend/src/components/EditProfileDialog.tsx",
+          "operation": "modify",
+          "description": "Ensure dialog is responsive, fits mobile screens with max-height and scrolling (max-h-[90vh] overflow-y-auto), and input fields have minimum 44px height. Add responsive padding (p-4 sm:p-6)."
+        },
+        {
+          "path": "frontend/src/components/EditAuthorProfileDialog.tsx",
+          "operation": "modify",
+          "description": "Make dialog responsive with mobile-friendly layout, scrollable content if needed (max-h-[90vh] overflow-y-auto), and all inputs meeting 44px minimum height. Apply responsive padding."
+        },
+        {
+          "path": "frontend/src/components/DeleteAccountModal.tsx",
+          "operation": "modify",
+          "description": "Ensure modal is responsive, fits mobile screens, and action buttons are touch-friendly (min-h-[44px]) with adequate spacing to prevent accidental taps."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Make AdminPage and AdminReviewPage responsive with stacked book cards and touch-friendly actions",
+      "acceptanceCriteria": [
+        "Book list displays in single column on mobile",
+        "Approve/reject/edit/delete buttons are touch-friendly",
+        "Confirmation dialogs fit mobile screen without scrolling",
+        "Status badges remain visible and readable",
+        "Filter controls are accessible on mobile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with book items stacking vertically on mobile. Ensure action buttons (edit, delete) are touch-friendly (min-h-[44px]) with adequate spacing (gap-2). Add responsive padding (px-4 sm:px-6 lg:px-8) and ensure BookForm dialog is mobile-responsive."
+        },
+        {
+          "path": "frontend/src/pages/AdminReviewPage.tsx",
+          "operation": "modify",
+          "description": "Make review page responsive with stacked submission cards on mobile. Ensure approve/reject buttons are touch-friendly (min-h-[44px]). Add responsive padding and ensure rejection reason dialog fits mobile screens with scrollable content if needed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Optimize carousel components for touch gestures with swipe support and touch-friendly controls",
+      "acceptanceCriteria": [
+        "Carousels support touch swipe gestures on mobile",
+        "Navigation arrows are touch-friendly (minimum 44x44px)",
+        "Scrolling is smooth without lag",
+        "Books don't cut off at screen edges",
+        "Carousel indicators work on touch devices"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BookCarousel.tsx",
+          "operation": "modify",
+          "description": "Add touch gesture support using touch event handlers or CSS scroll-snap. Ensure navigation arrows are 44x44px minimum (min-w-[44px] min-h-[44px]). Implement smooth scrolling behavior (scroll-smooth) and ensure books display properly without cutoff using appropriate gap and padding."
+        },
+        {
+          "path": "frontend/src/components/MoodCarousel.tsx",
+          "operation": "modify",
+          "description": "Implement touch swipe support using touch events. Ensure navigation arrows meet 44x44px minimum size. Add smooth scrolling (scroll-smooth, scroll-snap-x) and proper spacing to prevent content cutoff at edges."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Ensure all text uses responsive font sizes with mobile-appropriate scaling",
+      "acceptanceCriteria": [
+        "Body text is minimum 16px on all devices",
+        "Heading sizes scale appropriately with breakpoints",
+        "Text does not overflow containers on small screens",
+        "Line height and spacing maintain readability on mobile",
+        "No text is cut off or requires horizontal scrolling"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add responsive typography utilities in the @layer base section. Set base font size to 16px minimum. Define responsive heading scales: h1 (text-2xl sm:text-3xl md:text-4xl lg:text-5xl), h2 (text-xl sm:text-2xl md:text-3xl lg:text-4xl), h3 (text-lg sm:text-xl md:text-2xl). Ensure line-height scales appropriately (leading-relaxed on mobile, leading-normal on desktop)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Ensure all images use responsive sizing with proper aspect ratios and object-fit properties",
+      "acceptanceCriteria": [
+        "Book covers maintain aspect ratio on all devices",
+        "Images use object-fit: cover or contain appropriately",
+        "Loading skeletons match final image dimensions",
+        "No images cause horizontal overflow",
+        "Images are optimized for mobile bandwidth"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BookGrid.tsx",
+          "operation": "modify",
+          "description": "Ensure book cover images use responsive sizing (w-full) with aspect-ratio (aspect-[2/3]) and object-fit (object-cover). Add loading skeletons that match image dimensions. Prevent horizontal overflow with max-w-full."
+        },
+        {
+          "path": "frontend/src/components/BookCarousel.tsx",
+          "operation": "modify",
+          "description": "Apply responsive image sizing with aspect-ratio utilities (aspect-[2/3]) and object-fit (object-cover). Ensure loading skeletons match final image dimensions and images scale appropriately on all breakpoints."
+        },
+        {
+          "path": "frontend/src/components/RecommendationCard.tsx",
+          "operation": "modify",
+          "description": "Ensure book cover image is responsive with proper aspect ratio (aspect-[2/3]), object-fit (object-cover), and scales appropriately on mobile (max-w-full)."
+        },
+        {
+          "path": "frontend/src/components/TrendingSection.tsx",
+          "operation": "modify",
+          "description": "Make book cover images responsive with aspect-ratio utilities (aspect-[2/3]) and object-fit (object-cover). Ensure images scale properly on all screen sizes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Make Sidebar responsive: full on desktop, auto-collapse on tablet, hidden on mobile with navigation integration",
+      "acceptanceCriteria": [
+        "Sidebar visible and toggleable on desktop (≥1024px)",
+        "Sidebar auto-collapses or hides on tablets (768-1024px)",
+        "Sidebar hidden on mobile (<768px)",
+        "Sidebar navigation items appear in mobile hamburger menu",
+        "Layout adjusts smoothly when sidebar state changes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Sidebar.tsx",
+          "operation": "modify",
+          "description": "Add responsive visibility classes: hidden lg:block to hide sidebar on mobile/tablet and show on desktop. Implement auto-collapse behavior for tablet range using responsive width classes (lg:w-64 xl:w-72) and transition utilities for smooth state changes."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Adjust layout grid to accommodate responsive sidebar using responsive classes (flex flex-col lg:grid lg:grid-cols-[auto_1fr]). Ensure main content area adapts when sidebar is hidden or collapsed with appropriate padding and max-width constraints."
+        },
+        {
+          "path": "frontend/src/components/Navigation.tsx",
+          "operation": "modify",
+          "description": "Integrate sidebar navigation items into mobile hamburger menu. Include all sidebar links in the mobile menu overlay so users can access all navigation on mobile devices."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Ensure all modal dialogs are responsive and fit mobile screens with scrollable content",
+      "acceptanceCriteria": [
+        "Modals fit within mobile viewport without overflow",
+        "Modal content scrolls if it exceeds screen height",
+        "Close buttons are touch-friendly (minimum 44x44px)",
+        "Form inputs in modals are properly sized for mobile",
+        "Modal backdrop prevents scrolling of background content"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BookForm.tsx",
+          "operation": "modify",
+          "description": "Ensure dialog container uses responsive width (max-w-full sm:max-w-md md:max-w-lg) and max-height (max-h-[90vh]) with overflow-y-auto for scrollable content. Ensure close button is 44x44px minimum and all form inputs meet 44px height requirement. Add responsive padding (p-4 sm:p-6)."
+        },
+        {
+          "path": "frontend/src/components/AuthPrompt.tsx",
+          "operation": "modify",
+          "description": "Make auth prompt dialog responsive with max-width constraints (max-w-full sm:max-w-md) and ensure it fits mobile viewport. Ensure action buttons are touch-friendly (min-h-[44px])."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "modify",
+          "description": "Ensure modal is responsive with max-width (max-w-full sm:max-w-md), fits mobile screen, and input fields have minimum 44px height. Add responsive padding and ensure submit button is touch-friendly."
+        },
+        {
+          "path": "frontend/src/components/RequestMoreEditsDialog.tsx",
+          "operation": "modify",
+          "description": "Make dialog responsive with appropriate max-width (max-w-full sm:max-w-lg), ensure textarea and buttons meet 44px minimum height, and add responsive padding."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Verify all features function correctly on mobile with touch input and mobile browsers",
+      "acceptanceCriteria": [
+        "Internet Identity login works on mobile browsers",
+        "Star rating accepts touch input",
+        "Bookmark toggle works with tap gestures",
+        "File upload works on mobile (camera and file system)",
+        "PDF viewer displays and navigates on mobile",
+        "All form submissions work on mobile devices"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/StarRating.tsx",
+          "operation": "modify",
+          "description": "Ensure star buttons accept touch events properly by verifying onClick handlers work with both mouse and touch input. Add touch-friendly sizing (min-w-[44px] min-h-[44px]) to interactive star buttons."
+        },
+        {
+          "path": "frontend/src/hooks/usePdfUpload.ts",
+          "operation": "modify",
+          "description": "Verify file input accepts mobile file sources including camera and file system. Ensure drag-and-drop handlers also work with touch events on mobile devices."
+        },
+        {
+          "path": "frontend/src/components/PdfViewer.tsx",
+          "operation": "modify",
+          "description": "Ensure PDF viewer iframe is touch-scrollable and navigation controls work with tap gestures on mobile browsers."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Add responsive breakpoints and update components to use mobile-first Tailwind utilities",
+      "acceptanceCriteria": [
+        "All components use mobile-first CSS (base styles for mobile)",
+        "Breakpoints applied progressively: sm (640px), md (768px), lg (1024px), xl (1280px)",
+        "No desktop-first styles that break on mobile",
+        "Responsive utilities used consistently across codebase",
+        "Layout classes follow mobile → tablet → desktop progression"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Verify and document responsive breakpoints in Tailwind config: sm: '640px', md: '768px', lg: '1024px', xl: '1280px', 2xl: '1536px'. Ensure all custom theme extensions support mobile-first approach."
+        },
+        {
+          "path": "frontend/src/pages/MyBooksPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive layout with vertical stacking on mobile. Use responsive grid (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3) for book cards. Ensure action buttons are touch-friendly (min-h-[44px]) and add responsive padding (px-4 sm:px-6 lg:px-8)."
+        },
+        {
+          "path": "frontend/src/pages/TrendingPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with responsive sections. Use responsive grids for book displays (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4). Ensure heading text scales (text-xl sm:text-2xl md:text-3xl) and add responsive padding."
+        },
+        {
+          "path": "frontend/src/pages/FavoritesPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive layout with responsive padding (px-4 sm:px-6 lg:px-8). Ensure BookGrid component renders with mobile-appropriate column count."
+        },
+        {
+          "path": "frontend/src/pages/AuthorsPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with responsive grid for authors (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4). Ensure author cards are touch-friendly with adequate spacing and responsive padding (px-4 sm:px-6 lg:px-8)."
+        },
+        {
+          "path": "frontend/src/pages/AuthorProfilePage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked profile information on mobile. Use responsive grid for author books (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3). Scale heading text responsively and add responsive padding."
+        },
+        {
+          "path": "frontend/src/pages/AdminAnalyticsPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked statistics cards on mobile (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3). Ensure charts and data displays are responsive and add responsive padding (px-4 sm:px-6 lg:px-8)."
+        },
+        {
+          "path": "frontend/src/pages/UserManagementPage.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked user list on mobile. Ensure action buttons are touch-friendly (min-h-[44px]) and add responsive padding."
+        },
+        {
+          "path": "frontend/src/components/AuthorBookManager.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first responsive grid for books (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3). Ensure action buttons are touch-friendly (min-h-[44px]) with adequate spacing."
+        },
+        {
+          "path": "frontend/src/components/AuthorAnalytics.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked analytics cards on mobile (grid-cols-1 sm:grid-cols-2 lg:grid-cols-4). Ensure stat cards are responsive and scale text appropriately."
+        },
+        {
+          "path": "frontend/src/components/AuthorSeriesManager.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked series cards on mobile. Ensure action buttons are touch-friendly (min-h-[44px]) and add responsive padding."
+        },
+        {
+          "path": "frontend/src/components/AuthorReaderInteraction.tsx",
+          "operation": "modify",
+          "description": "Apply mobile-first layout with stacked comments and fan sections on mobile. Ensure interactive elements are touch-friendly and add responsive padding."
+        }
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "summary": "Maintain consistent Van Gogh-inspired theme across all screen sizes",
+      "acceptanceCriteria": [
+        "Color palette remains consistent across all breakpoints",
+        "Font families and weights consistent on all devices",
+        "Spacing scale (padding, margins) maintains proportions",
+        "Dark mode works correctly on all screen sizes",
+        "Visual hierarchy preserved across responsive layouts"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Verify Van Gogh color palette (blue, gold, white) remains consistent across all breakpoints in both light and dark modes. Ensure CSS custom properties are properly applied and spacing scale maintains proportions on all screen sizes. Add any necessary responsive utilities for maintaining visual hierarchy."
+        }
+      ]
+    }
+  ]
+}

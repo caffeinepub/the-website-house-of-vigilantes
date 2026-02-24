@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "A digital library and reading platform where authors can upload books and users can discover, read, and download them, focused on intellectual growth, philosophy, literature, and knowledge sharing",
+  "architectural_notes": [
+    "Mobile-first responsive design approach for all pages",
+    "Internet Identity for user authentication",
+    "Admin approval workflow for book uploads",
+    "PDF storage and rendering system for in-browser reading",
+    "Bookmark and progress tracking per user per book",
+    "Blue, gold, white color scheme with dark mode support",
+    "Navigation: Home, Genres, Browse, Upload, Profile, About"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-mobile-first-responsive-design-for-navigation-component-with-hamburger-menu-that-appears-on-screens-smaller-than-768px-md-breakpoint-the-hamburger-icon-should-toggle-a-mobile-menu-overlay-with-touch-friendly-spacing-and-all-navigation-items",
+      "title": "Implement mobile-first responsive design for Navigation component with hamburger menu that appears on screens smaller than 768px (md breakpoint). The hamburger icon should toggle a mobile menu overlay with touch-friendly spacing and all navigation items.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-all-interactive-elements-buttons-links-form-inputs-touch-friendly-with-minimum-44x44px-touch-targets-and-adequate-spacing-minimum-8px-between-adjacent-interactive-elements-on-mobile-devices",
+      "title": "Make all interactive elements (buttons, links, form inputs) touch-friendly with minimum 44x44px touch targets and adequate spacing (minimum 8px) between adjacent interactive elements on mobile devices.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-homepage-landingpage-displays-responsively-with-properly-scaled-background-centered-content-and-readable-text-on-all-screen-sizes-from-320px-width-upward",
+      "title": "Ensure HomePage/LandingPage displays responsively with properly scaled background, centered content, and readable text on all screen sizes from 320px width upward.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-personalizedhomepage-fully-responsive-with-stacked-layout-on-mobile-recommendations-continue-reading-recently-viewed-trending-sections-and-mood-carousels-should-stack-vertically-and-display-properly-on-screens-down-to-320px-width",
+      "title": "Make PersonalizedHomePage fully responsive with stacked layout on mobile: recommendations, continue reading, recently viewed, trending sections, and mood carousels should stack vertically and display properly on screens down to 320px width.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-browsebookspage-responsive-with-mobile-optimized-genre-author-filter-dropdowns-mood-chips-that-wrap-on-small-screens-and-a-book-grid-that-displays-1-column-on-mobile-640px-2-columns-on-tablets-640-1024px-and-3-columns-on-desktop",
+      "title": "Make BrowseBooksPage responsive with mobile-optimized genre/author filter dropdowns, mood chips that wrap on small screens, and a book grid that displays 1 column on mobile (<640px), 2 columns on tablets (640-1024px), and 3+ columns on desktop.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-bookdetailpage-fully-responsive-with-stacked-layout-on-mobile-book-cover-title-author-rating-description-and-pdf-viewer-should-stack-vertically-pdf-viewer-should-resize-to-fit-mobile-screen-width-while-maintaining-usability",
+      "title": "Make BookDetailPage fully responsive with stacked layout on mobile: book cover, title, author, rating, description, and PDF viewer should stack vertically. PDF viewer should resize to fit mobile screen width while maintaining usability.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-all-carousel-components-bookcarousel-moodcarousel-for-touch-gestures-with-swipe-support-properly-sized-navigation-arrows-for-mobile-and-smooth-horizontal-scrolling",
+      "title": "Optimize all carousel components (BookCarousel, MoodCarousel) for touch gestures with swipe support, properly sized navigation arrows for mobile, and smooth horizontal scrolling.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-text-content-uses-responsive-font-sizes-headings-should-scale-down-appropriately-on-mobile-while-remaining-readable-minimum-16px-for-body-text-20px-for-h3-24px-for-h2-32px-for-h1-on-mobile",
+      "title": "Ensure all text content uses responsive font sizes: headings should scale down appropriately on mobile while remaining readable (minimum 16px for body text, 20px for h3, 24px for h2, 32px for h1 on mobile).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-images-book-covers-backgrounds-author-avatars-use-responsive-sizing-with-proper-aspect-ratios-css-object-fit-properties-and-loading-states-images-should-never-distort-or-break-layout-on-any-screen-size",
+      "title": "Ensure all images (book covers, backgrounds, author avatars) use responsive sizing with proper aspect ratios, CSS object-fit properties, and loading states. Images should never distort or break layout on any screen size.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-sidebar-component-responsive-show-full-sidebar-on-desktop-1024px-auto-collapse-on-tablets-768-1024px-and-hide-completely-on-mobile-768px-with-functionality-moved-to-navigation-hamburger-menu",
+      "title": "Make Sidebar component responsive: show full sidebar on desktop (≥1024px), auto-collapse on tablets (768-1024px), and hide completely on mobile (<768px) with functionality moved to Navigation hamburger menu.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-and-test-that-all-existing-features-bookmarking-rating-progress-tracking-authentication-file-uploads-function-correctly-on-mobile-devices-with-touch-input-and-mobile-browsers",
+      "title": "Verify and test that all existing features (bookmarking, rating, progress tracking, authentication, file uploads) function correctly on mobile devices with touch input and mobile browsers.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-maintain-consistent-van-gogh-inspired-color-scheme-blue-gold-white-typography-spacing-and-design-patterns-across-all-screen-sizes-to-ensure-visual-uniformity-and-professional-appearance-on-mobile-tablet-and-desktop",
+      "title": "Maintain consistent Van Gogh-inspired color scheme (blue, gold, white), typography, spacing, and design patterns across all screen sizes to ensure visual uniformity and professional appearance on mobile, tablet, and desktop.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Internet Identity authentication system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Book browsing by genres and categories with advanced search",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Book upload system for authors with title, description, genre, cover, and PDF",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "In-browser PDF reader with page navigation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Book download functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Bookmark and reading progress tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "User profiles and author profiles",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Recommendation and trending system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Admin approval system for uploaded books",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Fully responsive mobile-first design with hamburger menu and touch-friendly elements",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Make UploadBookPage responsive with single-column form layout on mobile, touch-friendly file upload areas, and properly sized input fields. BookForm dialog should adapt to mobile screen sizes.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Make ProfilePage and AuthorDashboardPage responsive with stacked layouts on mobile. Dashboard tabs should scroll horizontally or convert to dropdown on small screens. Statistics cards should display in 1-2 column grid on mobile.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Make AdminPage and AdminReviewPage responsive with stacked book cards or list view on mobile, touch-friendly action buttons, and accessible dialogs that fit mobile screens.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Ensure all modal dialogs (BookForm, EditProfileDialog, DeleteAccountModal, AuthPrompt, ProfileSetupModal, etc.) are responsive and fit mobile screens with appropriate padding, scrollable content when needed, and touch-friendly close buttons.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add responsive breakpoints to Tailwind config and update all components to use responsive utility classes (sm:, md:, lg:, xl:) for layout, spacing, typography, and visibility following mobile-first approach.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "House of Vigilantes",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

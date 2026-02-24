@@ -1,0 +1,374 @@
+{
+  "kind": "build_request",
+  "title": "Implement fully responsive mobile-first design across entire platform",
+  "projectName": "House of Vigilantes",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement mobile-first responsive design for Navigation component with hamburger menu that appears on screens smaller than 768px (md breakpoint). The hamburger icon should toggle a mobile menu overlay with touch-friendly spacing and all navigation items.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Make the website fully responsive so it works perfectly on mobile phones, tablets, and desktops",
+          "Ensure navigation menus convert into a mobile-friendly menu (such as a hamburger menu) on smaller screens"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigation displays as horizontal bar on desktop (≥768px)",
+        "Navigation shows hamburger menu icon on mobile (<768px)",
+        "Tapping hamburger opens full-screen or overlay mobile menu",
+        "Mobile menu items have minimum 44px touch targets",
+        "Mobile menu closes when item is selected or close button is tapped"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Make all interactive elements (buttons, links, form inputs) touch-friendly with minimum 44x44px touch targets and adequate spacing (minimum 8px) between adjacent interactive elements on mobile devices.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "All buttons, links, and interactive elements must be large enough and properly spaced for easy tapping with fingers"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All buttons have minimum 44x44px dimensions on mobile",
+        "Form inputs have minimum 44px height on mobile",
+        "Interactive elements have 8px minimum spacing between them",
+        "Touch targets do not overlap or cause mis-taps"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Ensure HomePage/LandingPage displays responsively with properly scaled background, centered content, and readable text on all screen sizes from 320px width upward.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Van Gogh background scales and positions correctly on mobile",
+        "Heading text sizes appropriately on small screens",
+        "Login button remains visible and accessible on all devices",
+        "Theme toggle is accessible on mobile",
+        "No horizontal scrolling or content overflow"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Make PersonalizedHomePage fully responsive with stacked layout on mobile: recommendations, continue reading, recently viewed, trending sections, and mood carousels should stack vertically and display properly on screens down to 320px width.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All sections stack vertically on mobile (<768px)",
+        "Section headings remain readable and properly sized",
+        "Carousel controls are touch-friendly",
+        "Book cards display in appropriate grid (1 column on mobile)",
+        "No content is cut off or requires horizontal scrolling"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Make BrowseBooksPage responsive with mobile-optimized genre/author filter dropdowns, mood chips that wrap on small screens, and a book grid that displays 1 column on mobile (<640px), 2 columns on tablets (640-1024px), and 3+ columns on desktop.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Filter dropdowns are touch-friendly on mobile",
+        "Mood filter chips wrap to multiple lines on narrow screens",
+        "Book grid uses 1 column layout on screens <640px",
+        "Book grid uses 2 columns on tablets (640-1024px)",
+        "Book grid uses 3+ columns on desktop (≥1024px)",
+        "All book covers scale proportionally"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Make BookDetailPage fully responsive with stacked layout on mobile: book cover, title, author, rating, description, and PDF viewer should stack vertically. PDF viewer should resize to fit mobile screen width while maintaining usability.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones",
+          "Make sure PDF reading, login, upload, bookmarks, and all features work correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Book details stack vertically on mobile",
+        "Book cover scales to fit screen without distortion",
+        "PDF viewer displays at appropriate size for mobile reading",
+        "Action buttons (bookmark, download, rate) are touch-friendly",
+        "Star rating component works with touch input",
+        "Reviews section displays properly on mobile"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Make UploadBookPage responsive with single-column form layout on mobile, touch-friendly file upload areas, and properly sized input fields. BookForm dialog should adapt to mobile screen sizes.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Form fields stack vertically on mobile",
+        "File upload dropzones are touch-friendly and large enough",
+        "All input fields have minimum 44px height on mobile",
+        "BookForm dialog fits mobile screen without overflow",
+        "Submit and cancel buttons are easily tappable"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Make ProfilePage and AuthorDashboardPage responsive with stacked layouts on mobile. Dashboard tabs should scroll horizontally or convert to dropdown on small screens. Statistics cards should display in 1-2 column grid on mobile.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile information displays clearly on mobile",
+        "Statistics cards use 1 column on mobile (<640px)",
+        "Dashboard tabs remain accessible on mobile (scroll or dropdown)",
+        "Edit profile button is touch-friendly",
+        "Bookmarked books grid adapts to mobile (1 column)",
+        "Delete account button remains accessible but not accidentally tappable"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Make AdminPage and AdminReviewPage responsive with stacked book cards or list view on mobile, touch-friendly action buttons, and accessible dialogs that fit mobile screens.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The homepage, genres section, browse page, book pages, upload page, and user dashboard must all display correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Book list displays in single column on mobile",
+        "Approve/reject/edit/delete buttons are touch-friendly",
+        "Confirmation dialogs fit mobile screen without scrolling",
+        "Status badges remain visible and readable",
+        "Filter controls are accessible on mobile"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Optimize all carousel components (BookCarousel, MoodCarousel) for touch gestures with swipe support, properly sized navigation arrows for mobile, and smooth horizontal scrolling.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Optimize scrolling so it is smooth and natural on mobile devices"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Carousels support touch swipe gestures on mobile",
+        "Navigation arrows are touch-friendly (minimum 44x44px)",
+        "Scrolling is smooth without lag",
+        "Books don't cut off at screen edges",
+        "Carousel indicators work on touch devices"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Ensure all text content uses responsive font sizes: headings should scale down appropriately on mobile while remaining readable (minimum 16px for body text, 20px for h3, 24px for h2, 32px for h1 on mobile).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Ensure text, images, book covers, and all content scale properly and remain clear and readable on small screens"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Body text is minimum 16px on all devices",
+        "Heading sizes scale appropriately with breakpoints",
+        "Text does not overflow containers on small screens",
+        "Line height and spacing maintain readability on mobile",
+        "No text is cut off or requires horizontal scrolling"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Ensure all images (book covers, backgrounds, author avatars) use responsive sizing with proper aspect ratios, CSS object-fit properties, and loading states. Images should never distort or break layout on any screen size.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Ensure text, images, book covers, and all content scale properly and remain clear and readable on small screens"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Book covers maintain aspect ratio on all devices",
+        "Images use object-fit: cover or contain appropriately",
+        "Loading skeletons match final image dimensions",
+        "No images cause horizontal overflow",
+        "Images are optimized for mobile bandwidth"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Make Sidebar component responsive: show full sidebar on desktop (≥1024px), auto-collapse on tablets (768-1024px), and hide completely on mobile (<768px) with functionality moved to Navigation hamburger menu.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Ensure navigation menus convert into a mobile-friendly menu (such as a hamburger menu) on smaller screens"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sidebar visible and toggleable on desktop (≥1024px)",
+        "Sidebar auto-collapses or hides on tablets (768-1024px)",
+        "Sidebar hidden on mobile (<768px)",
+        "Sidebar navigation items appear in mobile hamburger menu",
+        "Layout adjusts smoothly when sidebar state changes"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Ensure all modal dialogs (BookForm, EditProfileDialog, DeleteAccountModal, AuthPrompt, ProfileSetupModal, etc.) are responsive and fit mobile screens with appropriate padding, scrollable content when needed, and touch-friendly close buttons.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "The layout should automatically adjust to different screen sizes and phone dimensions without breaking or overlapping"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Modals fit within mobile viewport without overflow",
+        "Modal content scrolls if it exceeds screen height",
+        "Close buttons are touch-friendly (minimum 44x44px)",
+        "Form inputs in modals are properly sized for mobile",
+        "Modal backdrop prevents scrolling of background content"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Verify and test that all existing features (bookmarking, rating, progress tracking, authentication, file uploads) function correctly on mobile devices with touch input and mobile browsers.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Make sure PDF reading, login, upload, bookmarks, and all features work correctly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Internet Identity login works on mobile browsers",
+        "Star rating accepts touch input",
+        "Bookmark toggle works with tap gestures",
+        "File upload works on mobile (camera and file system)",
+        "PDF viewer displays and navigates on mobile",
+        "All form submissions work on mobile devices"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Add responsive breakpoints to Tailwind config and update all components to use responsive utility classes (sm:, md:, lg:, xl:) for layout, spacing, typography, and visibility following mobile-first approach.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Use a mobile-first design approach"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All components use mobile-first CSS (base styles for mobile)",
+        "Breakpoints applied progressively: sm (640px), md (768px), lg (1024px), xl (1280px)",
+        "No desktop-first styles that break on mobile",
+        "Responsive utilities used consistently across codebase",
+        "Layout classes follow mobile → tablet → desktop progression"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Maintain consistent Van Gogh-inspired color scheme (blue, gold, white), typography, spacing, and design patterns across all screen sizes to ensure visual uniformity and professional appearance on mobile, tablet, and desktop.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Maintain consistent colors, fonts, spacing, and design across mobile and desktop so the website looks uniform and professional on all devices"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Color palette remains consistent across all breakpoints",
+        "Font families and weights consistent on all devices",
+        "Spacing scale (padding, margins) maintains proportions",
+        "Dark mode works correctly on all screen sizes",
+        "Visual hierarchy preserved across responsive layouts"
+      ]
+    }
+  ],
+  "constraints": [
+    "All responsive changes must be frontend-only; do not modify backend/main.mo or backend/migration.mo",
+    "Do not edit frontend/src/hooks/useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, or main.tsx",
+    "Do not edit any files in frontend/src/components/ui directory",
+    "Maintain existing Van Gogh theming and color scheme defined in index.css",
+    "Preserve existing Internet Identity authentication flow",
+    "Do not break existing functionality while adding responsive features"
+  ],
+  "nonGoals": [
+    "Adding new features beyond responsive design improvements",
+    "Changing the technology stack or framework",
+    "Modifying backend data models or API endpoints",
+    "Redesigning the Van Gogh-inspired theme or color palette",
+    "Implementing native mobile apps (React Native, Flutter, etc.)",
+    "Adding animations or transitions beyond smooth scrolling",
+    "Changing authentication method from Internet Identity"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
